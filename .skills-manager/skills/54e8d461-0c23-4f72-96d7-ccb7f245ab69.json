@@ -5,6 +5,7 @@
   "path_key": "skill-creator",
   "enabled": true,
   "tags": [
+    "base",
     "claude"
   ],
   "source": {
