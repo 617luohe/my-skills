@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "106f10c1-859e-4426-ba04-b237523ba566",
+  "path": "docx",
+  "path_key": "docx",
+  "enabled": true,
+  "tags": [
+    "claude",
+    "办公"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\docx",
+    "branch": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "135181db-be26-4a07-9379-6884236fe083",
+  "path": "doc-coauthoring",
+  "path_key": "doc-coauthoring",
+  "enabled": true,
+  "tags": [
+    "claude",
+    "办公"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\doc-coauthoring",
+    "branch": null
+  }
+}

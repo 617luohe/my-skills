@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "b06d9b78-4b86-425c-b099-d9937be3c3c8",
+  "path": "pptx",
+  "path_key": "pptx",
+  "enabled": true,
+  "tags": [
+    "claude",
+    "办公"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\pptx",
+    "branch": null
+  }
+}

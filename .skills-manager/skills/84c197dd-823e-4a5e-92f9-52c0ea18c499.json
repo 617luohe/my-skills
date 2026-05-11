@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "84c197dd-823e-4a5e-92f9-52c0ea18c499",
+  "path": "brand-guidelines",
+  "path_key": "brand-guidelines",
+  "enabled": true,
+  "tags": [
+    "claude"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\brand-guidelines",
+    "branch": null
+  }
+}

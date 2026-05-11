@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "c234db19-749b-4025-bc58-099a8e2ad98d",
+  "path": "vercel-react-best-practices",
+  "path_key": "vercel-react-best-practices",
+  "enabled": true,
+  "tags": [
+    "agent skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/vercel-labs/agent-skills.git",
+    "subpath": "skills\\react-best-practices",
+    "branch": null
+  }
+}

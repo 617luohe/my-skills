@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "00310cc3-6275-464f-947a-eddf4012e089",
+  "path": "frontend-design",
+  "path_key": "frontend-design",
+  "enabled": true,
+  "tags": [
+    "claude"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\frontend-design",
+    "branch": null
+  }
+}

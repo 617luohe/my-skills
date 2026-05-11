@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "d47d6529-570b-4cc9-a0c7-a1a6a429c448",
+  "path": "webapp-testing",
+  "path_key": "webapp-testing",
+  "enabled": true,
+  "tags": [
+    "claude"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/anthropics/skills.git",
+    "subpath": "skills\\webapp-testing",
+    "branch": null
+  }
+}

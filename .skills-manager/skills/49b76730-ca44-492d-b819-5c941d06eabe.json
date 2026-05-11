@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "49b76730-ca44-492d-b819-5c941d06eabe",
+  "path": "deploy-to-vercel",
+  "path_key": "deploy-to-vercel",
+  "enabled": true,
+  "tags": [
+    "agent skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/vercel-labs/agent-skills.git",
+    "subpath": "skills\\deploy-to-vercel",
+    "branch": null
+  }
+}
