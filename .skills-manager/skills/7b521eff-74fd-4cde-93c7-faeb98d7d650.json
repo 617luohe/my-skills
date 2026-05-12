@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "7b521eff-74fd-4cde-93c7-faeb98d7d650",
+  "path": "using-superpowers-2",
+  "path_key": "using-superpowers-2",
+  "enabled": true,
+  "tags": [
+    "superpowers"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/obra/superpowers.git",
+    "subpath": "skills\\using-superpowers",
+    "branch": null
+  }
+}
