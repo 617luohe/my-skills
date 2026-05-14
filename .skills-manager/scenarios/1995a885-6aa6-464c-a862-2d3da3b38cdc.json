@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "scenario_id": "1995a885-6aa6-464c-a862-2d3da3b38cdc",
+  "name": "办公",
+  "description": "文本办公与文案优化",
+  "icon": "briefcase",
+  "sort_order": 999
+}
