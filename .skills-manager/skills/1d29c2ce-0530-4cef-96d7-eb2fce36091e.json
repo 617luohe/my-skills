@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "1d29c2ce-0530-4cef-96d7-eb2fce36091e",
+  "path": "daily",
+  "path_key": "daily",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
