@@ -1,0 +1,24 @@
+# Obsidian workspace files
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/hotkeys.json
+
+# IDE/editor config (keep if shared)
+.claude/*
+!.claude/skills/
+.codex/
+.cursor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node (if using Obsidian plugins dev)
+node_modules/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+~$*

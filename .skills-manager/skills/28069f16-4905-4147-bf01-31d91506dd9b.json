@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "28069f16-4905-4147-bf01-31d91506dd9b",
+  "path": "工作周报日报生成工具",
+  "path_key": "工作周报日报生成工具",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

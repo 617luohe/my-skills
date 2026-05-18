@@ -1,0 +1,67 @@
+﻿date,project,module,summary,sha,author
+2026-04-27,冷热集批排产-控制程序,src,fix(data): 解决时间戳转换过程中的数据类型错误,423ee7642ee6785d86015b9bed2a061f73c1402e,luohe666
+2026-04-24,冷热集批排产-控制程序,src,feat(backup): 优化备份机制支持粗轧双辊期目录结构,2564ce92d0c21faf9be3f7d6ced8489ff55bade4,luohe666
+2026-04-24,冷热集批排产-控制程序,src,perf(schedule): 优化粗轧规则调度性能和辊期号管理,a335f2ea9c44947d3d04d243957b163b4af81dec,luohe666
+2026-04-23,冷热集批排产-控制程序,src,feat(batch): 添加粗轧规则排程批量测试脚本,8151f16d589c3398204b694397a24e42d8d7d0d4,luohe666
+2026-04-23,冷热集批排产-控制程序,config,feat(config): 针对粗轧排程算法添加超时配置和性能监控功能,4cf4492b678bcac2cfc4d1dd03657dec04b81cc0,luohe666
+2026-04-22,冷热集批排产-控制程序,src,feat(debug): 添加粗轧规则排程独立调试脚本,fbed1baba9a90c8ca854e39025ae8e8b5b19ba8f,luohe666
+2026-04-22,冷热集批排产-控制程序,src,feat(log): 统一日志记录系统并完善日志输出格式,fbc8084243a2ea746240f2bcf2b81b788ff93333,luohe666
+2026-04-22,冷热集批排产-控制程序,src,```,22456911e3c5326c589047a4de4603aaa41c57e8,luohe666
+2026-04-22,冷热集批排产-控制程序,src,refactor(unit_process): 重构结果数据构建方法支持外部数据传入,60fe6a6351dcb485a4e11db78ef6cb17507ba837,luohe666
+2026-04-22,冷热集批排产-控制程序,src,feat(scheduler): 添加粗轧规则排程功能,24f0a4d20b8f8a4e987989709883419dac56a084,luohe666
+2026-04-22,冷热集批排产-控制程序,config,Merge remote-tracking branch 'origin/master',cce775dba8c9ddb6ac65a43faef12b30809027a1,luohe666
+2026-04-22,冷热集批排产-控制程序,src,feat(config): 更新热轧排程系统配置和新增备份表读写功能,0cc785b6d2f1962aebc91d60809179f19cef65d9,luohe666
+2026-04-22,冷热集批排产-控制程序,src,"Revert ""2026年4月2日优化数据过滤性能""",42526451b7d133af23555e9e1c5b1ccf4697ac86,luohe666
+2026-04-21,冷热集批排产-控制程序,config,feat(config): 更新热轧排程系统配置参数,ada8bdbcc17a346033b6a14a06e372ed5e1c925b,luohe666
+2026-04-13,冷热集批排产-控制程序,结果对比工具,Merge remote-tracking branch 'origin/master',72ea9e70ab6649e81342c0bc432bcd8f3309ddcb,luohe666
+2026-04-13,冷热集批排产-控制程序,src,feat(core): 添加程序启动上下文日志记录功能,395e4d6c2430f2443289fd91d2d08242e390c30a,luohe666
+2026-04-10,冷热集批排产-控制程序,src,"Revert ""2026年4月2日优化数据过滤性能""",482e86712107f78e802de643d4080aac8251a385,luohe666
+2026-04-16,冷热集批排产-算法程序,src,feat(optimizer): 添加热轧调度后置优化器,bf6a008e2704733105140a32868d1ccd7bd92f6d,luohe666
+2026-04-16,冷热集批排产-算法程序,src,feat(scheduler): 添加后处理优化器并调整宽度惩罚参数,32589debd60889420cd34ed712945880654b3474,luohe666
+2026-04-16,冷热集批排产-算法程序,src,Merge remote-tracking branch 'origin/master',8d78a49569cbe0eaadc2521cf5789484cf6a4fdf,luohe666
+2026-04-16,冷热集批排产-算法程序,src,refactor(model): 移除主轧段厚度尖点惩罚并添加物料一致性约束,c1a87d73ffde1f0685568b4957c6eaae5a66a884,luohe666
+2026-04-15,冷热集批排产-算法程序,src,feat(hotrolling): 添加热轧调度中厚度切换的方向性惩罚机制,69ee2a10c95e219b376489235a96b159f27742be,luohe666
+2026-04-15,冷热集批排产-算法程序,src,feat(model): 添加热轧模型中主轧段防穿插约束和优化,28927b8fadabda8dfbb454c41f42f809445b6ddd,luohe666
+2026-04-14,冷热集批排产-算法程序,AntColony_v3.5,feat(build): 添加 Linux 多平台构建支持和测试工具,9a2cc1ef3b57b541ce98fddf344ea1b959404935,luohe666
+2026-04-13,冷热集批排产-算法程序,AntColony_v3.5,feat(build): 添加 manylinux2014 容器编译支持并优化构建流程,4a98347ea4b75cfd6a1b3d015c85ed91066cc752,luohe666
+2026-04-13,冷热集批排产-算法程序,config,chore(build): 更新版本号并改进构建脚本,e19a50136ee310f92b522af161fc74c18e9ab5cd,luohe666
+2026-04-12,冷热集批排产-算法程序,src,refactor(AntColony): 重构蚁群算法实现以提高性能和可维护性,1ca1f8949f870d38110985012590f16f05221efc,luohe666
+2026-04-12,冷热集批排产-算法程序,AntColony_v3.5,refactor(AntColony): 重构蚁群算法实现以提高性能和可维护性,9432ced58d92131d34f0dae9e709b919d2b087a3,luohe666
+2026-04-12,冷热集批排产-算法程序,config,config(batch): 调整批量参数网格配置以优化执行效率,c05814229b14493ec1d36a164545815d24ec5d35,luohe666
+2026-04-12,冷热集批排产-算法程序,src,feat(model): 添加热轧模型中主轧段反宽和厚度阶梯约束控制,61ea463ac35e1aa67f619066ae59c168a5652974,luohe666
+2026-04-11,冷热集批排产-算法程序,config,feat(config): 添加批量参数网格配置文件,a1ac761678353a8d13e6347b4b87b26e50b36927,luohe666
+2026-04-11,冷热集批排产-算法程序,src,feat(hotrolling): 扩展轧宽差范围以改进厚度尖点惩罚算法,842837cab6af70f442d7c6a537f4835c8f37e978,luohe666
+2026-04-11,冷热集批排产-算法程序,AntColony_v3.5,feat(model): 添加主轧段同宽轧厚尖点惩罚功能,9b49acc0b057fdd3be113d17b480cd45d53cee54,luohe666
+2026-04-11,冷热集批排产-算法程序,src,perf(benchmark): 优化蚁群算法基准测试性能,9a25e704bcd4887f7be06daf6b2d1996d07239ee,luohe666
+2026-04-11,冷热集批排产-算法程序,AntColony_v3.5,refactor(AntColony): 优化信息素管理并移除废弃代码,58285b2f39126e7d74555f39b3b5ae0c1803ca6f,luohe666
+2026-04-11,冷热集批排产-算法程序,new_antcolony,feat(algorithm): 优化热轧排程蚁群算法的日志记录与约束控制,bd6a2c67e0169ad94533229afd93c1d9ca3ca988,luohe666
+2026-04-10,冷热集批排产-算法程序,test,2026年4月10日添加参数网格批量排程脚本,ad444387f0e29a5e4848d52c971e89b77dcab4be,luohe666
+2026-04-10,冷热集批排产-算法程序,test,2026年4月10日添加参数网格批量排程脚本,f390003a33da28edc95e31fa2a81e0e272b932a5,luohe666
+2026-04-10,冷热集批排产-算法程序,AntColony_v3.5,fix(ant): 修复蚂蚁算法路径构造中的无限循环问题,75af49b30603ce3e787707b840302d1e096786f7,luohe666
+2026-04-10,冷热集批排产-算法程序,config,2026年4月10日更新配置文件版本并移除邻接矩阵CSV导出功能,be19819c441d8c6b6e230575b5e428fa12b33ffe,luohe666
+2026-04-10,冷热集批排产-算法程序,config,2026年4月10日优化热轧模型轧宽回升惩罚与奖励机制,f565553a561297231b8b856f05eddf5f1117c3bd,luohe666
+2026-04-09,冷热集批排产-算法程序,AntColony_v3.5,2026年4月9日添加轧宽从宽到窄的物料节点偏好机制,188dbf418c6ef4d1c4a97ad9bfae78d0bac0d7c2,luohe666
+2026-04-09,冷热集批排产-算法程序,src,2026年4月9日实现主轧段分界配置和优化参数调整,0dea9a303c0b74215c9b76e47693a3d9b233dd1e,luohe666
+2026-04-08,冷热集批排产-算法程序,AntColony_v3.5,2026年4月8日优化蚁群算法性能和数据类型安全性,96c5825ab53b4af349c109db138d1cad11279b99,luohe666
+2026-04-08,冷热集批排产-算法程序,new_antcolony,Merge remote-tracking branch 'origin/master',20323bbf5b7bcb946d62d2c002cc1efb42d2b210,luohe666
+2026-04-08,冷热集批排产-算法程序,AntColony_v3.5,2026年4月8日添加蚁群算法核心组件和模型模块,534c5c07a828d8149682ed136ca2aaaea8ec2256,luohe666
+2026-04-08,冷热集批排产-算法程序,src,2026年4月8日添加主轧段轧宽回升惩罚系数配置,70f99ebd633445e259c2e74945b10467e93c8ea8,luohe666
+2026-04-08,冷热集批排产-算法程序,config,2026年4月8日移除废弃的可利用材固定规格模式,3d7fbb8dd10be897ae68287c6dd867638e0e4b4c,luohe666
+2026-04-08,冷热集批排产-算法程序,config,"Revert ""2026年3月19日原本可利用材插入部分轧宽轧厚单独计算，修改为联合计算（配置文件部分）""",3040e5e4e3dc9ca1c82714ee56b19deb90f0b1c0,luohe666
+2026-05-15,冷热集批排产-控制程序,结果对比工具,feat(data-dashboard): 添加数据仪表板功能模块,0590e8facabd3c43c004445c392537e02feac373,luohe666
+2026-05-13,冷热集批排产-控制程序,README.md,docs(markdown): 添加粗排设计方案与双语README文档,d6f1a440723bd9eae061000e69f284d53cfd4210,luohe666
+2026-05-12,冷热集批排产-控制程序,tools,docs(config): 添加数据库配置文件和单元配置文件,1705af9efee413ec894d6c69b963ce1bcc43c79b,luohe666
+2026-05-12,冷热集批排产-控制程序,src,docs: 添加粗排规则设计文档与邻接判定规范,9f0a20a1c66218ad8de9abaf5bede378971af070,luohe666
+2026-05-12,冷热集批排产-控制程序,src,docs(readme): 添加粗轧规则排程服务文档并修复文件引用错误,ee7fba684e8a890877d9c560ad5c99a758e589d2,luohe666
+2026-05-12,冷热集批排产-控制程序,src,fix(unit_process): 修复排产结果出场率计算中的分子分母不一致问题,f29948790dcf70bef9b7212ff8ec49ed13115b77,luohe666
+2026-05-11,冷热集批排产-控制程序,src,refactor(unit_process): 优化备份目录查找和辊期号管理逻辑,a1c5ab09d08672649d50ab83a83fc7a86f5f2936,luohe666
+2026-05-11,冷热集批排产-控制程序,config,feat(config): 添加单元配置文件定义数据结构和规则,05f8b468a96eae2785516e81de13189bc8cdeed9,luohe666
+2026-05-06,冷热集批排产-控制程序,src,Merge remote-tracking branch 'origin/master',438bd68077e34509f298ab5f1704ca1213b9cebd,luohe666
+2026-05-06,冷热集批排产-控制程序,docs,docs: 删除旧版粗轧规则排程文档并更新设计方案,664a57d063cb63d956558fd98ad8bdaafe91d290,luohe666
+2026-05-06,冷热集批排产-控制程序,docs,"Revert ""docs(schedule): 更新调度结果存储文档补充粗排零行数据处理说明""",79e6626d8206117ba6e6d08d6db3ed43ad3dc6eb,luohe666
+2026-05-06,冷热集批排产-控制程序,src,feat(coarse_rolling_rule_schedule): 添加可执行计划门禁功能,682582932e3cc835bda075d8738d117a34afe09e,luohe666
+2026-05-06,冷热集批排产-控制程序,docs,docs(schedule): 更新调度结果存储文档补充粗排零行数据处理说明,54ff6b6690636fdea8860c80d5de8e343c34164d,luohe666
+2026-05-06,冷热集批排产-控制程序,docs,docs(coarse_rolling_rule): 添加粗轧规则排程相关文档,6a3f2f19462532635dba2c17fd291c09472755f7,luohe666
+2026-05-06,冷热集批排产-控制程序,src,feat(unit_process): 优化排产结果出场率计算逻辑,7618c76a7c4b72e1d72cd7fdcd95286dcc255175,luohe666
+2026-05-06,冷热集批排产-控制程序,README.md,docs(readme): 更新中英文文档以反映粗轧规则排程服务,247d73ab4610974efc23ef6114fc22ae03fd8c68,luohe666
+2026-05-06,冷热集批排产-控制程序,src,refactor(schedule): 优化烫辊段构建逻辑,72e78c70fc05b9bf9f7aa1dbe98702fce30bddbc,luohe666
