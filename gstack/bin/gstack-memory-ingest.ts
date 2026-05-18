@@ -54,7 +54,7 @@ import {
   rmSync,
 } from "fs";
 import { join, basename, dirname } from "path";
-import { execSync, execFileSync, spawnSync, spawn, type ChildProcess } from "child_process";
+import { execFileSync, spawnSync, spawn, type ChildProcess } from "child_process";
 import { homedir } from "os";
 import { createHash } from "crypto";
 
@@ -64,6 +64,7 @@ import {
   detectEngineTier,
   withErrorContext,
 } from "../lib/gstack-memory-helpers";
+import { execGbrainText, spawnGbrainAsync } from "../lib/gbrain-exec";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -809,16 +810,14 @@ let _gbrainAvailability: boolean | null = null;
 function gbrainAvailable(): boolean {
   if (_gbrainAvailability !== null) return _gbrainAvailability;
   try {
-    execSync("command -v gbrain", { stdio: "ignore" });
     // Probe `--help` for the `import` subcommand. gbrain v0.20.0+ ships
     // `import <dir>` (batch markdown import via path-authoritative slugs).
     // If absent, we surface a single clean error here rather than failing
     // the whole stage with a confusing usage message from gbrain itself.
-    const help = execFileSync("gbrain", ["--help"], {
-      encoding: "utf-8",
-      timeout: 5000,
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    // `gbrain --help` probes only CLI availability, not DB connectivity, so
+    // it doesn't strictly need DATABASE_URL. But routing through the helper
+    // keeps the invariant test from chasing exceptions per call site.
+    const help = execGbrainText(["--help"], { timeout: 5000 });
     _gbrainAvailability = /^\s+import\s/m.test(help);
   } catch {
     _gbrainAvailability = false;
@@ -1203,6 +1202,57 @@ function makeStagingDir(): string {
 }
 
 /**
+ * Persistent staging dir used in remote-http MCP mode (split-engine D11).
+ *
+ * Instead of staging to ~/.gstack/.staging-ingest-<pid>-<ts>/ and cleaning up
+ * after `gbrain import`, remote-http users get a stable path that survives.
+ * gstack-brain-sync's allowlist pushes ~/.gstack/transcripts/** to the
+ * artifacts repo; the brain admin's pull job indexes them into the remote
+ * brain. Local PGLite (if present) stays code-only.
+ *
+ * Path: ~/.gstack/transcripts/<run-id>/  (run-id pid+ts so concurrent passes
+ * stay separate; brain-sync push doesn't care about subdir naming).
+ */
+function makePersistentTranscriptDir(): string {
+  const dir = join(
+    GSTACK_HOME,
+    "transcripts",
+    `run-${process.pid}-${Date.now()}`,
+  );
+  mkdirSync(dir, { recursive: true });
+  return dir;
+}
+
+/**
+ * Detect whether the gbrain MCP is remote-http (Path 4) — and therefore we
+ * should NOT call `gbrain import` because we don't want the local PGLite
+ * polluted with transcripts (per plan D11).
+ *
+ * Reads ~/.claude.json directly (same fallback chain as gstack-gbrain-detect
+ * Tier 3). Cheap: one fs read, no fork-exec.
+ */
+function isRemoteHttpMcpMode(): boolean {
+  const home = process.env.HOME || homedir();
+  const claudeJsonPath = join(home, ".claude.json");
+  if (!existsSync(claudeJsonPath)) return false;
+  try {
+    const parsed = JSON.parse(readFileSync(claudeJsonPath, "utf-8")) as {
+      mcpServers?: {
+        gbrain?: { type?: string; transport?: string; url?: string };
+      };
+    };
+    const entry = parsed.mcpServers?.gbrain;
+    if (!entry) return false;
+    const mtype = entry.type || entry.transport || "";
+    if (mtype === "url" || mtype === "http" || mtype === "sse") return true;
+    if (entry.url) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Best-effort recursive cleanup. Failures swallowed — at worst we leak a
  * staging dir to disk; the next run uses a new one and they age out via
  * normal disk hygiene. We deliberately do NOT crash the pipeline on
@@ -1266,11 +1316,11 @@ function runGbrainImport(
 ): Promise<{ status: number | null; stdout: string; stderr: string }> {
   installSignalForwarder();
   return new Promise((resolve) => {
-    const child = spawn(
-      "gbrain",
-      ["import", stagingDir, "--no-embed", "--json"],
-      { stdio: ["ignore", "pipe", "pipe"] },
-    );
+    // Seed DATABASE_URL from gbrain's own config so this stage works
+    // inside Next.js / Prisma / Rails projects with their own
+    // .env.local (codex review #7 — defense in depth on top of the
+    // parent gstack-gbrain-sync seeding the bun grandchild's env).
+    const child = spawnGbrainAsync(["import", stagingDir, "--no-embed", "--json"]);
     _activeImportChild = child;
     let stdout = "";
     let stderr = "";
@@ -1387,12 +1437,24 @@ async function ingestPass(args: CliArgs): Promise<BulkResult> {
     };
   }
 
-  // Phase 2: stage to a per-run dir + invoke gbrain import.
-  const stagingDir = makeStagingDir();
+  // Phase 2: stage + (optionally) invoke gbrain import.
+  //
+  // Split-engine branch per plan D11: in remote-http MCP mode, we stage to a
+  // PERSISTENT dir under ~/.gstack/transcripts/ and SKIP `gbrain import`
+  // entirely. gstack-brain-sync push will pick the dir up via its allowlist
+  // and the brain admin's pull job will index transcripts into the remote
+  // brain. Local PGLite (if any) stays code-only.
+  const remoteHttpMode = isRemoteHttpMcpMode();
+  const stagingDir = remoteHttpMode
+    ? makePersistentTranscriptDir()
+    : makeStagingDir();
   // Register staging dir with the signal forwarder so SIGTERM/SIGINT can
   // synchronously clean it up before process.exit (the async finally block
-  // below does NOT run after a signal-handler exit).
-  _activeStagingDir = stagingDir;
+  // below does NOT run after a signal-handler exit). In remote-http mode we
+  // skip registration — the dir is meant to persist.
+  if (!remoteHttpMode) {
+    _activeStagingDir = stagingDir;
+  }
   try {
     const staging = writeStaged(prep.prepared, stagingDir);
     failed += staging.errors.length;
@@ -1415,9 +1477,60 @@ async function ingestPass(args: CliArgs): Promise<BulkResult> {
     }
 
     if (!args.quiet) {
+      const action = remoteHttpMode
+        ? "persisting to artifacts pipeline (skipping local gbrain import — remote-http mode)"
+        : "running gbrain import";
       console.error(
-        `[memory-ingest] staged ${staging.written} pages → ${stagingDir}; running gbrain import...`,
+        `[memory-ingest] staged ${staging.written} pages → ${stagingDir}; ${action}...`,
       );
+    }
+
+    // Remote-http branch (split-engine D11): no local gbrain import. The
+    // staged markdown lives under ~/.gstack/transcripts/<run-id>/ and the
+    // next gstack-brain-sync push will move it to the artifacts repo. From
+    // there the brain admin's pull job indexes into the remote brain.
+    //
+    // We treat ALL prepared pages as "written" since the import didn't run
+    // and we have no per-page failures from gbrain to filter on. The
+    // brain admin's pull pipeline is the authoritative gate; from this
+    // machine's perspective, the act of staging IS the write.
+    if (remoteHttpMode) {
+      const nowIso = new Date().toISOString();
+      for (const p of prep.prepared) {
+        try {
+          state.sessions[p.source_path] = {
+            mtime_ns: Math.floor(statSync(p.source_path).mtimeMs * 1e6),
+            sha256: fileSha256(p.source_path),
+            ingested_at: nowIso,
+            page_slug: p.page_slug,
+            partial: p.partial,
+          };
+          written++;
+        } catch (err) {
+          console.error(
+            `[state-record] ${p.source_path}: ${(err as Error).message}`,
+          );
+        }
+      }
+      state.last_full_walk = nowIso;
+      state.last_writer = "gstack-memory-ingest (remote-http mode)";
+      saveState(state);
+      if (!args.quiet) {
+        console.error(
+          `[memory-ingest] persisted ${written} pages to ${stagingDir} (brain admin will index on next pull)`,
+        );
+      }
+      // Skip the gbrain-import error handling + cleanupStagingDir paths
+      // below by short-circuiting the function.
+      return {
+        written,
+        skipped_secret: prep.skippedSecret,
+        skipped_dedup: prep.skippedDedup,
+        skipped_unattributed: prep.skippedUnattributed,
+        failed,
+        duration_ms: Date.now() - t0,
+        partial_pages: prep.partialPages,
+      };
     }
 
     // D6: single batch import. `--no-embed` matches the prior per-file
