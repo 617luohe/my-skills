@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "a3426e27-3075-42aa-8898-3e3d760d2e87",
+  "path": "3-开发",
+  "path_key": "3-开发",
+  "enabled": true,
+  "tags": [
+    "my-skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "3-开发",
+    "branch": null
+  }
+}

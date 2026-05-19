@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "14897b27-9ad6-414e-ab6b-035b8d2d9443",
+  "path": "2-分析",
+  "path_key": "2-分析",
+  "enabled": true,
+  "tags": [
+    "my-skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "2-分析",
+    "branch": null
+  }
+}

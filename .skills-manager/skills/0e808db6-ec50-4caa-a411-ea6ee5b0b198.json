@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "0e808db6-ec50-4caa-a411-ea6ee5b0b198",
+  "path": "5-优化",
+  "path_key": "5-优化",
+  "enabled": true,
+  "tags": [
+    "my-skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "5-优化",
+    "branch": null
+  }
+}
