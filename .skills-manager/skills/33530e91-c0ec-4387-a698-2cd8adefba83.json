@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "33530e91-c0ec-4387-a698-2cd8adefba83",
+  "path": "request-refactor-plan",
+  "path_key": "request-refactor-plan",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\deprecated\\request-refactor-plan",
+    "branch": null
+  }
+}

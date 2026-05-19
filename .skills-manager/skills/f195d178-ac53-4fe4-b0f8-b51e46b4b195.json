@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "f195d178-ac53-4fe4-b0f8-b51e46b4b195",
+  "path": "writing-beats",
+  "path_key": "writing-beats",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\in-progress\\writing-beats",
+    "branch": null
+  }
+}

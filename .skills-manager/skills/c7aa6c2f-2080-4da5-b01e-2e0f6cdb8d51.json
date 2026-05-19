@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "c7aa6c2f-2080-4da5-b01e-2e0f6cdb8d51",
+  "path": "prototype",
+  "path_key": "prototype",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\engineering\\prototype",
+    "branch": null
+  }
+}

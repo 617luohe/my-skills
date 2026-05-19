@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "8ad38f4e-4433-444a-92d2-1c3f0ae2a91d",
+  "path": "setup-matt-pocock-skills",
+  "path_key": "setup-matt-pocock-skills",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\engineering\\setup-matt-pocock-skills",
+    "branch": null
+  }
+}

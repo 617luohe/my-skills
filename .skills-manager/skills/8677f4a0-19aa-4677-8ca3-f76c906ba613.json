@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "8677f4a0-19aa-4677-8ca3-f76c906ba613",
+  "path": "triage",
+  "path_key": "triage",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\engineering\\triage",
+    "branch": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "beadad6f-090e-4ede-bc73-b07a3f9a740b",
+  "path": "scaffold-exercises",
+  "path_key": "scaffold-exercises",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\misc\\scaffold-exercises",
+    "branch": null
+  }
+}

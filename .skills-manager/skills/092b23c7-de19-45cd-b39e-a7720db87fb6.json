@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "092b23c7-de19-45cd-b39e-a7720db87fb6",
+  "path": "design-an-interface",
+  "path_key": "design-an-interface",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\deprecated\\design-an-interface",
+    "branch": null
+  }
+}

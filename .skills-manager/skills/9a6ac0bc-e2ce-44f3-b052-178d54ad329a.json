@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "9a6ac0bc-e2ce-44f3-b052-178d54ad329a",
+  "path": "caveman",
+  "path_key": "caveman",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\productivity\\caveman",
+    "branch": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "b48edb8e-cfe3-4585-a891-81b7d2b3dbce",
+  "path": "qa",
+  "path_key": "qa",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\deprecated\\qa",
+    "branch": null
+  }
+}

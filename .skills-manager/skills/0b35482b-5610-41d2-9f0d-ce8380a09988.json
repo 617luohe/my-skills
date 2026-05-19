@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "0b35482b-5610-41d2-9f0d-ce8380a09988",
+  "path": "zoom-out",
+  "path_key": "zoom-out",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\engineering\\zoom-out",
+    "branch": null
+  }
+}

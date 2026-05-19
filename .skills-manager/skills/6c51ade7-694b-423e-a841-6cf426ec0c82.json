@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "6c51ade7-694b-423e-a841-6cf426ec0c82",
+  "path": "writing-shape",
+  "path_key": "writing-shape",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\in-progress\\writing-shape",
+    "branch": null
+  }
+}

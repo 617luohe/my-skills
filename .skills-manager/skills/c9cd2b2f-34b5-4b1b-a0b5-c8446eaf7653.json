@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "c9cd2b2f-34b5-4b1b-a0b5-c8446eaf7653",
+  "path": "setup-pre-commit",
+  "path_key": "setup-pre-commit",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\misc\\setup-pre-commit",
+    "branch": null
+  }
+}

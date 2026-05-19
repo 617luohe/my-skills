@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "b1770b90-ae2f-4993-b50c-644e554d280d",
+  "path": "obsidian-vault",
+  "path_key": "obsidian-vault",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\personal\\obsidian-vault",
+    "branch": null
+  }
+}

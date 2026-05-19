@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "3d3df000-1144-485f-b5ad-d1a778774f62",
+  "path": "migrate-to-shoehorn",
+  "path_key": "migrate-to-shoehorn",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\misc\\migrate-to-shoehorn",
+    "branch": null
+  }
+}

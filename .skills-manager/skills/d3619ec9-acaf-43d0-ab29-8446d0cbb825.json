@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "d3619ec9-acaf-43d0-ab29-8446d0cbb825",
+  "path": "handoff",
+  "path_key": "handoff",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\productivity\\handoff",
+    "branch": null
+  }
+}

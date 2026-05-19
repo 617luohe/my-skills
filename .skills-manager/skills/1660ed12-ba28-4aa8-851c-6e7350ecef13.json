@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "1660ed12-ba28-4aa8-851c-6e7350ecef13",
+  "path": "review",
+  "path_key": "review",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\in-progress\\review",
+    "branch": null
+  }
+}

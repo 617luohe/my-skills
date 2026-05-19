@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "c76cc218-ee9f-4896-bedc-d667d411b62b",
+  "path": "tdd",
+  "path_key": "tdd",
+  "enabled": true,
+  "tags": [
+    "grill-me"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/mattpocock/skills.git",
+    "subpath": "skills\\engineering\\tdd",
+    "branch": null
+  }
+}
