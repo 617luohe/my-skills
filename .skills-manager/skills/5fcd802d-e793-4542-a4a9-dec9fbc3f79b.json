@@ -1,12 +1,10 @@
 {
   "schema_version": 1,
-  "skill_id": "341b2af0-4ed6-4ae6-99db-0155b4834b33",
+  "skill_id": "5fcd802d-e793-4542-a4a9-dec9fbc3f79b",
   "path": "0-启动",
   "path_key": "0-启动",
   "enabled": true,
-  "tags": [
-    "my-skills"
-  ],
+  "tags": [],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

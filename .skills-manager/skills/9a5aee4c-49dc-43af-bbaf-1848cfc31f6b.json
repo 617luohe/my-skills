@@ -1,12 +1,10 @@
 {
   "schema_version": 1,
-  "skill_id": "14897b27-9ad6-414e-ab6b-035b8d2d9443",
+  "skill_id": "9a5aee4c-49dc-43af-bbaf-1848cfc31f6b",
   "path": "2-分析",
   "path_key": "2-分析",
   "enabled": true,
-  "tags": [
-    "my-skills"
-  ],
+  "tags": [],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

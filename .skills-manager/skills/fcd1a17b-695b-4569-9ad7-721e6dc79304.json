@@ -1,12 +1,10 @@
 {
   "schema_version": 1,
-  "skill_id": "cac3090f-06a5-4606-a1a7-bee06bbddbf0",
+  "skill_id": "fcd1a17b-695b-4569-9ad7-721e6dc79304",
   "path": "7-版本管理",
   "path_key": "7-版本管理",
   "enabled": true,
-  "tags": [
-    "my-skills"
-  ],
+  "tags": [],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

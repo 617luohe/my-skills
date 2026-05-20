@@ -1,12 +1,10 @@
 {
   "schema_version": 1,
-  "skill_id": "ec8f0ee6-eb9f-461a-b9c0-cd0edc2611ef",
+  "skill_id": "669f7d99-9a7c-4536-817b-3acc127fd329",
   "path": "1-规划",
   "path_key": "1-规划",
   "enabled": true,
-  "tags": [
-    "my-skills"
-  ],
+  "tags": [],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",
