@@ -4,7 +4,9 @@
   "path": "9-最后整理",
   "path_key": "9-最后整理",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "my-skills"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

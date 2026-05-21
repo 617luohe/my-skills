@@ -4,7 +4,9 @@
   "path": "8-版本管理",
   "path_key": "8-版本管理",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "my-skills"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

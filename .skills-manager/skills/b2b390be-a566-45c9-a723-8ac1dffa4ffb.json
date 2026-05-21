@@ -4,7 +4,9 @@
   "path": "7-调试",
   "path_key": "7-调试",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "my-skills"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",

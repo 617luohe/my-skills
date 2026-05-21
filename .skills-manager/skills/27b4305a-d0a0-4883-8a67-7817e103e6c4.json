@@ -4,7 +4,9 @@
   "path": "4-开发",
   "path_key": "4-开发",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "my-skills"
+  ],
   "source": {
     "type": "git",
     "ref": "https://github.com/617luohe/my-skills.git",
