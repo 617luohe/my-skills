@@ -1,9 +1,9 @@
 ---
-name: 5-优化
+name: 6-优化
 description: Discover architectural friction points + create detailed incremental refactor plans with tiny safe commits. Use when code gets messy, modules grow too large, or you want to improve codebase structure.
 ---
 
-# 5-优化 — 重构与架构改进
+# 6-优化 — 重构与架构改进
 
 两个模式：**架构分析**（发现问题）和 **重构计划**（解决问题）。进入时问用户走哪个。
 

@@ -1,9 +1,9 @@
 ---
-name: 8-最后整理
+name: 9-最后整理
 description: End-of-session cleanup — create handoff document, sync project docs with code, verify git safety guardrails. Use when finishing a milestone, ending a work session, or before handing off to another agent.
 ---
 
-# 8-最后整理 — 收尾与交接
+# 9-最后整理 — 收尾与交接
 
 三件事：**交接**（为下个会话留上下文）、**知识整理**（同步文档和记忆）、**安全确认**（检查护栏）。
 

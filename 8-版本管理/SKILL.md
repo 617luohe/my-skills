@@ -1,9 +1,9 @@
 ---
-name: 7-版本管理
+name: 8-版本管理
 description: Full git version control — init, save, log, diff, rollback, branch, remote. Works locally by default; connect to GitHub on demand. Use for any version control needs.
 ---
 
-# 7-版本管理 — Git 版本控制全流程
+# 8-版本管理 — Git 版本控制全流程
 
 覆盖 git 版本管理全部核心操作。默认本地仓库，需连接远程时按需配置。
 

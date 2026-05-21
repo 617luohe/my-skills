@@ -1,9 +1,9 @@
 ---
-name: 6-调试
+name: 7-调试
 description: Disciplined diagnosis loop for bugs and performance issues — reproduce → hypothesise → instrument → fix → regression test. Use when encountering a hard-to-reproduce bug or performance regression.
 ---
 
-# 6-调试 — 结构化调试
+# 7-调试 — 结构化调试
 
 六阶段调试流程，适用于难复现的 bug 和性能问题。
 
@@ -90,7 +90,7 @@ def test_payment_retry_on_timeout():
 - [ ] 所有调试标签已清除（`grep [DEBUG-`）
 - [ ] 一次性原型删除
 
-然后问：**"什么能防止这个 bug？"** 如果答案涉及架构变更，交给 5-优化。
+然后问：**"什么能防止这个 bug？"** 如果答案涉及架构变更，交给 6-优化。
 
 ---
 

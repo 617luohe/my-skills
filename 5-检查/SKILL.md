@@ -1,9 +1,9 @@
 ---
-name: 4-检查
+name: 5-检查
 description: Two-axis code review（standards + spec compliance）plus interactive bug reporting with GitHub issue creation. Use before merging code, after completing a feature, or when you find a bug.
 ---
 
-# 4-检查 — 代码审查与验收
+# 5-检查 — 代码审查与验收
 
 两个模式：**代码审查**（Review）和 **Bug 报告**（QA）。进入时问用户走哪个。
 

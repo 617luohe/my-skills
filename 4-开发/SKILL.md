@@ -1,9 +1,9 @@
 ---
-name: 3-开发
+name: 4-开发
 description: TDD red-green-refactor loop with pytest, guided by coding guardrails（先想后写、简单第一、手术刀式改动、目标驱动）. Use when implementing features or fixing bugs test-first.
 ---
 
-# 3-开发 — TDD 编码实现
+# 4-开发 — TDD 编码实现
 
 红-绿-重构循环开发，pytest 驱动，先写失败测试再写实现。
 
