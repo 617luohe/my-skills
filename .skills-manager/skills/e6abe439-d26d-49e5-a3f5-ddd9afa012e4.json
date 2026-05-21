@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "e6abe439-d26d-49e5-a3f5-ddd9afa012e4",
+  "path": "5-检查",
+  "path_key": "5-检查",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "5-检查",
+    "branch": null
+  }
+}

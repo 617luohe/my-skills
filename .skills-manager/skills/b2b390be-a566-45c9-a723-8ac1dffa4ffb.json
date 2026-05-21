@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "b2b390be-a566-45c9-a723-8ac1dffa4ffb",
+  "path": "7-调试",
+  "path_key": "7-调试",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "7-调试",
+    "branch": null
+  }
+}

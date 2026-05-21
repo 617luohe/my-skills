@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "d28441b2-8bd0-450d-97b0-2586d582416d",
+  "path": "8-版本管理",
+  "path_key": "8-版本管理",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "8-版本管理",
+    "branch": null
+  }
+}

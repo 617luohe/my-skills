@@ -1,0 +1,89 @@
+---
+name: 5-检查
+description: Two-axis code review（standards + spec compliance）plus interactive bug reporting with GitHub issue creation. Use before merging code, after completing a feature, or when you find a bug.
+---
+
+# 5-检查 — 代码审查与验收
+
+两个模式：**代码审查**（Review）和 **Bug 报告**（QA）。进入时问用户走哪个。
+
+---
+
+## 模式 A — 代码审查
+
+对代码变更进行双轴审查，两个评估并行执行。
+
+### 步骤
+
+1. **确定审查基点** — 从哪个点开始审查？main 分支、某个 commit、还是当前改动？
+2. **定位规范来源** — 读 CLAUDE.md、pyproject.toml（ruff 配置）等编码规范
+3. **定位需求来源** — commit 消息中的 issue 引用 → PRD → 问你
+
+### 并行审查
+
+**Standards 轴**（Python 规范）：
+- 命名规范：snake_case 函数/变量、PascalCase 类
+- 类型注解是否完整
+- 异常处理是否捕获过于宽泛的 Exception
+- import 组织：标准库 → 三方库 → 本地模块
+- 公共 API 是否缺少文档字符串
+- 是否使用 Python 惯用写法（上下文管理器、列表推导）
+
+**Spec 轴**（需求符合度）：
+- 需求中要求但缺失的
+- 代码中出现但需求没要求的（范围蔓延）
+- 实现方式有问题的地方
+
+### 汇总报告
+
+两个结果并排展示，不合并、不排序。
+
+---
+
+## 模式 B — Bug 报告
+
+交互式 QA。你口述遇到的问题，我澄清、探索代码、提交 issue。
+
+### 流程
+
+1. **倾听 + 轻量澄清** — 最多问 2-3 个简短问题
+2. **后台探索代码** — 一边对话一边启动代理了解领域上下文
+3. **判断范围** — 是否需拆成多个 issue
+4. **提交 issue** — 用 `gh issue create` 提交，从用户视角写，不包含文件路径
+
+### Issue 模板
+
+```md
+## What happened
+[实际行为]
+
+## What I expected
+[期望行为]
+
+## Steps to reproduce
+1. [具体步骤]
+
+## Additional context
+[额外观察]
+```
+
+---
+
+## 什么时候用
+
+- **模式 A**：提 PR 前自审、审查团队成员代码、合并前把关
+- **模式 B**：发现 bug 但不想手动写 issue、做系统性 QA
+
+## 案例
+
+```
+你：帮我检查一下 payment-service 分支
+Claude：Standards 审查结果：
+       ❌ payment/processor.py:45 — processPayment → 应改为 process_payment
+       ❌ payment/views.py:102 — except Exception: 过宽
+       ⚠️ 3 个函数缺少类型注解
+
+       Spec 审查结果：
+       ❌ 缺失需求: PRD §3.2 "退款原路返回" 未实现
+       ❌ 范围蔓延: payment_logger.py 需求中没要求
+```
