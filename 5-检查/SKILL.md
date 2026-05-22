@@ -11,17 +11,23 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 
 ## 模式 A — 代码审查
 
-对代码变更进行双轴审查，两个评估并行执行。
+对代码变更进行双轴审查。两个评估用**并行子代理**独立执行，避免互相污染上下文。
 
 ### 步骤
 
-1. **确定审查基点** — 从哪个点开始审查？main 分支、某个 commit、还是当前改动？
-2. **定位规范来源** — 读 CLAUDE.md、pyproject.toml（ruff 配置）等编码规范
-3. **定位需求来源** — commit 消息中的 issue 引用 → PRD → 问你
+1. **确定审查基点** — 从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
+2. **定位需求来源** — 按顺序查找：
+   - commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 取对应 issue
+   - 你传入的路径参数
+   - 项目中的 PRD/spec 文件
+   - 如果都没找到，问你需求在哪
+3. **定位规范来源** — 收集 CLAUDE.md、pyproject.toml（ruff 配置）、ADR 等编码规范文件
 
 ### 并行审查
 
-**Standards 轴**（Python 规范）：
+启动两个并行子代理（Agent tool），各自独立报告：
+
+**Standards 子代理** — 读规范文件 + 读 diff，逐文件报告违反规范的地方：
 - 命名规范：snake_case 函数/变量、PascalCase 类
 - 类型注解是否完整
 - 异常处理是否捕获过于宽泛的 Exception
@@ -29,14 +35,16 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 - 公共 API 是否缺少文档字符串
 - 是否使用 Python 惯用写法（上下文管理器、列表推导）
 
-**Spec 轴**（需求符合度）：
-- 需求中要求但缺失的
+**Spec 子代理** — 读需求文档 + 读 diff，报告：
+- 需求中要求但缺失或部分实现的功能
 - 代码中出现但需求没要求的（范围蔓延）
 - 实现方式有问题的地方
 
 ### 汇总报告
 
-两个结果并排展示，不合并、不排序。
+两个结果并排展示（`## Standards` + `## Spec` 标题），**不合并、不排序**。
+
+末尾一行总结：每个轴各多少发现，最严重的问题是什么。
 
 ---
 
@@ -47,13 +55,30 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 ### 流程
 
 1. **倾听 + 轻量澄清** — 最多问 2-3 个简短问题
-2. **后台探索代码** — 一边对话一边启动代理了解领域上下文
-3. **判断范围** — 是否需拆成多个 issue
+2. **后台探索代码** — 一边对话一边启动 Agent 了解领域上下文和领域术语
+3. **判断范围** — 是不是应该拆成多个独立 issue？
 4. **提交 issue** — 用 `gh issue create` 提交，从用户视角写，不包含文件路径
+
+**决定是否拆分**：
+
+| 拆成多个 | 保留一个 |
+|---|---|
+| 修复涉及多个独立区域 | 同一处行为错误的单点问题 |
+| 不同人可并行处理 | 所有症状由同一根因导致 |
+| 多个不同的失败模式 | |
+
+**Issue 规则**：
+- ❌ 不包含文件路径和行号（会过期）
+- ✅ 使用项目领域术语描述
+- ✅ 描述行为，不描述代码
+- ✅ 复现步骤必须可执行
+- ✅ 30 秒内能读完
 
 ### Issue 模板
 
-```md
+**单 issue**：
+
+```
 ## What happened
 [实际行为]
 
@@ -62,10 +87,25 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 
 ## Steps to reproduce
 1. [具体步骤]
-
-## Additional context
-[额外观察]
 ```
+
+**拆分多 issue**（按依赖顺序提交，先建阻塞项）：
+
+```
+## Parent issue
+#<父 issue 号> 或在 QA 中报告
+
+## What's wrong
+[这一片的具体问题]
+
+## Blocked by
+- #<阻塞项> 或 "无，可直接开始"
+
+```
+
+### 继续循环
+
+提完所有 issue 后问：**"继续下一个，还是完成了？"** 直到你说完成。
 
 ---
 
