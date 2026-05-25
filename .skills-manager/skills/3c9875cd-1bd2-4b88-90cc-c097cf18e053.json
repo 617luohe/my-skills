@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "skill_id": "3c9875cd-1bd2-4b88-90cc-c097cf18e053",
+  "path": "生成科研审批单",
+  "path_key": "生成科研审批单",
+  "enabled": true,
+  "tags": [],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
