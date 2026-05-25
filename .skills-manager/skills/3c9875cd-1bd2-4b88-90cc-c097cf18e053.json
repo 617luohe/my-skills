@@ -4,7 +4,9 @@
   "path": "生成科研审批单",
   "path_key": "生成科研审批单",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公"
+  ],
   "source": {
     "type": "local",
     "ref": null,
