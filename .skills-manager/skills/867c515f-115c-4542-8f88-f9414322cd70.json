@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "867c515f-115c-4542-8f88-f9414322cd70",
+  "path": "note-polisher",
+  "path_key": "note-polisher",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

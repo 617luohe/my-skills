@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "bb45d017-42c3-4e6a-b875-cb96467087a7",
+  "path": "concept-atomizer",
+  "path_key": "concept-atomizer",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

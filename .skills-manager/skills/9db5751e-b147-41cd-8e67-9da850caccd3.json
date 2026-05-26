@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "9db5751e-b147-41cd-8e67-9da850caccd3",
+  "path": "vault-wizard",
+  "path_key": "vault-wizard",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

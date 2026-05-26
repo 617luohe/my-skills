@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "f423b2ee-fbf5-403c-8399-f8b61b28201c",
+  "path": "note-composer",
+  "path_key": "note-composer",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

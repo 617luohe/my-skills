@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "18649f72-5155-4a6a-bbf0-b602ee951f67",
+  "path": "vault-cartographer",
+  "path_key": "vault-cartographer",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

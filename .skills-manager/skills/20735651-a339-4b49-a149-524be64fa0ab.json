@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "20735651-a339-4b49-a149-524be64fa0ab",
+  "path": "daily-concierge",
+  "path_key": "daily-concierge",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "39faa4ff-b1e3-490b-9a77-32d0f605189f",
+  "path": "reading-digester",
+  "path_key": "reading-digester",
+  "enabled": true,
+  "tags": [
+    "my-note"
+  ],
+  "source": {
+    "type": "local",
+    "ref": null,
+    "subpath": null,
+    "branch": null
+  }
+}
