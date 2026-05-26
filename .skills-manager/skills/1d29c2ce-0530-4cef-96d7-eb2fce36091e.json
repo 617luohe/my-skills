@@ -4,7 +4,9 @@
   "path": "daily",
   "path_key": "daily",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "办公"
+  ],
   "source": {
     "type": "local",
     "ref": null,
