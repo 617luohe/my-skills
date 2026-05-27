@@ -9,13 +9,32 @@ description: Full planning pipeline — grill requirements, extract domain terms
 
 ## 流程
 
-这个技能分 5 个阶段，按顺序执行。在每个阶段结束时问用户是否要继续下一阶段。
+这个技能分 6 个阶段，按顺序执行。在每个阶段结束时问用户是否要继续下一阶段。
 
 ### 阶段 1 — 方案追问
 
 把你的方案想象成一棵**决策树**。每个不确定的点是一个分支节点，每个分支走到叶子（做出决策）才算完成。
 
 **核心原则：RELENTLESS** — 沿着依赖链逐个决议，不把所有分支走完不罢休。
+
+#### 1a. 文档发现（进入追问前）
+
+在开始追问之前，先扫描项目中已有的领域文档：
+
+```
+grep 项目根目录和 docs/ 查找：CONTEXT.md、docs/adr/NNNN-*.md
+```
+
+- 如果 `CONTEXT.md` 存在 → 读取，了解已有的术语体系和概念定义
+- 如果 `docs/adr/` 存在 → 读取最近的 ADR，了解历史架构决策
+- 如果用户输入中使用的术语与现有文档冲突 → 立即指出："你的 CONTEXT.md 定义 X 为 A，但你刚才说的是 B——哪个是对的？"
+- 如果**不存在** CONTEXT.md → 在阶段 2 中按需创建
+
+> 这是 grill-with-docs 的核心特性：**带着对现有领域的理解来追问**，而不是从零开始。
+
+**输出**：项目领域文档现状综述（什么存在、什么缺失、有没有术语冲突）。
+
+#### 1b. 决策树追问
 
 **规则**：
 - 一次只问一个问题，等你回答后再问下一个
@@ -24,6 +43,8 @@ description: Full planning pipeline — grill requirements, extract domain terms
 - 沿着决策树的依赖链逐个决议，不做跳跃
 - 当前面的决策会影响后面的选择时，先把前面定下来再推进
 - **不要因为后面还有阶段就急着收尾** — 阶段1的唯一退出条件是：所有决策分支都已决议，双方达成共享理解
+- **场景压力测试** — 当讨论领域关系时，用具体场景探测边界：「一个已取消的订单还能退款吗？如果退款完成后再取消呢？」逼迫精确定义概念间的界限
+- **代码交叉验证** — 当你描述系统工作方式时，如果项目已有代码，我会读实际代码验证：「你的代码是取消整个 Order，但你刚才说可以部分取消——哪个是对的？」
 
 **信号表明可以退出阶段1**：
 - [ ] 所有涉及的需求假设都已显式化并确认
@@ -37,13 +58,79 @@ description: Full planning pipeline — grill requirements, extract domain terms
 
 ### 阶段 2 — 领域术语提取
 
-从对话中提取领域相关的名词和概念，整理成一致的术语表。
+从对话中提取领域相关的名词和概念，整理成一致的术语表。同时，实时更新项目文档。
 
-**输出**：`UBIQUITOUS_LANGUAGE.md`，包含：
-- 规范术语表格（每个术语一句话定义）
-- 术语之间的关系（如"一个 Order 产生一个或多个 Invoice"）
-- 已标记的歧义项（同一个词指不同东西）
-- 示例对话展示术语的真实用法
+**实时规则**（贯穿整个阶段）：
+- **术语冲突标记** — 如果你用词与已有 CONTEXT.md 或之前的讨论冲突，立即指出：「你的术语表定义 X 为 A，但你刚才说的是 B——到底是哪个？」
+- **模糊语言锐化** — 当你使用模糊或过载词汇时，提议精确的规范术语：「你说的"account"——是指 Customer 还是 User？这是两个不同的概念。」
+- **场景压力测试** — 当领域关系正在定义时，用具体场景探测边界：「如果一个 Customer 下了一个 Order，取消后重新下单，这两个 Order 有关联吗？」
+- **内联更新** — 每当一个术语被确认，立即更新 CONTEXT.md。不批量等最后。写一张表就够了。
+
+**输出**：两份文档。
+
+1. `UBIQUITOUS_LANGUAGE.md` — 完整术语表（规范表格 + 关系 + 歧义标记 + 示例对话）
+2. `CONTEXT.md` — 项目上下文文档（精简版术语表 + 关系 + 示例对话 + 已标记歧义）
+
+> 如果项目已有 CONTEXT.md，在其基础上更新（合并新术语、修改歧义项、补充关系）。
+> 如果项目没有 CONTEXT.md，这里创建它。`CONTEXT.md` 只含术语和领域概念，不含实现细节。
+
+**CONTEXT.md 格式**：
+```
+# {项目名称}
+
+{一两句描述}
+
+## Language
+
+**Order**:
+{A concise description}
+_Avoid_: Purchase, transaction
+
+**Invoice**:
+A request for payment sent to a customer after delivery.
+_Avoid_: Bill, payment request
+
+## Relationships
+
+- An **Order** produces one or more **Invoices**
+
+## Example dialogue
+
+> **Dev:** "When a Customer places an Order, do we create the Invoice immediately?"
+
+## Flagged ambiguities
+
+- "account" was used to mean both Customer and User — resolved: these are distinct.
+```
+
+---
+
+### 阶段 2.5 — 决策记录（ADR）
+
+在术语体系建立后、接口设计前，回顾整个规划阶段已做出的关键决策。
+
+**不所有决策都记录**。仅当以下**三个条件全部满足**时才提议创建 ADR：
+1. **难逆转** — 事后改主意的成本很高
+2. **少见** — 未来的读者看到代码会想"为什么这样做？"
+3. **真实取舍** — 确实有多种选择，你基于特定原因选了一个
+
+如果三条缺任何一条，跳过 ADR。
+
+**ADR 格式**（极简，一条就够了）：
+```md
+# {短标题}
+
+{1-3 句：上下文是什么、决定了什么、为什么。}
+```
+
+**可选扩展**（只有确实有价值时加）：
+- **Status** — `proposed | accepted | deprecated | superseded by ADR-NNNN`
+- **Considered Options** — 被拒绝的替代方案值得记住时才写
+- **Consequences** — 只有非显而易见的后续影响需要指出时才写
+
+**存储位置**：
+- 如果项目已有 `docs/adr/`，顺序编号 `NNNN-slug.md`
+- 如果项目没有，输出到 `DECISIONS.md` 放在项目根
 
 ---
 
