@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "7d5c387c-a62c-49ac-ab5f-6e0781b0cef8",
+  "path": "3-原型",
+  "path_key": "3-原型",
+  "enabled": true,
+  "tags": [
+    "my-skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "3-原型",
+    "branch": null
+  }
+}

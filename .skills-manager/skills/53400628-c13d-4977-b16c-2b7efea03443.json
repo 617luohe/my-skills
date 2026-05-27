@@ -4,7 +4,9 @@
   "path": "Obsidian Vault",
   "path_key": "obsidian vault",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "my-skills"
+  ],
   "source": {
     "type": "local",
     "ref": null,
