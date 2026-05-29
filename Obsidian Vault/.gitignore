@@ -2,6 +2,7 @@
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json
 .obsidian/hotkeys.json
+.obsidian/plugins/
 
 # IDE/editor config (keep if shared)
 .claude/*
