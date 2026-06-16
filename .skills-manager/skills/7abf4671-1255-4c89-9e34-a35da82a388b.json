@@ -4,7 +4,9 @@
   "path": "teach",
   "path_key": "teach",
   "enabled": true,
-  "tags": [],
+  "tags": [
+    "base"
+  ],
   "source": {
     "type": "skillssh",
     "ref": "mattpocock/skills/teach",
