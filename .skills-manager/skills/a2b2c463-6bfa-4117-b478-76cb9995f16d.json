@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "a2b2c463-6bfa-4117-b478-76cb9995f16d",
+  "path": "dot-skill",
+  "path_key": "dot-skill",
+  "enabled": true,
+  "tags": [
+    "蒸馏skill"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/titanwings/colleague-skill.git",
+    "subpath": null,
+    "branch": null
+  }
+}
