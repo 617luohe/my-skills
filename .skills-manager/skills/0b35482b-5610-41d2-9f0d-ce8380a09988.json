@@ -10,7 +10,7 @@
   "source": {
     "type": "git",
     "ref": "https://github.com/mattpocock/skills.git",
-    "subpath": "skills\\engineering\\zoom-out",
+    "subpath": "skills",
     "branch": null
   }
 }

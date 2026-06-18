@@ -5,11 +5,13 @@ tags:
   - type/resource
   - domain/tech/tools
 created: 2026-05-26
-updated: 2026-05-26
+updated: 2026-06-18
 status: published
-confidence: seed
+confidence: sprout
 source: "https://github.com/617luohe/my-skills"
 ---
+
+> 📊 **2026-06-18 更新**：体系已扩展至 14 个技能，详见 [[my-skills 深度分析报告]]（含架构分析 + 新人上手指南）。
 
 # my-skills 开发工作流技能体系
 

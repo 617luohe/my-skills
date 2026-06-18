@@ -10,7 +10,7 @@
   "source": {
     "type": "git",
     "ref": "https://github.com/mattpocock/skills.git",
-    "subpath": "skills\\productivity\\caveman",
+    "subpath": "skills",
     "branch": null
   }
 }

@@ -22,7 +22,7 @@ description: >
    - **昨日日记** — 提取未完成的待办、关键反思
    - **活跃项目** — 从 `2-Projects/` 提取 status=active 的项目及其最近待办
    - **日历事件** — 如果用户有日历数据
-4. 写入 `5-Journal/daily/YYYY/YYYY-MM-DD.md`
+4. 写入 `5-Journal/daily/YYYY/YYYY-MM/YYYY-MM-DD.md`
 
 ### 1.2 晚间反思提示
 用户说"完成今日日记"或"晚间反思"时：
@@ -43,7 +43,7 @@ description: >
    - CSV 表格数据 → 渲染为 Markdown 表格
    - 统计信息 → 提取关键指标
    - 文本内容 → 摘要整合
-5. 写入 `5-Journal/daily/YYYY/YYYY-MM-DD.md` 或 `5-Journal/weekly/`
+5. 写入 `5-Journal/daily/YYYY/YYYY-MM/YYYY-MM-DD.md` 或 `5-Journal/weekly/YYYY/`
 6. 完成后通知 `workflow-wrapup` 执行原始文件归档
 
 遇到无法自动解析的文件格式时，提示用户："⚠️ 文件 {文件名} 格式暂不支持自动解析，请手动粘贴相关内容。"
@@ -87,7 +87,7 @@ description: >
 3. 检查项目进展（与上周对比）
 4. 生成下周重点
 5. 识别可提炼的永久笔记
-6. 写入 `5-Journal/weekly/YYYY-W{周数}.md`
+6. 写入 `5-Journal/weekly/YYYY/YYYY-W{周数}.md`
 
 ### 3.2 每月回顾（月末）
 用户说"月回顾"或每月最后一天：
