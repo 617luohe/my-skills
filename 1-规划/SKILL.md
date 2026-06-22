@@ -22,13 +22,14 @@ description: Full planning pipeline — grill requirements, extract domain terms
 在开始追问之前，先扫描项目中已有的领域文档：
 
 ```
-grep 项目根目录和 docs/ 查找：CONTEXT.md、docs/adr/NNNN-*.md
+grep 项目根目录和 docs/ 查找：CONTEXT-MAP.md、CONTEXT.md、docs/adr/NNNN-*.md
 ```
 
+- 如果 `CONTEXT-MAP.md` 存在 → 按 map 读取每个上下文的 `CONTEXT.md` 与对应 `docs/adr/`
 - 如果 `CONTEXT.md` 存在 → 读取，了解已有的术语体系和概念定义
 - 如果 `docs/adr/` 存在 → 读取最近的 ADR，了解历史架构决策
 - 如果用户输入中使用的术语与现有文档冲突 → 立即指出："你的 CONTEXT.md 定义 X 为 A，但你刚才说的是 B——哪个是对的？"
-- 如果**不存在** CONTEXT.md → 在阶段 2 中按需创建
+- 如果**不存在** CONTEXT.md → 在阶段 2 中按需创建（懒创建：有第一条确认术语时再落盘）
 
 > 这是 grill-with-docs 的核心特性：**带着对现有领域的理解来追问**，而不是从零开始。
 

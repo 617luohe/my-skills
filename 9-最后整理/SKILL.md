@@ -11,6 +11,14 @@ description: End-of-session cleanup — create handoff document, sync project do
 
 ## 步骤
 
+### 0. 尺寸体检（先于一切）
+
+先检查关键文档是否膨胀，再做增量同步。顺序不能反。
+
+- `CLAUDE.md` 建议不超过 ~300 行；超标先精简历史叙事，再补新规则
+- 单条记忆文件建议不超过 ~100 行；超标优先拆分或删除过期内容
+- 先做"减法"再做"加法"：先删过期和重复，再补本次新增事实
+
 ### 1. 会话交接
 
 创建交接文档，让下个会话能无缝继续。
@@ -66,7 +74,7 @@ description: End-of-session cleanup — create handoff document, sync project do
 
 #### 执行流程
 
-1. **枚举文件** — 列出本项目所有 .md 文件（CLAUDE.md、docs/ 下的每个文件、MEMORY.md），对每个标记"评估过/要改/不用改"
+1. **枚举文件** — 列出本项目所有 .md 文件（CLAUDE.md、docs/ 下的每个文件、散落 markdown、MEMORY.md），对每个标记"评估过/要改/不用改"
 2. **识别变更** — 本次对话产生了什么新事实？波及哪些文档层级？
    - 新增 API/路由 → CLAUDE.md 路由表 + docs/
    - 新增环境变量 → CLAUDE.md 环境变量表 + docs/
@@ -74,6 +82,7 @@ description: End-of-session cleanup — create handoff document, sync project do
    - **跨项目影响**：如果改动了本项目且其他项目依赖它，下游项目的文档也要同步
 3. **先精简，后增量** — 不能合并，顺序不能反
 4. **实际修改** — 用 Edit/Write 真的改文件，不是描述
+5. **修改顺序** — 先改 `docs/`（外部读者优先）→ 再改 `CLAUDE.md`（规则）→ 最后改 memory（跨会话偏好）
 
 #### 检查清单
 
@@ -87,7 +96,7 @@ description: End-of-session cleanup — create handoff document, sync project do
 - [ ] 新增 API/路由 → CLAUDE.md + 对应文档
 - [ ] 新增环境变量 → CLAUDE.md
 - [ ] 跨项目影响的下游文档已同步
-- [ ] 所有相对时间已转绝对日期（`grep -E "今天|昨天|最近|today|yesterday"` 清零）
+- [ ] 所有相对时间已转绝对日期（`grep -E "今天|昨天|刚刚|最近|上周|today|yesterday|recently"` 清零）
 - [ ] memory 中没有过期事实
 - [ ] CLAUDE.md 中提到的路径/命令在代码中真实存在
 
@@ -97,6 +106,7 @@ description: End-of-session cleanup — create handoff document, sync project do
 - 删除优于保留 — 完成的计划、推翻的决策、过期记忆直接删
 - 精确优于冗长 — 一条 memory 说清楚一件事
 - 面向读者 — 文档是写给第一次接触的人看的
+- 受众不混写 — 规则放 CLAUDE.md，外部接入与运维放 docs/，跨会话偏好放 memory
 
 #### 变更摘要
 

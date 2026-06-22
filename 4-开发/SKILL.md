@@ -30,6 +30,7 @@ description: TDD red-green-refactor loop with pytest, guided by coding guardrail
 ### 核心理念
 
 测试应该**通过公共接口验证行为**，而不是验证实现细节。代码可以完全重写，测试不应该变。
+优先写集成风格测试：走真实调用路径，验证用户可感知行为。
 
 ### 反模式：水平切片
 
@@ -46,7 +47,7 @@ description: TDD red-green-refactor loop with pytest, guided by coding guardrail
 
 ### 步骤
 
-1. **规划** — 确认接口设计，列出要测试的行为（不是实现步骤），等你批准。
+1. **规划** — 先读术语与决策上下文（`CONTEXT.md` / ADR），确认接口设计，列出要测试的行为（不是实现步骤），等你批准。
    **你不可能测试一切**——确认你最关心的行为和关键路径，聚焦在复杂逻辑和边界上
 2. **示踪弹** — 写一个测试确认一件事 → 最少代码让它通过，证明路径可行
 3. **递增循环** — 对每个剩余行为：
@@ -63,6 +64,13 @@ description: TDD red-green-refactor loop with pytest, guided by coding guardrail
 - [ ] 重构后测试不变
 - [ ] 代码量刚好通过当前测试
 - [ ] 没有投机功能
+
+### 规划阶段补充清单
+
+- [ ] 和你确认了公开接口长什么样
+- [ ] 和你确认了优先测试哪些行为
+- [ ] 识别了可提炼的深模块机会（小接口封装高复杂度）
+- [ ] 测试点按行为清单组织，不按实现步骤组织
 
 ## 什么时候用
 

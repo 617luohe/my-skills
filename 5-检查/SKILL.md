@@ -16,18 +16,21 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 ### 步骤
 
 1. **确定审查基点** — 从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
+   - 统一记录：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）
+   - 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`
+   - 如果你没给 fixed-point，先问清楚再继续，不能默认替你决定
 2. **定位需求来源** — 按顺序查找：
    - commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 取对应 issue
    - 你传入的路径参数
    - 项目中的 PRD/spec 文件
-   - 如果都没找到，问你需求在哪
-3. **定位规范来源** — 收集 CLAUDE.md、pyproject.toml（ruff 配置）、ADR 等编码规范文件
+   - 如果都没找到，问你需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"
+3. **定位规范来源** — 收集 CLAUDE.md、CONTRIBUTING.md、CONTEXT.md/CONTEXT-MAP.md、ADR、以及 linter/formatter/tsconfig 等工具配置
 
 ### 并行审查
 
 启动两个并行子代理（Agent tool），各自独立报告：
 
-**Standards 子代理** — 读规范文件 + 读 diff，逐文件报告违反规范的地方：
+**Standards 子代理** — 读规范文件 + 读 diff，逐文件报告违反规范的地方（跳过已被工具自动强约束的事项）：
 - 命名规范：snake_case 函数/变量、PascalCase 类
 - 类型注解是否完整
 - 异常处理是否捕获过于宽泛的 Exception
@@ -42,7 +45,7 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 
 ### 汇总报告
 
-两个结果并排展示（`## Standards` + `## Spec` 标题），**不合并、不排序**。
+两个结果并排展示（`## Standards` + `## Spec` 标题），**不合并、不排序、不重排优先级**；只允许轻量清理表述。
 
 末尾一行总结：每个轴各多少发现，最严重的问题是什么。
 

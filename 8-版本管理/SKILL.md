@@ -91,6 +91,18 @@ git push -u origin main
 
 在你要求连接 GitHub 时执行。首次推送后告知你后续可直接用 `push` 和 `pull`。
 
+---
+
+### guardrails — Git 安全护栏（可选）
+
+为高风险仓库可选安装 PreToolUse 钩子，拦截危险命令（如 `git push`、`git reset --hard`、`git clean -fd`、`git branch -D`）。
+
+执行前先问作用域：
+- 仅当前项目（推荐）→ `.claude/settings.json`
+- 全局所有项目 → `~/.claude/settings.json`
+
+原则：合并现有 hooks 配置，不覆盖其他设置。
+
 ### push / pull — 同步远程
 
 ```bash
