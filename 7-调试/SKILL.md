@@ -51,8 +51,9 @@ description: Disciplined diagnosis loop for bugs and performance issues — repr
 ### 阶段 2 — 复现
 
 跑回路，确认 bug 确实出现。
-- [ ] 回路产生的失败模式与描述一致
-- [ ] 多次运行可复现
+- [ ] 回路产生的失败模式与描述一致（避免修错 bug）
+- [ ] 多次运行可复现（非确定性问题也要提升到可调试复现率）
+- [ ] 记录了可观察症状（错误信息/错误输出/性能指标）
 
 ---
 
@@ -78,11 +79,18 @@ description: Disciplined diagnosis loop for bugs and performance issues — repr
 
 ### 阶段 5 — 修复 + 回归测试
 
+先判断是否有**正确测试接缝**：回归测试必须能覆盖真实触发链路，而不是过浅单元。
+
+如果有正确接缝：
 1. 把最小化复现变成失败测试
 2. 确认失败
 3. 实施修复
 4. 确认通过
 5. 重新跑原始场景确认修复
+
+如果没有正确接缝：
+- 明确记录"当前架构阻止可靠回归测试"这一发现
+- 修复后把架构问题移交给 **6-优化**，作为后续重构输入
 
 ```python
 # test_regression_<issue_number>.py
