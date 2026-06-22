@@ -21,6 +21,7 @@ my-skills/
 |---|---|---|---|
 | 0 | **初始化CLAUDE** | 新增 | 一键生成 CLAUDE.md：称呼规则 + Karpathy 准则 + 上下文健康检查 |
 | 0 | **启动** | 配置环境 + 技能初始化 + 项目脚手架 | 新建项目：目录结构 → uv 环境 → pre-commit → 任务配置 |
+| 0 | **构建索引** | [graphify](https://github.com/safishamsi/graphify) | 将代码/文档/媒体构建为可查询知识图谱（graphify-out/） |
 | 1 | **规划** | 方案追问 + 接口设计 + 领域术语 + 输出PRD + 拆解任务 | 写代码前理清方案，输出 PRD 和任务清单 |
 | 2 | **分析** | 代码概览 | 查看不熟悉的代码，输出模块地图和数据流 |
 | 3 | **原型** | 快速原型验证 | 用一次性代码验证设计决策，然后进入正式开发 |
@@ -41,3 +42,17 @@ my-skills/
 ## 部署方法
 
 将 `my-skills/<skill-name>/` 复制到 `.claude/skills/<skill-name>/` 即可使用。
+
+**一键同步**（推荐）：在项目根 `skills工程/` 下执行：
+
+```powershell
+.\my-skills\scripts\sync-skills.ps1
+```
+
+预览不写盘：
+
+```powershell
+.\my-skills\scripts\sync-skills.ps1 -DryRun
+```
+
+同步目标：`.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 0~9 技能写入短数字目录（如 `0-启动` → `0/`），其余技能保留完整文件夹名。

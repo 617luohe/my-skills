@@ -99,6 +99,40 @@ Claude：luohe，好的。检测到当前目录为 "data-pipeline"，
 
 ---
 
+## 0-构建索引 — 构建项目知识图谱
+
+**场景**：将代码、文档、PDF、图片、视频等构建为可查询的知识图谱。适合接手大型陌生项目、团队共享架构地图、或对已有 `graphify-out/` 做自然语言查询。
+
+**阶段**：阶段 0 — 环境准备 / 项目理解（索引构建）
+
+**触发方式**：`/0-构建索引` 或 `/use-skills 构建索引`
+
+**前置依赖**：
+```powershell
+uv tool install graphifyy
+# 可选 extras: uv tool install "graphifyy[pdf,office,video,mcp]"
+```
+
+**输出**（`graphify-out/`）：
+- `graph.html` — 浏览器交互式图谱
+- `GRAPH_REPORT.md` — God Nodes、意外连接、建议问题
+- `graph.json` — 完整图数据，供 `graphify query` 使用
+
+**对话示例**：
+```
+你：/0-构建索引 .
+Claude：Corpus: 128 files · ~45,000 words
+       [AST + 语义提取 → 聚类 → 生成报告]
+       God Nodes: AuthService, DatabasePool, ...
+       最有趣的问题：认证失败时错误如何传播到 API 响应？要追踪吗？
+
+你：/0-构建索引 query "订单状态机有哪些状态转换？"
+Claude：→ graphify query "订单状态机有哪些状态转换？"
+       [基于 graph.json 回答，引用 source_location]
+```
+
+---
+
 ## 0-启动 — 新项目初始化
 
 **场景**：开始一个全新的 Python 项目时使用。一条龙完成：目录结构 → uv 环境 → pre-commit → git 初始化 → 任务配置。
