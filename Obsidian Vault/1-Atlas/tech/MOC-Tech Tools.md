@@ -19,7 +19,8 @@ status: active
 - [[CC Switch 配置与使用]] — 一键切换 Claude Code 供应商/模型的开源桌面应用
 - [[Skills Manager 技能管理]] — 跨 15+ AI 工具的 Agent Skills 统一管理平台
 - [[my-skills 开发工作流技能体系]] — 全生命周期 Claude Code 技能链，串联需求到收尾
-- [[my-skills 深度分析报告]] — 📊 14 技能体系架构深度分析 + 新人上手指南
+- [[my-skills 深度分析报告]] — 📊 13 技能体系架构深度分析 + 新人上手指南
+- [[MOC-my-skills 使用指南]] — 📖 13 个技能独立使用指南索引（含场景 + 案例）
 
 ## IDE 集成
 
