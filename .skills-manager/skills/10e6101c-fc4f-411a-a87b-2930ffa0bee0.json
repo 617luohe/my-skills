@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "skill_id": "10e6101c-fc4f-411a-a87b-2930ffa0bee0",
+  "path": "9-最后整理",
+  "path_key": "9-最后整理",
+  "enabled": true,
+  "tags": [
+    "my-skills"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "9-最后整理",
+    "branch": null
+  }
+}
