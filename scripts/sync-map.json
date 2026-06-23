@@ -13,9 +13,9 @@
   },
   "fullNames": [
     "use-skills",
-    "0-初始化CLAUDE",
-    "0-辩证矛盾分析法",
-    "0-构建索引"
+    "0--claude",
+    "0--graphify",
+    "辩证矛盾分析法"
   ],
   "agentTargets": [
     ".claude/skills",

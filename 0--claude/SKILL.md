@@ -1,9 +1,9 @@
 ---
-name: 0-初始化CLAUDE
+name: 0--claude
 description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Karpathy guidelines, or injects luohe rule into existing CLAUDE.md. Non-destructive, smart injection.
 ---
 
-# 0-初始化CLAUDE — CLAUDE.md 初始化器
+# 0--claude — CLAUDE.md 初始化器
 
 luohe，我来处理项目的 CLAUDE.md。
 
@@ -57,7 +57,7 @@ luohe，我来处理项目的 CLAUDE.md。
 ## 案例
 
 ```
-你：/0-初始化CLAUDE
+你：/0--claude
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
        📄 CLAUDE.md 不存在 → 新建完整文件
@@ -65,7 +65,7 @@ Claude：luohe，检测到当前目录 "data-pipeline"。
 
 ---
 
-你：/0-初始化CLAUDE（已有 CLAUDE.md 但没有称呼规则）
+你：/0--claude（已有 CLAUDE.md 但没有称呼规则）
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
        📄 CLAUDE.md 已存在，但缺少称呼规则 → 嵌入
@@ -73,6 +73,6 @@ Claude：luohe，检测到当前目录 "data-pipeline"。
 
 ---
 
-你：/0-初始化CLAUDE（已包含称呼规则）
+你：/0--claude（已包含称呼规则）
 Claude：luohe，当前 CLAUDE.md 已包含称呼规则，无需修改。
 ```
