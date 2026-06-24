@@ -1,6 +1,6 @@
 ---
 name: 0--claude
-description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines, or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection.
+description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines + workflow routing to /1-规划, or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection.
 ---
 
 # 0--claude — CLAUDE.md 初始化器
@@ -8,7 +8,7 @@ description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe
 luohe，我来处理项目的 CLAUDE.md。
 
 核心逻辑：
-- **没有 CLAUDE.md** → 新建完整文件（称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 占位）
+- **没有 CLAUDE.md** → 新建完整文件（称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 + 占位）
 - **已有 CLAUDE.md** → 检测三个规则块，缺失则注入，已有则跳过
 - **三个规则都已存在** → 跳过，无需改动
 
@@ -26,7 +26,7 @@ luohe，我来处理项目的 CLAUDE.md。
 - 读取 `references/template.md`
 - 替换 `{project-name}` 为实际项目名
 - 写入 `./CLAUDE.md`
-- 告知：✅ 新建完成
+- 告知：✅ 新建完成（包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 → /1-规划）
 
 #### 分支 B：当前目录已有 CLAUDE.md
 - 读取 `./CLAUDE.md`
@@ -93,7 +93,7 @@ luohe，我来处理项目的 CLAUDE.md。
 
 ## 什么时候用
 
-- 开始一个新项目时，初始化 AI 协作规则
+- 开始一个新项目时，初始化 AI 协作规则（含工作流路由 → 用户提需求自动触发 /1-规划）
 - 现有项目想补上缺失的规则块（称呼 / Caveman / Karpathy），不想改已有内容
 
 ## 案例
@@ -103,7 +103,7 @@ luohe，我来处理项目的 CLAUDE.md。
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
        📄 CLAUDE.md 不存在 → 新建完整文件
-       ✅ 已生成，包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则
+       ✅ 已生成，包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 → /1-规划
 
 ---
 
