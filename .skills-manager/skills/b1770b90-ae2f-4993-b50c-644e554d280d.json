@@ -5,7 +5,7 @@
   "path_key": "obsidian-vault",
   "enabled": true,
   "tags": [
-    "grill-me"
+    "my-note"
   ],
   "source": {
     "type": "git",

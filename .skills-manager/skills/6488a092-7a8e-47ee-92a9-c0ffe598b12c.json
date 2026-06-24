@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "6488a092-7a8e-47ee-92a9-c0ffe598b12c",
+  "path": "tools--智能搜索",
+  "path_key": "tools--智能搜索",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--智能搜索",
+    "branch": null
+  }
+}

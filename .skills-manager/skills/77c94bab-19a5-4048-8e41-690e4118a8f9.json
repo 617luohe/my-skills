@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "77c94bab-19a5-4048-8e41-690e4118a8f9",
+  "path": "tools--技能工坊",
+  "path_key": "tools--技能工坊",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--技能工坊",
+    "branch": null
+  }
+}

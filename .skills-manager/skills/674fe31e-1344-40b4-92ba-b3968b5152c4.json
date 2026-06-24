@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "674fe31e-1344-40b4-92ba-b3968b5152c4",
+  "path": "tools--画布设计",
+  "path_key": "tools--画布设计",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--画布设计",
+    "branch": null
+  }
+}

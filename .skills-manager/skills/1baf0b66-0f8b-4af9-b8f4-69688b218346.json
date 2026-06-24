@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "1baf0b66-0f8b-4af9-b8f4-69688b218346",
+  "path": "tools--前端设计",
+  "path_key": "tools--前端设计",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--前端设计",
+    "branch": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "379b4ecf-8ae4-402e-931a-ac20591eaebb",
+  "path": "tools--表格生成",
+  "path_key": "tools--表格生成",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--表格生成",
+    "branch": null
+  }
+}

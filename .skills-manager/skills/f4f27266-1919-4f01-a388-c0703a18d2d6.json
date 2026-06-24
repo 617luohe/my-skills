@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "f4f27266-1919-4f01-a388-c0703a18d2d6",
+  "path": "tools--文档生成",
+  "path_key": "tools--文档生成",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--文档生成",
+    "branch": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "a7a516b7-d6a2-4f0f-b0c3-a4e0e783dde1",
+  "path": "0--graphify",
+  "path_key": "0--graphify",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "workflow"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "0--graphify",
+    "branch": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "bdb1638f-4100-4440-a396-678d208c0fc6",
+  "path": "tools--数据可视化",
+  "path_key": "tools--数据可视化",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--数据可视化",
+    "branch": null
+  }
+}

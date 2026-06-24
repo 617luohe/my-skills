@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "fb70494e-6836-427c-a91b-a6020662b496",
+  "path": "use-skills",
+  "path_key": "use-skills",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "workflow"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "use-skills",
+    "branch": null
+  }
+}

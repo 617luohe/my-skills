@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "29d5aac3-3e3c-4775-a586-334bfb8db143",
+  "path": "1-规划",
+  "path_key": "1-规划",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "workflow"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "1-规划",
+    "branch": null
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "01860506-d33c-4190-b39f-f53f27fc6edb",
+  "path": "tools--深度研报生成",
+  "path_key": "tools--深度研报生成",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--深度研报生成",
+    "branch": null
+  }
+}

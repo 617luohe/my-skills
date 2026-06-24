@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "83ed55d6-c768-41de-8d31-113f0922cd30",
+  "path": "tools--幻灯片生成",
+  "path_key": "tools--幻灯片生成",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "my-tools"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "tools--幻灯片生成",
+    "branch": null
+  }
+}

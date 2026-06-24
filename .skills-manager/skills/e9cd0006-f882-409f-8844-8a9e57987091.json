@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "skill_id": "e9cd0006-f882-409f-8844-8a9e57987091",
+  "path": "0--claude",
+  "path_key": "0--claude",
+  "enabled": true,
+  "tags": [
+    "my-skills",
+    "workflow"
+  ],
+  "source": {
+    "type": "git",
+    "ref": "https://github.com/617luohe/my-skills.git",
+    "subpath": "0--claude",
+    "branch": null
+  }
+}
