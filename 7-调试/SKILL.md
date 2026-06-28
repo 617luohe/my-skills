@@ -1,6 +1,6 @@
 ---
 name: 7-调试
-description: Disciplined diagnosis loop for bugs and performance issues — reproduce → hypothesise → instrument → fix → regression test. Use when encountering a hard-to-reproduce bug or performance regression.
+description: Disciplined diagnosis loop for bugs and performance issues — reproduce → hypothesise → instrument → fix → regression test. Use when encountering a hard-to-reproduce bug or performance regression. 触发词：调试、debug、排查、诊断、报错、崩溃、性能问题、复现。
 ---
 
 # 7-调试 — 结构化调试
@@ -8,6 +8,13 @@ description: Disciplined diagnosis loop for bugs and performance issues — repr
 六阶段调试流程，适用于难复现的 bug 和性能问题。
 
 ## 流程
+
+## MUST 规则
+
+1. **没有反馈回路，不进入假设阶段。** 先构建可复现的 pass/fail 信号。
+2. **假设阶段至少列 3 条可证伪假设。** 不能只有一条（锚定偏见）。
+3. **一次只改一个变量验证。** 不并行修改。
+4. **所有调试标签用唯一 ID 标记。** 格式 `[DEBUG-xxxx]`，最后 grep 清除。
 
 ### 阶段 1 — 构建反馈回路
 

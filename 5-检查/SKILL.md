@@ -1,6 +1,6 @@
 ---
 name: 5-检查
-description: Two-axis code review（standards + spec compliance）plus interactive bug reporting with GitHub issue creation. Use before merging code, after completing a feature, or when you find a bug.
+description: Two-axis code review（standards + spec compliance）plus interactive bug reporting with GitHub issue creation. Use before merging code, after completing a feature, or when you find a bug. 触发词：代码审查、检查、验收、review、bug报告、issue、质量检查。
 ---
 
 # 5-检查 — 代码审查与验收
@@ -8,6 +8,13 @@ description: Two-axis code review（standards + spec compliance）plus interacti
 两个模式：**代码审查**（Review）和 **Bug 报告**（QA）。进入时问用户走哪个。
 
 ---
+
+## MUST 规则
+
+1. **审查基点和需求来源必须先确认再开始。** 不问清楚不审查。
+2. **两个子代理必须并行运行。** Standards 和 Spec 独立，不互相污染上下文。
+3. **标准审查结果和需求审查结果不合并、不排序、不重排优先级。**
+4. **Bug issue 不包含文件路径和行号。** 使用项目领域术语，不描述代码。
 
 ## 模式 A — 代码审查
 

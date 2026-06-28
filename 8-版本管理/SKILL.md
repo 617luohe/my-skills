@@ -1,6 +1,6 @@
 ---
 name: 8-版本管理
-description: Full git version control — init, save, log, diff, rollback, branch, remote. Works locally by default; connect to GitHub on demand. Use for any version control needs.
+description: Full git version control — init, save, log, diff, rollback, branch, remote. Works locally by default; connect to GitHub on demand. Use for any version control needs. 触发词：版本管理、git、提交、推送、分支、回滚、保存、commit、push。
 ---
 
 # 8-版本管理 — Git 版本控制全流程
@@ -8,6 +8,12 @@ description: Full git version control — init, save, log, diff, rollback, branc
 覆盖 git 版本管理全部核心操作。默认本地仓库，需连接远程时按需配置。
 
 ## 操作清单
+
+## MUST 规则
+
+1. **危险操作必须先确认再执行。** `git reset --hard`、`git push --force`、`git branch -D` 需要用户明确同意。
+2. **回滚默认用 revert，不用 reset。** 除非用户明确要求 reset。
+3. **首次推送自动设置上游分支。** `git push -u origin main`。
 
 ### init — 初始化仓库
 

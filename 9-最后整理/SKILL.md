@@ -1,6 +1,6 @@
 ---
 name: 9-最后整理
-description: End-of-session cleanup — create handoff document, sync project docs with code, verify git safety guardrails. Use when finishing a milestone, ending a work session, or before handing off to another agent.
+description: End-of-session cleanup — create handoff document, sync project docs with code, verify git safety guardrails. Use when finishing a milestone, ending a work session, or before handing off to another agent. 触发词：整理、交接、收尾、结束、下班、同步、handoff、清理。
 ---
 
 # 9-最后整理 — 收尾与交接
@@ -10,6 +10,13 @@ description: End-of-session cleanup — create handoff document, sync project do
 ---
 
 ## 步骤
+
+## MUST 规则
+
+1. **先体检再同步。** 尺寸超标（CLAUDE.md >300行、单条memory >100行）必须先精简。
+2. **先减法后加法。** 先删过期和重复内容，再补新增事实。
+3. **三层知识不重叠。** CLAUDE.md=规则手册、docs/=接入文档、memory=跨会话偏好。
+4. **所有相对时间必须转绝对日期。** grep 清零"今天/昨天/最近"等词。
 
 ### 0. 尺寸体检（先于一切）
 
