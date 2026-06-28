@@ -15,7 +15,8 @@
     "use-skills",
     "0--claude",
     "0--graphify",
-    "辩证矛盾分析法"
+    "辩证矛盾分析法",
+    "老油条"
   ],
   "agentTargets": [
     ".claude/skills",
