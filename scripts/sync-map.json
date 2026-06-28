@@ -17,7 +17,8 @@
     "0--graphify",
     "0--neat-freak",
     "辩证矛盾分析法",
-    "老油条"
+    "老油条",
+    "自动迭代"
   ],
   "agentTargets": [
     ".claude/skills",

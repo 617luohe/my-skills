@@ -70,6 +70,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 | 表格生成 | 做Excel、表格、xlsx、数据处理、财务报表 | tools--表格生成 | Excel 创建/编辑/分析 |
 | 网页测试 | 测试页面、浏览器截图、UI调试、Playwright、自动化测试 | tools--网页测试 | Playwright 自动化测试 |
 | 数据可视化 | 画图表、数据图、可视化、matplotlib、plotly、选图表 | tools--数据可视化 | Python 数据可视化 |
+| 自动迭代 / 多轮闭环 | 自动迭代、自动帮我、帮我自动完成、持续改进、迭代执行、闭环推进、loop | 自动迭代 | 五阶段 PDCA：探查→澄清→规划→迭代→收尾。主控+工人模式防上下文膨胀 |
 
 ## 组合规则
 
@@ -81,6 +82,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 4. **开发/重构** — 中间执行
 5. **检查收尾** — 最后做 5-检查、9-最后整理
 6. **tools 类技能** — 独立使用，或作为开发流程的输入/输出环节
+7. **自动迭代优先** — 如果包含"自动帮我"、"持续改进"、"迭代执行"等多轮闭环意图，直接用 自动迭代 接管整个流程
 
 示例：
 - "分析一下这段代码，然后帮我重构" → 2-分析 → 6-优化
@@ -90,6 +92,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 - "调研一下竞品，然后做个PPT汇报" → tools--深度研报生成 → tools--幻灯片生成
 - "先搜一下最新的技术方案，画个架构图" → tools--智能搜索 → tools--图表生成
 - "分析这个模块的代码结构，画个流程图" → 2-分析 → tools--图表生成
+- "自动帮我完成缓存层的开发、测试和文档" → 自动迭代（接管完整五阶段闭环）
 - "初始化老油条，然后看看这次交什么" → 老油条（初始化） → 老油条（分析建议）
 - "规划一个新功能，用老油条管理交付节奏" → 1-规划 → 老油条（初始化）
 
