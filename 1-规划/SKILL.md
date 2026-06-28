@@ -1,15 +1,30 @@
 ---
 name: 1-规划
-description: Full planning pipeline — grill requirements, extract domain terms, design interfaces, output PRD, break into tasks. Use before writing code for any non-trivial feature.
+description: Full planning pipeline — grill requirements, extract domain terms, design interfaces, output PRD, break into tasks. Use before writing code for any non-trivial feature. 触发词：规划、方案设计、PRD、任务拆解、接口设计、领域建模、需求分析、ADR、技术方案。
 ---
 
 # 1-规划 — 方案设计与任务拆解
 
 写代码前的完整规划流程。按阶段推进，不跳跃。
 
-## 流程
+## MUST 规则
 
-这个技能分 6 个阶段，按顺序执行。在每个阶段结束时问用户是否要继续下一阶段。
+1. **按顺序走阶段，不跳跃。** 每个阶段结束问用户是否继续。
+2. **能读代码解决的，不追问用户。** 去代码库里找答案。
+3. **每个问题先给推荐答案，再让用户选择。** 不做开放题。
+4. **阶段 1 的唯一退出条件：所有决策分支已决议，双方无分歧。** 不因为后面有阶段就急着收尾。
+5. **阶段 4 不追问用户。** 只基于阶段 1-3 已达成的共识综合整理。
+
+## 阶段速查
+
+| 阶段 | 内容 | 核心产物 | 追问用户？ |
+|------|------|----------|-----------|
+| 1 | 方案追问（文档发现 → 决策树穷举） | 共识方案描述 | 是（逐个决议） |
+| 2 | 领域术语提取 | CONTEXT.md + UBIQUITOUS_LANGUAGE.md | 是（术语确认） |
+| 2.5 | ADR 决策记录（可选） | ADR 或 DECISIONS.md | 否 |
+| 3 | 接口设计（3 并行 Agent） | 选定接口方案 | 是（方案选择） |
+| 4 | 输出 PRD | 结构化 PRD 文档 | 否 |
+| 5 | 拆解任务 | Issue 清单（AFK/HITL） | 否 |
 
 ### 阶段 1 — 方案追问
 
