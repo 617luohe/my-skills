@@ -1,6 +1,6 @@
 ---
 name: 4-开发
-description: TDD red-green-refactor loop with pytest, guided by coding guardrails（先想后写、简单第一、手术刀式改动、目标驱动）. Use when implementing features or fixing bugs test-first.
+description: TDD red-green-refactor loop with pytest, guided by coding guardrails（先想后写、简单第一、手术刀式改动、目标驱动）. Use when implementing features or fixing bugs test-first. 触发词：开发、实现、编码、写代码、TDD、功能开发、test-driven。
 ---
 
 # 4-开发 — TDD 编码实现
@@ -24,6 +24,15 @@ description: TDD red-green-refactor loop with pytest, guided by coding guardrail
 把模糊任务转成可验证的目标。多步骤时给出简短计划和验证项。
 
 ---
+
+## MUST 规则（贯穿全程的四条准则）
+
+1. **先想后写。** 编码前说出假设，不确定就问。
+2. **简单第一。** 最少代码解决问题，不做投机功能。
+3. **手术刀式改动。** 只碰必须碰的，不顺手改旁边的。
+4. **目标驱动。** 模糊任务转可验证目标，多步骤先列计划。
+5. **绝不在 RED 时重构。** 全部变绿后才检查提取重复/加深模块。
+6. **测试通过公共接口验证行为，不验证实现细节。**
 
 ## TDD 流程
 

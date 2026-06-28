@@ -1,6 +1,6 @@
 ---
 name: 0--claude
-description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines + workflow routing to /1-规划, or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection.
+description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines + workflow routing to /1-规划, or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection. 触发词：初始化CLAUDE、创建CLAUDE.md、CLAIM规则、caveman、karpathy。
 ---
 
 # 0--claude — CLAUDE.md 初始化器
@@ -13,6 +13,12 @@ luohe，我来处理项目的 CLAUDE.md。
 - **三个规则都已存在** → 跳过，无需改动
 
 ## 流程
+
+## MUST 规则
+
+1. **非破坏式注入。** 已有内容完全不动，只在缺失位置嵌入。
+2. **三个规则块按优先级注入。** 称呼规则 → Caveman 规则 → Karpathy 准则。
+3. **已有则跳过。** 三个规则都已存在 → 告知无需改动，不写文件。
 
 ### 1. 问候用户
 - 以 "luohe" 称呼用户

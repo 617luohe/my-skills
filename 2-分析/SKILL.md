@@ -1,12 +1,18 @@
 ---
 name: 2-分析
-description: Read unfamiliar code and output a high-level map — modules, data flow, entry points, architecture context. Use when you don't understand a section of code, need architecture overview, or want to see the big picture.
+description: Read unfamiliar code and output a high-level map — modules, data flow, entry points, architecture context. Use when you don't understand a section of code, need architecture overview, or want to see the big picture. 触发词：分析、理解、概览、地图、看不懂、结构、模块、代码结构、overview。
 disable-model-invocation: true
 ---
 
 # 2-分析 — 代码理解与概览
 
 面对一段不熟悉的代码时，让 Claude 跳出细节，给你一张"地图"，而不是钻进代码行。
+
+## MUST 规则
+
+1. **立刻往上一层抽象。** 不进代码行细节，给地图不给实现。
+2. **四部分缺一不可。** 模块地图 + 数据流 + 关键入口 + 与整体架构的关系。
+3. **全程使用项目领域术语。** 不泛称"这个模块""那个类"。
 
 ## 工作方式
 

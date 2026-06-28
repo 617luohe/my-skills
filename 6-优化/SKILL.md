@@ -1,6 +1,6 @@
 ---
 name: 6-优化
-description: Discover architectural friction points + create detailed incremental refactor plans with tiny safe commits. Use when code gets messy, modules grow too large, or you want to improve codebase structure.
+description: Discover architectural friction points + create detailed incremental refactor plans with tiny safe commits. Use when code gets messy, modules grow too large, or you want to improve codebase structure. 触发词：优化、重构、改进、架构、代码混乱、耦合、refactor、cleanup。
 ---
 
 # 6-优化 — 重构与架构改进
@@ -8,6 +8,13 @@ description: Discover architectural friction points + create detailed incrementa
 两个模式：**架构分析**（发现问题）和 **重构计划**（解决问题）。进入时问用户走哪个。
 
 ---
+
+## MUST 规则
+
+1. **先探索后判断。** 走读代码前先读 CONTEXT.md + ADR。
+2. **候选方案用领域术语 + 架构术语。** CONTEXT.md 词汇 + 接缝/深度/浅模块。
+3. **重构计划每个提交必须能独立工作。** 每步尽可能小，始终可回滚。
+4. **ADR 不轻启。** 除非确实值得重开，才标记冲突。
 
 ## 模式 A — 架构分析
 
