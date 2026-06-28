@@ -58,6 +58,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 | 调试排查 | 调试、bug、排查、诊断、报错、崩溃、性能 | 7-调试 | 六阶段结构化调试 |
 | 版本管理 | 版本、git、提交、推送、分支、回滚、保存 | 8-版本管理 | git 全流程 |
 | 收尾整理 | 整理、交接、收尾、结束、下班、同步 | 9-最后整理 | 交接文档 + 知识同步 + 安全确认 |
+| 知识库洁癖审查 | 整理文档、梳理文档、同步文档、洁癖、防膨胀、neat、sync up、tidy docs、clean up docs | 0--neat-freak | 知识库洁癖级审查 — 同步+毕业+防膨胀+自检 |
 | 深度研究 / 研报生成 | 调研、深度分析、研报、研究报告、行业报告、竞品分析、文献综述、市场研究、趋势分析 | tools--深度研报生成 | 多源搜索+交叉验证+引用式报告 |
 | 智能搜索 | 搜索、查找、搜一下、找资料、查一下 | tools--智能搜索 | opencli 智能路由搜索 |
 | 图表生成 | 画图、流程图、架构图、思维导图、可视化流程、Excalidraw | tools--图表生成 | 自然语言→Excalidraw 图表 |
