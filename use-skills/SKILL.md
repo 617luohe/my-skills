@@ -1,11 +1,18 @@
 ---
 name: use-skills
-description: Intelligent skill dispatcher — analyze natural language requests and automatically route to the best matching skills. Use when you want to accomplish a task but don't know which skill to call, or want to compose multiple skills.
+description: Intelligent skill dispatcher — analyze natural language requests and automatically route to the best matching skills. Use when you want to accomplish a task but don't know which skill to call, or want to compose multiple skills. 触发词：use-skills、智能调度、用什么技能、匹配技能、调用技能、不知道该用哪个。
 ---
 
 # use-skills — 智能技能调度器
 
 输入你的需求，我自动为你调用最合适的一个或多个技能。你不需要记住哪个技能叫什么名字。
+
+## MUST 规则
+
+1. **匹配到技能后必须先展示计划再执行。** 格式：`→ 分析需求 → 匹配技能 → 开始执行`
+2. **多技能必须按顺序串联执行，不并行。** 每个技能执行完毕后汇总结果再进入下一个。
+3. **严格遵循目标技能 SKILL.md 的全部指令。** 包括其 MUST 规则、阶段流程、输出格式。
+4. **无法匹配任何技能时直接说明，不强行匹配。**
 
 ## 工作方式
 
@@ -43,6 +50,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 | 方案规划 | 规划、方案、设计、PRD、拆任务、需求分析 | 1-规划 | 方案追问 → 术语表 → 接口设计 → PRD → 任务拆解 |
 | 代码分析 | 分析、理解、概览、地图、看不懂、结构 | 2-分析 | 模块地图 + 数据流 + 关键入口 + 架构位置 |
 | 辩证分析 / 矛盾分析 | 矛盾分析、辩证分析、战略判断、宏观局势、问题分析、决策复盘、逆境突破、统筹、逻辑分析 | 辩证矛盾分析法 | 基础哲学方法论 — 六步法分析复杂问题、制定战略决策 |
+| 交付节奏管理 | 老油条、交付节奏、分支切换、逐步交付、甲方交付、交付说明、控制交付、branch switch | 老油条 | branch_config.json 驱动模块实现选择 + 交付路线图 + 甲方交付说明 |
 | 快速原型 | 原型、验证、试错、不确定、快速验证、试试 | 3-原型 | 一次性代码快速验证设计决策 |
 | 编码实现 | 开发、实现、编码、写代码、TDD、功能开发 | 4-开发 | TDD 红-绿-重构循环 |
 | 代码审查 | 审查、检查、验收、review、质量、issue | 5-检查 | 双轴审查（标准+需求） / Bug报告 |
@@ -81,6 +89,8 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 - "调研一下竞品，然后做个PPT汇报" → tools--深度研报生成 → tools--幻灯片生成
 - "先搜一下最新的技术方案，画个架构图" → tools--智能搜索 → tools--图表生成
 - "分析这个模块的代码结构，画个流程图" → 2-分析 → tools--图表生成
+- "初始化老油条，然后看看这次交什么" → 老油条（初始化） → 老油条（分析建议）
+- "规划一个新功能，用老油条管理交付节奏" → 1-规划 → 老油条（初始化）
 
 ## 执行策略
 
