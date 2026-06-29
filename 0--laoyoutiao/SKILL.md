@@ -1,5 +1,5 @@
 ---
-name: 老油条
+name: 0--laoyoutiao
 description: Python项目交付节奏管理。通过branch_config.json控制各模块实现版本，逐步向甲方展示优化成果，自动生成交付说明。触发词：老油条、交付节奏、控制交付、分支切换、逐步交付、甲方交付、交付说明、这次交什么、branch switch、delivery pacing。
 ---
 
