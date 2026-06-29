@@ -16,9 +16,9 @@
     "0--claude",
     "0--graphify",
     "0--neat-freak",
-    "辩证矛盾分析法",
-    "老油条",
-    "自动迭代"
+    "0--dialectic",
+    "0--laoyoutiao",
+    "0--auto-iteration"
   ],
   "agentTargets": [
     ".claude/skills",
