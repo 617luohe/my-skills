@@ -23,6 +23,8 @@ my-skills/
 | 0 | **启动** | 配置环境 + 技能初始化 + 项目脚手架 | 新建项目：目录结构 → uv 环境 → pre-commit → 任务配置 |
 | 0 | **构建索引** (`0--graphify`) | [graphify](https://github.com/safishamsi/graphify) | 将代码/文档/媒体构建为可查询知识图谱（graphify-out/） |
 | 0 | **洁癖审查** (`0--neat-freak`) | 新增 | 知识库洁癖级审查 — 同步文档+记忆，防膨胀，毕业机制 |
+| 0 | **失败学习器** (`0--headroom-learn`) | Headroom Learn | 分析会话失败模式 → LLM 分析根因 → 生成纠正规则写入 CLAUDE.md |
+| 0 | **上下文压缩** (`0--headroom-compress`) | Headroom MCP | 使用 headroom MCP 工具压缩大段输出、检索原始内容、查看节省统计 |
 | 1 | **规划** | 方案追问 + 接口设计 + 领域术语 + 输出PRD + 拆解任务 | 写代码前理清方案，输出 PRD 和任务清单 |
 | 2 | **分析** | 代码概览 | 查看不熟悉的代码，输出模块地图和数据流 |
 | 3 | **原型** | 快速原型验证 | 用一次性代码验证设计决策，然后进入正式开发 |

@@ -35,6 +35,26 @@
 - 每个任务转化为可验证的目标
 - 多步骤任务先列计划再动手
 
+## Headroom 上下文压缩规则
+
+当上下文窗口紧张或工具输出过大时，使用 Headroom MCP 工具压缩：
+
+### 三个工具
+- `mcp__headroom__headroom_compress` — 压缩大段内容（搜索结果、文件内容、日志）
+- `mcp__headroom__headroom_retrieve` — 通过 hash 检索原始未压缩内容（hash-only，v0.28+）
+- `mcp__headroom__headroom_stats` — 查看会话压缩统计和成本节省
+
+### 何时压缩
+- 任何工具输出超过 ~500 tokens
+- 上下文窗口开始膨胀时
+- 批量文件读取后需要汇总
+
+### 规则
+- 大输出先压缩再分析，保留 hash 供后续检索
+- 不要重复读取已知文件（headroom 已缓存）
+- 长会话中偶尔检查 headroom_stats 了解节省情况
+- 个人学习规则写入 `CLAUDE.local.md`（gitignored），不污染共享 `CLAUDE.md`
+
 ## 工作流路由
 
 当用户提出开发需求时，AI 必须按以下规则判断是否调用技能：
