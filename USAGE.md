@@ -294,6 +294,70 @@ Claude：1. 尺寸体检 → CLAUDE.md 36行 ✅, 无记忆目录
 
 ---
 
+## 0--headroom-learn — 会话失败学习器
+
+**场景**：对话中反复出现同类错误——路径找不到、包名写错、命令权限不对、同样的操作重试 3 次以上。分析失败模式，自动生成纠正规则写入 CLAUDE.local.md，防止同类错误重复发生。
+
+**阶段**：阶段 0 溢出技能（部署名 `0--headroom-learn`）
+
+**触发方式**：`/0--headroom-learn` 或自然语言「分析失败模式」「会话复盘」「为什么老出错」
+
+**核心机制**：
+- **模式识别** — 扫描会话历史，识别路径错误、缺失依赖、格式错误、顽固重试、RTK 循环等 7 类失败模式
+- **根因分析** — LLM 分析每组失败的根本原因和预防方案
+- **规则生成** — 生成简洁可执行的纠正规则
+- **默认写入 CLAUDE.local.md** — 个人学习不污染团队共享配置，标记 `<!-- headroom-learn: <date> -->`
+
+**对话示例**：
+```
+你：/0--headroom-learn
+
+Claude：luohe，扫描当前项目 10 个会话...
+       发现 4 个失败模式：
+
+       ⚠️ RTK 循环: grep 为空后重复执行 — 浪费 12,500 tokens
+       路径错误: 8次在 src/ 找文件，实际在 packages/
+       包管理器: 5次用 npm，项目实际用 pnpm
+       Python venv: 3次忘了激活虚拟环境
+
+       ✅ 4 条规则已写入 CLAUDE.local.md
+```
+
+---
+
+## 0--headroom-compress — 上下文压缩工具箱
+
+**场景**：工具输出太大（搜索结果、日志、批量文件读取），或上下文窗口开始膨胀时，用 Headroom MCP 工具压缩内容并保留关键信息，节省 50-90% token。
+
+**阶段**：阶段 0 溢出技能（部署名 `0--headroom-compress`）
+
+**触发方式**：`/0--headroom-compress` 或自然语言「压缩一下」「token太多」「精简输出」
+
+**三个工具**：
+| 工具 | 用途 |
+|------|------|
+| `headroom_compress` | 压缩大段输出，保留函数签名/错误/关键字段 |
+| `headroom_retrieve` | 按 hash 检索被压缩的原始内容 |
+| `headroom_stats` | 查看会话中省了多少 token / 成本 |
+
+**压缩策略**：
+- 代码文件 → AST 感知（保留签名、imports，压缩实现细节）
+- JSON/API → SmartCrusher（保留错误和关键字段，去重）
+- 日志/文本 → Kompress ML + TextCrusher（保留错误行和堆栈）
+
+**对话示例**：
+```
+你：搜索了整个项目的所有 Python 文件，输出太大
+
+Claude：luohe，搜索结果太大，我先压缩一下。
+       → headroom_compress → 关键 15 个文件，省了 73% token
+       需要完整列表时用 headroom_retrieve(hash="abc123")
+```
+
+---
+
+## 0-启动 — 项目脚手架
+
 **场景**：开始一个全新的 Python 项目时使用。一条龙完成：目录结构 → uv 环境 → pre-commit → git 初始化 → 任务配置。
 
 **触发方式**：`/0-启动`

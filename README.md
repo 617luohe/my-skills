@@ -60,4 +60,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步目标：`.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 技能写入短数字目录（如 `1-规划` → `1/`）；阶段 0 溢出技能用 `0--*` 前缀（如 `0--graphify`）；独立方法论保留完整文件夹名。
+同步目标：`.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 技能保留完整中文目录名（如 `1-规划` → `1-规划/`）；阶段 0 溢出技能用 `0--*` 前缀（如 `0--graphify`）；独立方法论保留完整文件夹名。
