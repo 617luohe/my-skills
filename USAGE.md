@@ -301,64 +301,24 @@ Claude：luohe，已完成尺寸体检和知识文件盘点。
 
 ---
 
-## 0--headroom-learn — 会话失败学习器
+## 0--tokenless — 超压缩沟通模式
 
-**场景**：对话中反复出现同类错误——路径找不到、包名写错、命令权限不对、同样的操作重试 3 次以上。分析失败模式，自动生成纠正规则写入 CLAUDE.local.md，防止同类错误重复发生。
+**场景**：希望回复极度精简、减少 token，或要求 Caveman 风格表达时使用。
 
-**阶段**：阶段 0 溢出技能（部署名 `0--headroom-learn`）
+**阶段**：阶段 0 溢出技能（部署名 `0--tokenless`）
 
-**触发方式**：`/0--headroom-learn` 或自然语言「分析失败模式」「会话复盘」「为什么老出错」
+**触发方式**：`/0--tokenless`，或自然语言「caveman mode」「less tokens」「be brief」。
 
-**核心机制**：
-- **模式识别** — 扫描会话历史，识别路径错误、缺失依赖、格式错误、顽固重试、RTK 循环等 7 类失败模式
-- **根因分析** — LLM 分析每组失败的根本原因和预防方案
-- **规则生成** — 生成简洁可执行的纠正规则
-- **默认写入 CLAUDE.local.md** — 个人学习不污染团队共享配置，标记 `<!-- headroom-learn: <date> -->`
-
-**对话示例**：
-```
-你：/0--headroom-learn
-
-Claude：luohe，扫描当前项目 10 个会话...
-       发现 4 个失败模式：
-
-       ⚠️ RTK 循环: grep 为空后重复执行 — 浪费 12,500 tokens
-       路径错误: 8次在 src/ 找文件，实际在 packages/
-       包管理器: 5次用 npm，项目实际用 pnpm
-       Python venv: 3次忘了激活虚拟环境
-
-       ✅ 4 条规则已写入 CLAUDE.local.md
-```
-
----
-
-## 0--headroom-compress — 上下文压缩工具箱
-
-**场景**：工具输出太大（搜索结果、日志、批量文件读取），或上下文窗口开始膨胀时，用 Headroom MCP 工具压缩内容并保留关键信息，节省 50-90% token。
-
-**阶段**：阶段 0 溢出技能（部署名 `0--headroom-compress`）
-
-**触发方式**：`/0--headroom-compress` 或自然语言「压缩一下」「token太多」「精简输出」
-
-**三个工具**：
-| 工具 | 用途 |
-|------|------|
-| `headroom_compress` | 压缩大段输出，保留函数签名/错误/关键字段 |
-| `headroom_retrieve` | 按 hash 检索被压缩的原始内容 |
-| `headroom_stats` | 查看会话中省了多少 token / 成本 |
-
-**压缩策略**：
-- 代码文件 → AST 感知（保留签名、imports，压缩实现细节）
-- JSON/API → SmartCrusher（保留错误和关键字段，去重）
-- 日志/文本 → Kompress ML + TextCrusher（保留错误行和堆栈）
+**核心规则**：
+- 删除冠词、填充语、客套和模糊措辞，允许短句、片段、缩写和因果箭头
+- 技术术语保持准确，代码块不变，错误原文精确引用
+- 触发后持续生效，直到用户说 `stop caveman` 或 `normal mode`
+- 安全警告、不可逆操作确认、易误读的多步骤流程暂时恢复完整表达，之后自动回到压缩模式
 
 **对话示例**：
 ```
-你：搜索了整个项目的所有 Python 文件，输出太大
-
-Claude：luohe，搜索结果太大，我先压缩一下。
-       → headroom_compress → 关键 15 个文件，省了 73% token
-       需要完整列表时用 headroom_retrieve(hash="abc123")
+你：/0--tokenless Why React component re-render?
+Claude：Inline obj prop -> new ref -> re-render. `useMemo`.
 ```
 
 ---

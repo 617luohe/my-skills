@@ -24,8 +24,7 @@ my-skills/
 | 0 | **启动** | 配置环境 + 技能初始化 + 项目脚手架 | 新建项目：目录结构 → uv 环境 → pre-commit → 任务配置 |
 | 0 | **构建索引** (`0--graphify`) | [graphify](https://github.com/safishamsi/graphify) | 将代码/文档/媒体构建为可查询知识图谱（graphify-out/） |
 | 0 | **洁癖审查** (`0--neat-freak`) | 新增 | 知识库洁癖审查 — 校准全局文档↔代码、尺寸体检、记忆毕业、消矛盾（减法/校准；本次会话沉淀交给 9-最后整理） |
-| 0 | **失败学习器** (`0--headroom-learn`) | Headroom Learn | 分析会话失败模式 → LLM 分析根因 → 默认生成纠正规则到 CLAUDE.local.md |
-| 0 | **上下文压缩** (`0--headroom-compress`) | Headroom MCP | 使用 headroom MCP 工具压缩大段输出、检索原始内容、查看节省统计 |
+| 0 | **Tokenless** (`0--tokenless`) | [caveman](../reference-skills/caveman/) | 超压缩沟通模式 — 删除填充语和客套，保留完整技术准确性与清晰度例外 |
 | 1 | **规划** | 方案追问 + 接口设计 + 领域术语 + 输出PRD + 拆解任务 | 写代码前理清方案，输出 PRD 和任务清单 |
 | 2 | **分析** | 代码概览 | 查看不熟悉的代码，输出模块地图和数据流 |
 | 3 | **原型** | 快速原型验证 | 用一次性代码验证设计决策，然后进入正式开发 |
@@ -79,4 +78,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 9 个完整名称 skills，共 19 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
+同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 8 个完整名称 skills，共 18 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。

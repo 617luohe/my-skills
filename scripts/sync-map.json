@@ -19,8 +19,7 @@
     "0--dialectic",
     "0--laoyoutiao",
     "0--auto-iteration",
-    "0--headroom-learn",
-    "0--headroom-compress"
+    "0--tokenless"
   ],
   "agentTargets": [
     ".claude/skills",
