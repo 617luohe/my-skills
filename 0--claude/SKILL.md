@@ -1,6 +1,6 @@
 ---
 name: 0--claude
-description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines + Headroom context compression rules + workflow routing to /1-规划, or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection. 触发词：初始化CLAUDE、创建CLAUDE.md、CLAIM规则、caveman、karpathy、headroom。
+description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe naming rule + Caveman brevity rules + Karpathy coding guidelines + workflow routing (按规模分档 + 支撑层触发表), or injects missing rules into existing CLAUDE.md. Non-destructive, smart injection. 触发词：初始化CLAUDE、创建CLAUDE.md、CLAUDE规则、caveman、karpathy、工作流路由。
 ---
 
 # 0--claude — CLAUDE.md 初始化器
@@ -8,17 +8,17 @@ description: One-shot CLAUDE.md initializer — creates new CLAUDE.md with luohe
 luohe，我来处理项目的 CLAUDE.md。
 
 核心逻辑：
-- **没有 CLAUDE.md** → 新建完整文件（称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + Headroom 上下文压缩规则 + 工作流路由 + 占位）
-- **已有 CLAUDE.md** → 检测四个规则块，缺失则注入，已有则跳过
-- **四个规则都已存在** → 跳过，无需改动
+- **没有 CLAUDE.md** → 新建完整文件（称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 + 占位）
+- **已有 CLAUDE.md** → 检测三个规则块，缺失则注入，已有则跳过
+- **三个规则都已存在** → 跳过，无需改动
 
 ## 流程
 
 ## MUST 规则
 
 1. **非破坏式注入。** 已有内容完全不动，只在缺失位置嵌入。
-2. **四个规则块按优先级注入。** 称呼规则 → Caveman 规则 → Karpathy 准则 → Headroom 压缩规则。
-3. **已有则跳过。** 四个规则都已存在 → 告知无需改动，不写文件。
+2. **三个规则块按优先级注入。** 称呼规则 → Caveman 规则 → Karpathy 准则 → 工作流路由。
+3. **已有则跳过。** 规则都已存在 → 告知无需改动，不写文件。
 
 ### 1. 问候用户
 - 以 "luohe" 称呼用户
@@ -32,15 +32,15 @@ luohe，我来处理项目的 CLAUDE.md。
 - 读取 `references/template.md`
 - 替换 `{project-name}` 为实际项目名
 - 写入 `./CLAUDE.md`
-- 告知：✅ 新建完成（包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + Headroom 上下文压缩规则 + 工作流路由 → /1-规划）
+- 告知：✅ 新建完成（包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 → /1-规划）
 
 #### 分支 B：当前目录已有 CLAUDE.md
 - 读取 `./CLAUDE.md`
-- 检测四个规则块是否已存在：
+- 检测三个规则块 + 工作流路由是否已存在：
   - **称呼规则**：搜索 "luohe" 或 "称呼规则"
   - **Caveman 简洁规则**：搜索 "caveman" 或 "简洁规则"
   - **Karpathy 编码准则**：搜索 "Karpathy" 或 "编码准则"
-  - **Headroom 压缩规则**：搜索 "headroom_compress" 或 "Headroom" 或 "上下文压缩"
+  - **工作流路由**：搜索 "工作流路由" 或 "/1-规划"
 - 对每个缺失的规则块，在文件头部（第一个 H1 标题之后）嵌入
 
 **称呼规则块**（缺失时注入）：
@@ -87,33 +87,37 @@ luohe，我来处理项目的 CLAUDE.md。
 - 多步骤任务先列计划再动手
 ```
 
-**Headroom 上下文压缩规则块**（缺失时注入）：
+**工作流路由块**（缺失时注入，与 `references/template.md` 保持一致）：
 ```
-## Headroom 上下文压缩规则
+## 工作流路由
 
-当上下文窗口紧张或工具输出过大时，使用 Headroom MCP 工具压缩：
+直接说需求，AI 按规模选路径，无需报技能名。拿不准用 `/use-skills <需求>`（自动匹配）；放手全自动用 `/0--auto-iteration <目标>`。
 
-### 三个工具
-- `mcp__headroom__headroom_compress` — 压缩大段内容（搜索结果、文件内容、日志）
-- `mcp__headroom__headroom_retrieve` — 通过 hash 检索原始未压缩内容
-- `mcp__headroom__headroom_stats` — 查看会话压缩统计和成本节省
+| 任务规模 | 路径 |
+|---|---|
+| **小改动 / bug**（单行、拼写、已定位 fix） | 直接改 →（需查根因 `/7-调试`）→ `/8-版本管理` |
+| **中大功能**（新功能、多模块、方案不定） | `/1-规划` →（存疑 `/3-原型`）→ `/4-开发` → `/5-检查` →（有 bug `/7-调试`）→ `/8-版本管理` → `/9-最后整理` |
+| **接手陌生项目** | `/0--graphify` 建索引 → `/2-分析` 看结构 → 再进上面的环 |
+| **不确定复杂度** | 说明判断依据，默认先 `/1-规划` |
 
-### 何时压缩
-- 任何工具输出超过 ~500 tokens
-- 上下文窗口开始膨胀时
-- 批量文件读取后需要汇总
+**铁律**：先想后写（Karpathy 准则 1）——没有方案共识不写复杂代码。
 
-### 规则
-- 大输出先压缩再分析，保留 hash 供后续检索
-- 不要重复读取已知文件（headroom 已缓存）
-- 长会话中偶尔检查 headroom_stats 了解节省情况
-- 个人学习规则写入 `CLAUDE.local.md`（gitignored），不污染共享 `CLAUDE.md`
+## 支撑层（不进主线，按信号触发）
+
+| 信号 | 技能 |
+|---|---|
+| 新项目开张 | `/0-启动` + `/0--claude` |
+| 工具输出太大 / token 紧张 | `/0--headroom-compress` |
+| 反复同类报错 | `/0--headroom-learn` |
+| 收尾、沉淀本次会话产出、清临时文件 | `/9-最后整理` |
+| 全局文档↔代码洁癖同步、防记忆膨胀 | `/0--neat-freak` |
+| 复杂问题拿不准方向 | `/0--dialectic` |
 ```
 
 嵌入规则：
 - 先跳过 YAML frontmatter（如果有 `--- ... ---` 块）
 - 在第一个 `# Title` 行之后插入，前后空一行
-- 多个规则块都缺失时，顺序：称呼规则 → Caveman 规则 → Karpathy 准则 → Headroom 压缩规则
+- 多个规则块都缺失时，顺序：称呼规则 → Caveman 规则 → Karpathy 准则 → 工作流路由
 - 其他内容完全不动
 - 写入 `./CLAUDE.md`
 
@@ -133,26 +137,26 @@ luohe，我来处理项目的 CLAUDE.md。
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
        📄 CLAUDE.md 不存在 → 新建完整文件
-       ✅ 已生成，包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + Headroom 压缩规则 + 工作流路由 → /1-规划
+       ✅ 已生成，包含称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 → /1-规划
 
 ---
 
-你：/0--claude（已有 CLAUDE.md，四个规则全缺）
+你：/0--claude（已有 CLAUDE.md，规则全缺）
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
-       📄 CLAUDE.md 已存在，缺少四个规则 → 嵌入
-       ✅ 已嵌入称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + Headroom 压缩规则
+       📄 CLAUDE.md 已存在，缺少全部规则 → 嵌入
+       ✅ 已嵌入称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由
 
 ---
 
-你：/0--claude（只缺 Karpathy + Headroom）
+你：/0--claude（只缺 Karpathy + 工作流路由）
 Claude：luohe，检测到当前目录 "data-pipeline"。
 
-       📄 称呼规则已有 ✓，Caveman 已有 ✓，Karpathy 缺失，Headroom 缺失
-       ✅ 已嵌入 Karpathy 编码准则 + Headroom 上下文压缩规则
+       📄 称呼规则已有 ✓，Caveman 已有 ✓，Karpathy 缺失，工作流路由缺失
+       ✅ 已嵌入 Karpathy 编码准则 + 工作流路由
 
 ---
 
-你：/0--claude（四个规则全有）
+你：/0--claude（规则全有）
 Claude：luohe，当前 CLAUDE.md 已包含所有规则，无需修改。
 ```
