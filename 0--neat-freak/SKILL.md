@@ -15,7 +15,7 @@ description: End-of-session knowledge cleanup with OCD-level rigor — reconcile
 4. **三层知识不重叠。** CLAUDE.md=规则手册、docs/=外部接入文档、memory=跨会话偏好+教训。
 5. **记忆要「毕业」。** 稳定知识并进 docs/CLAUDE.md，原记忆删或缩成指针——治膨胀的唯一手段。
 6. **真的改文件。** 用 Edit/Write/Delete，不描述"我会怎么改"。
-7. **相对时间必须清零。** `grep -E "今天|昨天|刚刚|最近|上周"` → 全部转绝对日期。
+7. **相对时间事实必须清零。** 搜索相对日期词，将事实陈述改为绝对日期；规则说明和用户话术示例可保留。
 
 ## 核心概念
 
@@ -70,14 +70,12 @@ description: End-of-session knowledge cleanup with OCD-level rigor — reconcile
 
 ## 第一步：盘点现状
 
-1. **记忆层**：`ls memory/` → 读 `MEMORY.md` 及所有被引用文件
-2. **项目文档层**：`ls docs/` → `find *.md` → 读 README、CLAUDE.md、每个 docs/*.md
+1. **记忆层**：按 [agent-paths.md](references/agent-paths.md) 定位项目记忆目录；存在时枚举并读取 `MEMORY.md` 与全部记忆文件，不存在时明确记录为「无记忆层」
+2. **项目文档层**：从项目根递归枚举 Markdown（如 `find . -name '*.md'`），先排除 `.git/`、vendor/第三方源码、嵌套仓库、部署副本及 cache/generated，再读取 README、CLAUDE.md、docs 与本次目标相关的知识文件
 3. **全局配置**：读 `~/.claude/CLAUDE.md` 等
 4. **回顾对话**：本次对话产生了什么新事实？
 
-对每个文件标「评估过/要改/不用改」。**漏一个不行。**
-
-Agent 记忆路径因平台而异，速查见 [references/agent-paths.md](references/agent-paths.md)。
+对每个纳入范围的文件标「评估过/要改/不用改」，并列出排除组与理由。**漏一个不行。**
 
 ---
 
@@ -105,14 +103,14 @@ Agent 记忆路径因平台而异，速查见 [references/agent-paths.md](refere
 - **合并优于追加**：新信息改旧条目，grep 同关键字
 - **删除优于保留**：完成的计划、推翻的决策、单次事故复盘——删
 - **毕业优于内部挪腾**：记忆稳定后并进 docs，原文件缩成指针或删
-- **绝对时间**：永远 `2026-06-29`，不写"今天/最近"
+- **绝对时间**：事实陈述使用 `2026-06-29` 这类绝对日期；检测规则和用户话术示例不算遗留事实
 - **受众不混**：CLAUDE.md 不抄 docs 全文，docs 不写"我记得上次"
 
 **修改顺序**：docs/（影响外部，最优先）→ CLAUDE.md → memory。
 
 **全局配置极度克制**：只有用户明确表达跨项目核心原则时才动 `~/.claude/CLAUDE.md`。
 
-**新增能力标准动作**：integration-guide（怎么用）+ architecture（怎么工作）+ runbook（怎么运维）+ handoff（已完成）。
+**新增能力按影响补文档**：只更新实际存在且受影响的文档。外部用法进 integration guide，内部机制进 architecture，运维变化进 runbook；仅大特性或确有交接需求时更新 handoff。
 
 ---
 

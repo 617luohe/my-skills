@@ -8,11 +8,12 @@
 
 ```
 my-skills/
-├── README.md              — 开发路线图 + 进度追踪
-├── USAGE.md               — 使用说明书（场景 + 案例演示）
-├── [0-9]-*/               — 开发流程技能（阶段 0~9）
-├── [独立方法论]            — 通用思维工具（无阶段编号）
-└── use-skills/            — 智能调度器（入口）
+├── README.md / USAGE.md  — 索引与调用示例
+├── 0-启动/ ~ 9-最后整理/ — 阶段 0~9 开发流程
+├── 0--*/                 — 阶段 0 扩展能力
+├── use-skills/           — 智能调度器入口
+├── tools--*/             — 工具类 skills
+└── scripts/              — 部署脚本与映射
 ```
 
 ## 开发流程 Skills（阶段 0~9）
@@ -23,7 +24,7 @@ my-skills/
 | 0 | **启动** | 配置环境 + 技能初始化 + 项目脚手架 | 新建项目：目录结构 → uv 环境 → pre-commit → 任务配置 |
 | 0 | **构建索引** (`0--graphify`) | [graphify](https://github.com/safishamsi/graphify) | 将代码/文档/媒体构建为可查询知识图谱（graphify-out/） |
 | 0 | **洁癖审查** (`0--neat-freak`) | 新增 | 知识库洁癖级审查 — 同步文档+记忆，防膨胀，毕业机制 |
-| 0 | **失败学习器** (`0--headroom-learn`) | Headroom Learn | 分析会话失败模式 → LLM 分析根因 → 生成纠正规则写入 CLAUDE.md |
+| 0 | **失败学习器** (`0--headroom-learn`) | Headroom Learn | 分析会话失败模式 → LLM 分析根因 → 默认生成纠正规则到 CLAUDE.local.md |
 | 0 | **上下文压缩** (`0--headroom-compress`) | Headroom MCP | 使用 headroom MCP 工具压缩大段输出、检索原始内容、查看节省统计 |
 | 1 | **规划** | 方案追问 + 接口设计 + 领域术语 + 输出PRD + 拆解任务 | 写代码前理清方案，输出 PRD 和任务清单 |
 | 2 | **分析** | 代码概览 | 查看不熟悉的代码，输出模块地图和数据流 |
@@ -44,6 +45,24 @@ my-skills/
 | **use-skills** | 智能调度器（入口） | 自然语言需求 → 自动匹配并执行对应技能 |
 | **自动迭代** | 新增（编排层） | 多轮闭环编排 — 五阶段 PDCA 自动推进任务链，门禁驱动直到闭环或跳出，主控+工人模式防上下文膨胀 |
 
+## 工具类 Skills
+
+| 目录 | 调用名 | 职责 |
+|---|---|---|
+| `tools--前端设计` | `/tools--前端设计` | 生产级前端界面设计与实现 |
+| `tools--图表生成` | `/tools--图表生成` | 图表和信息图生成 |
+| `tools--幻灯片生成` | `/tools--幻灯片生成` | 演示文稿创建与编辑 |
+| `tools--技能工坊` | `/tools--技能工坊` | 创建、评估和改进 skills |
+| `tools--数据可视化` | `/tools--数据可视化` | 图表、仪表盘与配色规范 |
+| `tools--文档生成` | `/tools--文档生成` | Word 文档创建与编辑 |
+| `tools--智能搜索` | `/tools--智能搜索` | 多源智能检索 |
+| `tools--深度研报生成` | `/tools--深度研报生成` | 深度研究与研报生成 |
+| `tools--画布设计` | `/tools--画布设计` | 画布式视觉设计 |
+| `tools--网页测试` | `/tools--网页测试` | Web 应用交互测试 |
+| `tools--表格生成` | `/tools--表格生成` | Excel 表格创建与分析 |
+
+> 工具目录是本仓库的参考/封装源码，当前不在 `scripts/sync-map.json` 的一键同步范围；部署由宿主环境的同名 skill 提供。
+
 ## 部署方法
 
 将 `my-skills/<skill-name>/` 复制到 `.claude/skills/<skill-name>/` 即可使用。
@@ -60,4 +79,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步目标：`.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 技能保留完整中文目录名（如 `1-规划` → `1-规划/`）；阶段 0 溢出技能用 `0--*` 前缀（如 `0--graphify`）；独立方法论保留完整文件夹名。
+同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 9 个完整名称 skills，共 19 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。

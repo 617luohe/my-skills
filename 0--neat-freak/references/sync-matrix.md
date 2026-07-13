@@ -22,13 +22,13 @@ CLAUDE.md / AGENTS.md 不是变更日志。下面这些反模式发现了就删 
 
 | 本次对话发生的事 | 要改的文件(按受众) |
 |---|---|
-| 新增 API / 路由 | 项目根 markdown 路由清单 · `docs/integration-guide.md` API 速查表 · `docs/architecture.md` Routes 小节 |
-| 新增 / 改名 环境变量 | 项目根 markdown 环境变量表 · `docs/operator-runbook.md` 环境变量章节 · `docs/integration-guide.md`(如果下游要配) |
-| 新增数据库表 / 列 | 项目根 markdown 数据库表 · `docs/architecture.md` Data Model |
-| 新增 / 改动 用户流程 | 项目根 markdown 用户流程 · README 相关命令行示例 · `docs/handoff.md` What Exists Today |
-| 新增大特性(能跨多文件) | 以上全部 + `docs/architecture.md` 新增章节 + `docs/handoff.md` 已完成清单 |
+| 新增 API / 路由 | `CLAUDE.md`（仅当 AI 需要路由红线）· README（用户入口变化时）· `docs/integration-guide.md` API 速查表 · `docs/architecture.md` Routes 小节 |
+| 新增 / 改名 环境变量 | `CLAUDE.md`（仅放配置红线）· `docs/operator-runbook.md` 环境变量章节 · `docs/integration-guide.md`（下游要配置时） |
+| 新增数据库表 / 列 | `CLAUDE.md`（仅放操作红线）· `docs/architecture.md` Data Model |
+| 新增 / 改动用户流程 | README 相关命令行示例 · `docs/integration-guide.md`（外部用法变化时）· `docs/handoff.md`（确有交接需求时） |
+| 新增大特性（能跨多文件） | 按实际影响更新 integration guide、architecture、runbook；确有交接需求时再更新 handoff |
 | 新增术语 / 改命名 | `docs/integration-guide.md` 术语表(如果有)+ 全局搜索旧术语替换 |
-| 部署参数 / 基础设施变化 | `docs/operator-runbook.md` · 项目根 markdown 部署章节 |
+| 部署参数 / 基础设施变化 | `docs/operator-runbook.md` · `CLAUDE.md`（仅配置红线）· README（用户部署步骤变化时） |
 | 下游项目接入方式变化 | 下游项目的 `docs/<integration>.md` · 上游项目的 `integration-guide.md` |
 
 ## 记忆层变更
@@ -36,7 +36,7 @@ CLAUDE.md / AGENTS.md 不是变更日志。下面这些反模式发现了就删 
 | 情况 | 处理方式 |
 |---|---|
 | 过期事实 | 改记忆文件,同时更新索引(如 MEMORY.md)的 description |
-| 相对时间("今天"、"最近") | 全部转成绝对日期(`2026-04-29` 而非"今天") |
+| 相对日期事实 | 转成绝对日期（如 `2026-04-29`）；检测规则和用户话术示例可保留相对日期词 |
 | 重复记录(多条说同一件事) | 合并为一条,改索引 |
 | 已完成的待办 | 删除——知识库不是历史档案 |
 | 推翻的决策 | 删除旧条目,留新决策 |
@@ -55,11 +55,11 @@ CLAUDE.md / AGENTS.md 不是变更日志。下面这些反模式发现了就删 
 
 ## 文档结构通用约定
 
-新增一个能力(API、flow、特性)的标准动作是**四处都补**:
+按影响更新，不为凑齐模板而创建空文档：
 
-1. **integration-guide / 外部视角文档**:怎么用(curl / SDK 示例 / 错误码)
-2. **architecture**:怎么工作(数据流、状态机、设计取舍)
-3. **runbook**:怎么运维(冒烟命令、故障排查、环境变量)
-4. **handoff / CHANGELOG**:已完成
+1. **integration guide / 外部视角文档**：外部调用方式、SDK 示例或错误码变化时更新
+2. **architecture**：内部数据流、状态机或设计取舍变化时更新
+3. **runbook**：部署、监控、环境变量或故障排查变化时更新
+4. **handoff**：大特性完成且确有跨人员交接需求时更新；纯历史归 git log / CHANGELOG
 
-API 速查表、环境变量表、术语表是高频查询的结构化信息,**必须保持"所见即最新"**。
+API 速查表、环境变量表、术语表一旦存在，必须保持「所见即最新」。
