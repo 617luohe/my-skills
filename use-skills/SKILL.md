@@ -43,6 +43,8 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 
 ## 技能路由表
 
+> **这是全体 skills 的唯一路由源。** 任何 skill(含 0--auto-iteration)需要"需求/任务类型 → skill"映射时，引用本表，不在别处复制。改路由只改这里。
+
 | 用户意图 | 触发词 | 匹配技能 | 技能职责 |
 |---|---|---|---|
 | 新项目初始化 | 新项目、初始化、搭建、脚手架、创建项目 | 0-启动 | 目录结构 → uv 环境 → pre-commit → git init |

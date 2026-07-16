@@ -145,3 +145,10 @@ Claude：仓库 URL 是什么？
 Claude：git remote add origin https://github.com/user/project.git
        git push -u origin main
 ```
+
+## 完成后 — 自动推进
+
+提交/推送完成后：
+
+- 这是一个功能阶段的收尾 → 提示转 `/9-最后整理`（沉淀本次产出、清临时文件、交接）。
+- 只是中途存盘、还要继续开发 → 不打断，回到当前手上的 skill。
