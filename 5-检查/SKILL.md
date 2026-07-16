@@ -32,10 +32,29 @@ description: Two-axis code review（standards + spec compliance）plus interacti
    - 项目中的 PRD/spec 文件
    - 如果都没找到，问你需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"
 3. **定位规范来源** — 收集 CLAUDE.md、CONTRIBUTING.md、CONTEXT.md/CONTEXT-MAP.md、ADR、以及 linter/formatter/tsconfig 等工具配置
+4. **识别门禁关注点** — 从上游 skill（1-规划的 PRD、7-调试的目标基线、6-优化的性能目标）提取门禁维度：
+   
+   **代码质量门禁**（默认，始终检查）：
+   - 命名规范、类型注解、异常处理、import 组织、公共 API 文档字符串
+   
+   **功能目标门禁**（按需，上游有明确目标时增加）：
+   - **性能指标**（如 PRD 要求"API 响应<100ms"）→ 审查时运行性能测试或检查 benchmark 结果
+   - **可靠性指标**（如"复现率<1%"）→ 审查时检查压力测试报告或重复运行测试
+   - **资源消耗**（如"内存<500MB"）→ 审查时检查资源监控数据或 profiler 输出
+   - **覆盖率**（如"测试覆盖率>80%"）→ 审查时检查覆盖率报告
+   
+   如无法自动验证功能目标门禁 → 在审查报告中标注 `⚠️ 需手动验证：XXX 指标`
 
 ### 并行审查
 
 启动两个并行子代理（Agent tool），各自独立报告：
+
+**上下文管理**：
+- 如果 diff 较小（<500 行变更）→ 并行运行两个子代理
+- 如果 diff 较大（≥500 行变更）→ 串行运行，避免上下文超限：
+  - 先运行 Standards 子代理（轻量，主要看规范）
+  - Standards 完成后，再运行 Spec 子代理（重量，需理解需求）
+  - 在最终汇总时标注："diff 较大，串行审查"
 
 **Standards 子代理** — 读规范文件 + 读 diff，逐文件报告违反规范的地方（跳过已被工具自动强约束的事项）：
 - 命名规范：snake_case 函数/变量、PascalCase 类

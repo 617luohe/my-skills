@@ -46,7 +46,17 @@ description: End-of-session wrap-up — summarize this session's changes, captur
 - 一次性调试细节、已完成的计划 → 不记
 - 项目规则、命令速查 → 属于 CLAUDE.md，不属于 memory
 
-**写法**：一条 memory 说清一件事，事实用绝对日期。若发现同类教训已出现多次、或已稳定成"系统怎么工作"→ 这是**毕业**信号，转 `0--neat-freak` 处理，别在这里硬塞。
+**写法**：一条 memory 说清一件事，事实用绝对日期。
+
+**毕业信号检测**（触发转 neat-freak）：
+- ✅ 同类教训出现 ≥3 次（如"该模块的 X 字段容易误用"反复出现）
+- ✅ 临时决策已稳定成"系统怎么工作"（如"OAuth refresh 用 Redis 缓存"从权宜变成架构）
+- ✅ memory 文件数 >50 个，或某个 topic 下 memory >10 个
+
+**如检测到毕业信号**：
+1. 不在本 skill 中处理
+2. 在步骤 2 完成后提示：`检测到 [X] 个毕业信号，建议会话结束后运行 /0--neat-freak 进行知识库审查`
+3. 继续执行步骤 3-4
 
 ### 3. 项目结构整理
 

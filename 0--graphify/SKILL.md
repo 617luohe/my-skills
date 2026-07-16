@@ -480,6 +480,22 @@ graphify query "<question>"
 
 ---
 
+## 完成后 — 自动推进
+
+graphify 构建完成后，根据场景自动推进：
+
+**默认下一步 → `/2-分析`** — 利用索引深入理解项目结构：
+- 2-分析会自动读取 `graphify-out/GRAPH_REPORT.md` 的 Suggested Questions
+- 将这些问题作为分析线索，输出模块地图 + 数据流 + 关键入口
+
+**其他场景**：
+- 用户只想构建索引（"先建个索引"） → 完成即停，不推进
+- 用户明确后续意图（"建索引后帮我重构 X 模块"） → 按意图路由（如 2-分析 → 6-优化）
+
+推进前一句话报出下一步 skill，再执行。
+
+---
+
 ## Troubleshooting
 
 ### PowerShell 5.1: Vertical scrolling stops working
