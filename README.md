@@ -43,6 +43,7 @@ my-skills/
 | **老油条** | 新增 | Python 交付节奏管理 — branch_config.json 驱动模块实现选择，逐步向甲方展示优化成果 |
 | **use-skills** | 智能调度器（入口） | 自然语言需求 → 自动匹配并执行对应技能 |
 | **自动迭代** | 新增（编排层） | 多轮闭环编排 — 五阶段 PDCA 自动推进任务链，门禁驱动直到闭环或跳出，主控+工人模式防上下文膨胀 |
+| **Agent 统筹** (`0--Agent统筹`) | [fable-the-boss](../reference-skills/fable-the-boss/) 中文化整合 | 统一组织、分工、调度和验收 Codex、Cursor 等外部智能体 |
 
 ## 工具类 Skills
 
@@ -78,4 +79,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 8 个完整名称 skills，共 18 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
+同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 9 个完整名称 skills，共 19 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
