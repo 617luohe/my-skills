@@ -90,3 +90,26 @@ my-skills/
 发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 17 个 `distribution: synchronized` 条目构成正式发布集；11 个 `distribution: host-provided` 工具条目只记录宿主提供关系。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
 
 `-DryRun` 会逐项输出 `REMOVE` 和 `COPY`，但不改磁盘。正式运行会对 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/` 执行精确镜像。
+
+## 治理验证
+
+验证源码治理规则（默认不检查部署目录）：
+
+```bash
+python scripts/validate_skills.py
+python scripts/validate_skills.py --json
+```
+
+验证父目录下 `.claude/.cursor/.codex` 的 skill 名称和内容哈希与源码完全一致：
+
+```bash
+python scripts/validate_skills.py --check-deployments
+```
+
+运行标准库 `unittest` 测试：
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+警告不影响退出码；治理错误返回非零退出码。CI 只验证独立源码，不依赖宿主部署目录，也不运行行为模型评测。
