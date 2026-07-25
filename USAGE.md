@@ -161,7 +161,7 @@ Claude：设计文档可拆为 3 个互不冲突的任务。
 
 # 工具类 Skills
 
-> 工具目录的 frontmatter `name` 即调用名；当前不在本仓库一键同步映射中，由宿主环境按需部署。
+> 11 个工具目录在 `skills-manifest.yaml` 中登记为 `host-provided`、`sync: false`，由宿主环境按需提供；精确镜像部署不会复制或改动其行为。
 
 | 调用名 | 适用场景 |
 |---|---|

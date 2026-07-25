@@ -14,7 +14,7 @@ my-skills/
 ├── multi-worker/         — 内置 Agent 并行开发入口（先检查 Agent 配置）
 ├── use-skills/           — 智能调度器入口
 ├── tools--*/             — 工具类 skills
-└── scripts/              — 部署脚本与映射
+└── scripts/              — manifest 解析与精确镜像部署脚本
 ```
 
 ## 调用分类
@@ -67,7 +67,7 @@ my-skills/
 | `tools--网页测试` | `/tools--网页测试` | Web 应用交互测试 |
 | `tools--表格生成` | `/tools--表格生成` | Excel 表格创建与分析 |
 
-> 工具目录是本仓库的参考/封装源码，当前不在 `scripts/sync-map.json` 的一键同步范围；部署由宿主环境的同名 skill 提供。
+> 11 个 `tools--*` 目录在 `skills-manifest.yaml` 中标记为 `host-provided`、`sync: false`；本仓库保留其参考/封装源码，但同步脚本不复制也不修改它们的行为。
 
 ## 部署方法
 
@@ -85,4 +85,8 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 7 个完整名称 skills，共 17 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
+同步后的三个目标是**完整镜像**：脚本先删除每个已存在目标目录下的全部子项，再仅复制 manifest 发布的 17 个核心 skills。目标根不存在时只警告，不创建未知父目录。
+
+发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 17 个 `distribution: synchronized` 条目构成正式发布集；11 个 `distribution: host-provided` 工具条目只记录宿主提供关系。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
+
+`-DryRun` 会逐项输出 `REMOVE` 和 `COPY`，但不改磁盘。正式运行会对 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/` 执行精确镜像。

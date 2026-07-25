@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Sync my-skills to project agent skill directories.
+  Publish the manifest-selected skills as exact mirrors for all known hosts.
 
 .EXAMPLE
   .\my-skills\scripts\sync-skills.ps1
@@ -17,60 +17,65 @@ $ErrorActionPreference = "Stop"
 
 $MySkillsRoot = Split-Path $PSScriptRoot -Parent
 $ProjectRoot = Split-Path $MySkillsRoot -Parent
-$MapPath = Join-Path $PSScriptRoot "sync-map.json"
+$ManifestPath = Join-Path $MySkillsRoot "skills-manifest.yaml"
+$ManifestTool = Join-Path $PSScriptRoot "skill_manifest.py"
+$Targets = @(".claude/skills", ".cursor/skills", ".codex/skills")
 
-if (-not (Test-Path $MapPath)) {
-    throw "Missing sync map: $MapPath"
+if (-not (Test-Path -LiteralPath $ManifestPath -PathType Leaf)) {
+    throw "Missing manifest: $ManifestPath"
+}
+if (-not (Test-Path -LiteralPath $ManifestTool -PathType Leaf)) {
+    throw "Missing manifest tool: $ManifestTool"
 }
 
-$Map = Get-Content -Path $MapPath -Raw -Encoding UTF8 | ConvertFrom-Json
-
-function Copy-SkillTree {
-    param(
-        [string]$Source,
-        [string]$Destination
-    )
-
-    if (-not (Test-Path $Source)) {
-        throw "Source not found: $Source"
-    }
-
-    if ($DryRun) {
-        Write-Host "[dry-run] $Source -> $Destination"
-        return
-    }
-
-    New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-    Copy-Item -Path (Join-Path $Source "*") -Destination $Destination -Recurse -Force
-    Write-Host "OK $Destination"
+$PublicationJson = & python $ManifestTool publication --manifest $ManifestPath
+if ($LASTEXITCODE -ne 0) {
+    throw "Manifest publication failed with exit code $LASTEXITCODE"
+}
+$Publication = $PublicationJson | ConvertFrom-Json
+if (@($Publication.skills).Count -ne 17) {
+    throw "Publication must contain exactly 17 synchronized skills"
 }
 
 Write-Host "my-skills : $MySkillsRoot"
 Write-Host "project   : $ProjectRoot"
+Write-Host "manifest  : $ManifestPath"
+Write-Host "version   : $($Publication.repository_version)"
+Write-Host "published : $(@($Publication.skills).Count)"
 if ($DryRun) { Write-Host "mode      : dry-run" }
 Write-Host ""
 
-foreach ($relativeTarget in $Map.agentTargets) {
-    $targetRoot = Join-Path $ProjectRoot ($relativeTarget -replace '/', '\')
-    if (-not (Test-Path $targetRoot)) {
-        Write-Warning "skip missing target: $relativeTarget"
+foreach ($RelativeTarget in $Targets) {
+    $TargetRoot = Join-Path $ProjectRoot ($RelativeTarget -replace '/', '\')
+    if (-not (Test-Path -LiteralPath $TargetRoot -PathType Container)) {
+        Write-Warning "skip missing target: $RelativeTarget"
         continue
     }
 
-    Write-Host "==> $relativeTarget"
-
-    foreach ($property in $Map.numbered.PSObject.Properties) {
-        $source = Join-Path $MySkillsRoot $property.Name
-        $dest = Join-Path $targetRoot $property.Value
-        Copy-SkillTree -Source $source -Destination $dest
+    Write-Host "==> $RelativeTarget"
+    $ExistingEntries = @(Get-ChildItem -LiteralPath $TargetRoot -Force)
+    foreach ($Entry in $ExistingEntries) {
+        if ($DryRun) {
+            Write-Host "REMOVE $($Entry.FullName)"
+        } else {
+            Remove-Item -LiteralPath $Entry.FullName -Recurse -Force
+            Write-Host "REMOVE $($Entry.FullName)"
+        }
     }
 
-    foreach ($name in $Map.fullNames) {
-        $source = Join-Path $MySkillsRoot $name
-        $dest = Join-Path $targetRoot $name
-        Copy-SkillTree -Source $source -Destination $dest
+    foreach ($Skill in $Publication.skills) {
+        $Source = Join-Path $MySkillsRoot $Skill.path
+        $Destination = Join-Path $TargetRoot $Skill.name
+        if (-not (Test-Path -LiteralPath $Source -PathType Container)) {
+            throw "Source not found: $Source"
+        }
+        if ($DryRun) {
+            Write-Host "COPY   $Source -> $Destination"
+            continue
+        }
+        Copy-Item -LiteralPath $Source -Destination $Destination -Recurse -Force
+        Write-Host "COPY   $Source -> $Destination"
     }
-
     Write-Host ""
 }
 

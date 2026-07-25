@@ -1,0 +1,255 @@
+schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: 0--claude
+    path: 0--claude
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 0--dialectic
+    path: 0--dialectic
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 0--laoyoutiao
+    path: 0--laoyoutiao
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 0--neat-freak
+    path: 0--neat-freak
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 0--tokenless
+    path: 0--tokenless
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 0-启动
+    path: 0-启动
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 1-规划
+    path: 1-规划
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 2-分析
+    path: 2-分析
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 3-原型
+    path: 3-原型
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 4-开发
+    path: 4-开发
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 5-检查
+    path: 5-检查
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 6-优化
+    path: 6-优化
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 7-调试
+    path: 7-调试
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 8-版本管理
+    path: 8-版本管理
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: 9-最后整理
+    path: 9-最后整理
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: multi-worker
+    path: multi-worker
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: use-skills
+    path: use-skills
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: tools--前端设计
+    path: tools--前端设计
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--图表生成
+    path: tools--图表生成
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--幻灯片生成
+    path: tools--幻灯片生成
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--技能工坊
+    path: tools--技能工坊
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--数据可视化
+    path: tools--数据可视化
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--文档生成
+    path: tools--文档生成
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--智能搜索
+    path: tools--智能搜索
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--深度研报生成
+    path: tools--深度研报生成
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--画布设计
+    path: tools--画布设计
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--网页测试
+    path: tools--网页测试
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
+  - name: tools--表格生成
+    path: tools--表格生成
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: host-provided
+    sync: false
+    dependencies: []
