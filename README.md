@@ -23,7 +23,6 @@ my-skills/
 |---|---|---|---|
 | 0 | **初始化CLAUDE** (`0--claude`) | 新增 | 一键生成 CLAUDE.md：称呼规则 + Karpathy 准则 + 上下文健康检查 |
 | 0 | **启动** | 配置环境 + 技能初始化 + 项目脚手架 | 新建项目：目录结构 → uv 环境 → pre-commit → 任务配置 |
-| 0 | **构建索引** (`0--graphify`) | [graphify](https://github.com/safishamsi/graphify) | 将代码/文档/媒体构建为可查询知识图谱（graphify-out/） |
 | 0 | **洁癖审查** (`0--neat-freak`) | 新增 | 知识库洁癖审查 — 校准全局文档↔代码、尺寸体检、记忆毕业、消矛盾（减法/校准；本次会话沉淀交给 9-最后整理） |
 | 0 | **Tokenless** (`0--tokenless`) | [caveman](../reference-skills/caveman/) | 超压缩沟通模式 — 删除填充语和客套，保留完整技术准确性与清晰度例外 |
 | 1 | **规划** | 批量 grilling + 接口设计 + CONTEXT.md + 输出PRD + 拆解任务 | 默认集中询问同类独立决策；用户要求逐步时一次一问，确认共识后产出规划 |
@@ -43,9 +42,7 @@ my-skills/
 | **辩证矛盾分析法** | 新增 | 哲学方法论 — 六步法分析复杂问题、制定战略决策 |
 | **老油条** | 新增 | Python 交付节奏管理 — 优先复用项目已有交付开关框架，无现成机制时回退到 branch_config.json，逐步向甲方展示优化成果 |
 | **use-skills** | 智能调度器（入口） | 自然语言需求 → 自动匹配并执行对应技能 |
-| **自动迭代** | 新增（编排层） | 多轮闭环编排 — 五阶段 PDCA 自动推进任务链，门禁驱动直到闭环或跳出，主控+工人模式防上下文膨胀 |
 | **multi-worker** | 新增（多 Agent 入口） | 基于设计文档拆分独立任务，先核验 Agent 配置，再用独立 worktree 并行开发、审查和合并 |
-| **Agent 统筹** (`0--Agent统筹`) | [fable-the-boss](../reference-skills/fable-the-boss/) 中文化整合 | 统一组织、分工、调度和验收 Codex、Cursor 等外部智能体 |
 
 ## 工具类 Skills
 
@@ -81,4 +78,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 10 个完整名称 skills，共 20 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
+同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 7 个完整名称 skills，共 17 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
