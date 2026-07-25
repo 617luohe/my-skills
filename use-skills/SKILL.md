@@ -36,16 +36,20 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 - ✅ 需要门禁反馈（"提升测试覆盖率到 90%"、"修复所有 mypy 报错"）
 - ✅ 涉及多个独立任务（"给 5 个模块都加上日志"）
 
-**Agent 统筹信号**（优先于普通复杂任务判断）：
-- ✅ 明确调用 Codex、Cursor 等外部编程智能体
-- ✅ 要求多智能体、跨模型协作或并行评审
-- ✅ 要求把独立任务委派给外部 agent
+**多 Agent 协作信号**（优先于普通复杂任务判断）：
+- ✅ 已有设计文档，要求多个内置 worker 分头、同时或并行开发独立模块 → `multi-worker`
+- ✅ 明确调用 Codex、Cursor 等外部编程智能体 → `0--Agent统筹`
+- ✅ 要求跨模型协作或外部智能体并行评审 → `0--Agent统筹`
+- ✅ 要求把独立任务委派给外部 agent → `0--Agent统筹`
+
+**Agent 配置门禁**：凡路由到 `multi-worker`，工作流必须先枚举并核验 Agent 配置（名称、工具权限、模型、worktree 能力）；配置缺失或不兼容时停止并报告，不得直接使用 Agent 或静默降级。
 
 **判断结果与执行策略**：
 - **简单** → 执行步骤 1-4（当前标准流程）
 - **中等** → 规划后通过执行授权门禁，再串联后续工作流（见"组合规则"）
 - **复杂** → 一句话说明理由后，移交 `/0--auto-iteration` 接管
-- **多 Agent 协作** → 移交 `/0--Agent统筹`；若同时要求持续闭环，由 `/0--auto-iteration` 主控并按轮调用
+- **内置多 worker 并行开发** → 移交 `/multi-worker`，并先通过 Agent 配置门禁；若同时要求持续闭环，由 `/0--auto-iteration` 主控并按轮调用
+- **外部/跨模型 Agent 协作** → 移交 `/0--Agent统筹`；若同时要求持续闭环，由 `/0--auto-iteration` 主控并按轮调用
 
 **判断后验证机制**：
 
@@ -126,7 +130,8 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 | 网页测试 | 测试页面、浏览器截图、UI调试、Playwright、自动化测试 | 🧪 验证 | tools--网页测试 | Playwright 自动化测试 |
 | 数据可视化 | 画图表、数据图、可视化、matplotlib、plotly、选图表 | 📊 文档 | tools--数据可视化 | Python 数据可视化 |
 | 自动迭代 / 多轮闭环 | 自动迭代、自动帮我、帮我自动完成、持续改进、迭代执行、闭环推进、loop | 🔁 编排 | 自动迭代 | 五阶段 PDCA：探查→澄清→规划→迭代→收尾。主控+工人模式防上下文膨胀 |
-| Agent 统筹 | Agent统筹、统筹Agent、外援、外部智能体、多智能体、跨模型、Codex、Cursor、委派给agent、并行评审 | 🔁 编排 | 0--Agent统筹 | 能力登记 → 任务分工 → 隔离调度 → 统一验收 → 接受/返工/丢弃 |
+| 内置多 worker 并行开发 | multi-worker、并行开发、分头开发、多路并行、同时开发、并行实现、多 worker | 🔁 编排 | multi-worker | 设计文档 → 独立任务拆解 → Agent 配置检查 → worktree 并行开发 → 审查合并 |
+| Agent 统筹 | Agent统筹、统筹Agent、外援、外部智能体、跨模型、Codex、Cursor、委派给agent、外部并行评审 | 🔁 编排 | 0--Agent统筹 | 能力登记 → 任务分工 → 隔离调度 → 统一验收 → 接受/返工/丢弃 |
 
 **技能类型说明**：
 - 🔧 **工具**：项目基础设施（启动、版本管理、索引、整理）
@@ -179,7 +184,7 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 5. **检查收尾** — 最后做 5-检查、9-最后整理
 6. **tools 类技能** — 独立使用，或作为开发流程的输入/输出环节
 7. **自动迭代优先** — 如果包含"自动帮我"、"持续改进"、"迭代执行"等多轮闭环意图，直接用 自动迭代 接管整个流程
-8. **Agent 统筹意图优先识别** — 明确要求 Codex、Cursor、跨模型或多个外部 Agent 时使用 0--Agent统筹；同时要求多轮闭环时由 0--auto-iteration 主控，按需调用
+8. **多 Agent 入口先分流** — 已有设计文档、用内置 worker 并行开发时使用 multi-worker，且派发前必须核验 Agent 配置；明确 Codex、Cursor、跨模型或外部 Agent 时使用 0--Agent统筹；同时要求多轮闭环时由 0--auto-iteration 主控，按需调用
 
 示例：
 - "分析一下这段代码，然后帮我重构" → 2-分析 → 6-优化

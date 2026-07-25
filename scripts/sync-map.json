@@ -20,6 +20,7 @@
     "0--laoyoutiao",
     "0--auto-iteration",
     "0--Agent统筹",
+    "multi-worker",
     "0--tokenless"
   ],
   "agentTargets": [

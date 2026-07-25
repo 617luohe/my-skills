@@ -11,6 +11,7 @@ my-skills/
 ├── README.md / USAGE.md  — 索引与调用示例
 ├── 0-启动/ ~ 9-最后整理/ — 阶段 0~9 开发流程
 ├── 0--*/                 — 阶段 0 扩展能力
+├── multi-worker/         — 内置 Agent 并行开发入口（先检查 Agent 配置）
 ├── use-skills/           — 智能调度器入口
 ├── tools--*/             — 工具类 skills
 └── scripts/              — 部署脚本与映射
@@ -43,6 +44,7 @@ my-skills/
 | **老油条** | 新增 | Python 交付节奏管理 — branch_config.json 驱动模块实现选择，逐步向甲方展示优化成果 |
 | **use-skills** | 智能调度器（入口） | 自然语言需求 → 自动匹配并执行对应技能 |
 | **自动迭代** | 新增（编排层） | 多轮闭环编排 — 五阶段 PDCA 自动推进任务链，门禁驱动直到闭环或跳出，主控+工人模式防上下文膨胀 |
+| **multi-worker** | 新增（多 Agent 入口） | 基于设计文档拆分独立任务，先核验 Agent 配置，再用独立 worktree 并行开发、审查和合并 |
 | **Agent 统筹** (`0--Agent统筹`) | [fable-the-boss](../reference-skills/fable-the-boss/) 中文化整合 | 统一组织、分工、调度和验收 Codex、Cursor 等外部智能体 |
 
 ## 工具类 Skills
@@ -79,4 +81,4 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 9 个完整名称 skills，共 19 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。
+同步范围由 `scripts/sync-map.json` 决定；当前包括 10 个阶段 skills 与 10 个完整名称 skills，共 20 个。目标为 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/`。阶段 1~9 保留完整中文目录名，阶段 0 扩展保留 `0--*` 前缀。

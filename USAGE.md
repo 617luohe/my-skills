@@ -171,6 +171,34 @@ Claude：[迭代 2 完成] 门禁 ✅ pass
 
 ---
 
+## multi-worker — 内置多 Agent 并行开发入口
+
+**场景**：已有完整设计文档，且可以拆成 2–5 个互不修改同一文件的独立子任务，需要调用宿主内置 worker Agent 并行实现。
+
+**位置**：多 Agent 协同入口。`multi-worker` 管理内置 worker 的任务拆解、Agent 配置检查、worktree 隔离、并行派发、审查和合并；Codex、Cursor 等外部执行器仍交给 `0--Agent统筹`。
+
+**触发方式**：`/multi-worker <设计文档路径>`，或自然语言提到“并行开发”“分头开发”“同时开发多个独立模块”。
+
+**前置门禁**：
+1. 设计文档必须包含目标、模块划分、接口约定和验收标准。
+2. 派发前必须枚举项目级与用户级 Agent 配置，核对 Agent 名称、工具权限、模型和 `worktree` 能力。
+3. 未找到兼容的开发 worker 时停止并报告配置缺口；不得直接使用 Agent，也不得静默回退到通用 Agent。
+4. 工作区必须干净；每个 worker 使用独立分支和 worktree。
+
+**核心流程**：设计文档 → 独立任务拆解 → 用户确认 → Agent 配置检查 → Git 基线与任务分支 → 并行派发 → 逐项验收 → 合并。
+
+**对话示例**：
+```
+你：/multi-worker docs/design-text-tools.md
+Claude：设计文档可拆为 3 个互不冲突的任务。
+        先检查 Agent 配置：已确认 worker-dev 的工具权限、模型与 worktree 能力。
+        工作区和分支准备完成后，并行派发 3 个 worker；逐项测试通过后合并到集成分支。
+```
+
+**边界**：没有设计文档先用 `/1-规划`；任务有强依赖用 `/0--auto-iteration`；涉及 Codex/Cursor 用 `/0--Agent统筹`。
+
+---
+
 ## Agent 统筹 — 多智能体组织与调度
 
 **场景**：需要调用 Codex CLI、Cursor Agent 等外部编程智能体完成独立实现、后台长任务、跨模型复核或并行只读评审。
