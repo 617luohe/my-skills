@@ -1,0 +1,5 @@
+interface:
+  display_name: "Version Control"
+  short_description: "Manage Git history, branches, and remotes"
+policy:
+  allow_implicit_invocation: false

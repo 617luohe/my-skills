@@ -1,7 +1,6 @@
 ---
 name: 2-分析
-description: Read unfamiliar code and output a high-level map — modules, data flow, entry points, architecture context. Use when you don't understand a section of code, need architecture overview, or want to see the big picture. 触发词：分析、理解、概览、地图、看不懂、结构、模块、代码结构、overview。
-disable-model-invocation: true
+description: Read unfamiliar code and output a high-level map — modules, data flow, entry points, and architecture context. Use when the user does not understand a section of code, needs an architecture overview, asks how a project is structured, or wants the big picture. Triggers include analysis, understanding, overview, map, unfamiliar code, structure, modules, code structure, and architecture.
 ---
 
 # 2-分析 — 代码理解与概览

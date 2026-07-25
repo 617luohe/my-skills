@@ -1,6 +1,6 @@
 ---
 name: multi-worker
-description: 并行开发编排 — 读设计文档 → 拆解独立子任务 → git 基线+独立分支 → spawn 多个 worker agent 并行开发 → 收集审查 → 合并。触发词：并行开发、multi-worker、分头开发、多路并行、同时开发、并行实现、多 worker。
+description: Orchestrate parallel implementation only when BOTH a clear existing development or design document defines the work AND the work contains genuinely independent development tasks that can proceed concurrently without conflicting edits or unresolved dependencies. Use for parallel development, multiple workers, or independent module implementation only when both conditions hold; otherwise do not invoke this skill and use planning or sequential development instead.
 ---
 
 # multi-worker — 并行开发编排

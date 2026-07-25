@@ -1,6 +1,7 @@
 ---
 name: 0--neat-freak
-description: OCD-level knowledge-base reconciliation — audits project docs (CLAUDE.md, README.md, docs/) and agent memory against the code so nothing rots, with size checks, memory graduation, and contradiction removal. Scope is the WHOLE knowledge base, not just this session (session-level wrap-up is 9-最后整理). 对整个知识库做洁癖审查与同步。触发词：sync up、tidy up docs、update memory、clean up docs、同步文档、整理文档、更新记忆、梳理一下文档、文档和代码对不上、记忆膨胀、新人能直接上手、/sync、/neat。
+description: Reconcile the whole project knowledge base with the code, removing stale or contradictory material.
+disable-model-invocation: true
 ---
 
 # 0--neat-freak — 知识库洁癖审查

@@ -1,6 +1,6 @@
 ---
 name: 5-检查
-description: Two-axis code review（standards + spec compliance）plus interactive bug reporting with GitHub issue creation. Use before merging code, after completing a feature, or when you find a bug. 触发词：代码审查、检查、验收、review、bug报告、issue、质量检查。
+description: Review code on standards and specification compliance, or turn discovered bugs into actionable reports and GitHub issues. Use before merging, after feature completion, for acceptance checks, or when the user asks for review, inspection, quality validation, or bug reporting.
 ---
 
 # 5-检查 — 代码审查与验收

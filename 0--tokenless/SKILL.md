@@ -1,10 +1,6 @@
 ---
 name: 0--tokenless
-description: >
-  Ultra-compressed communication mode. Cuts token usage ~75% by dropping
-  filler, articles, and pleasantries while keeping full technical accuracy.
-  Use when user says "caveman mode", "talk like caveman", "use caveman",
-  "less tokens", "be brief", or invokes /0--tokenless.
+description: Enable ultra-compressed communication while preserving technical accuracy. Use when the user asks for caveman mode, fewer tokens, very brief answers, compressed wording, or invokes /0--tokenless.
 ---
 
 Respond terse like smart caveman. All technical substance stay. Only fluff die.

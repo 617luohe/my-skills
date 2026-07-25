@@ -1,0 +1,3 @@
+interface:
+  display_name: "Architecture Optimization"
+  short_description: "Plan safe incremental architecture improvements"

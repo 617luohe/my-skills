@@ -1,6 +1,7 @@
 ---
 name: 1-规划
-description: Full planning pipeline — grill requirements, extract domain terms, design interfaces, output PRD, break into tasks. Use before writing code for any non-trivial feature. 触发词：规划、方案设计、PRD、任务拆解、接口设计、领域建模、需求分析、ADR、技术方案。
+description: Plan non-trivial features through requirements, domain terms, interfaces, PRD, and task breakdown.
+disable-model-invocation: true
 ---
 
 # 1-规划 — 方案设计与任务拆解

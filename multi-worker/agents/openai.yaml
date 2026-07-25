@@ -1,0 +1,3 @@
+interface:
+  display_name: "Multi-worker Development"
+  short_description: "Parallelize documented independent tasks"

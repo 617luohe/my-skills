@@ -1,6 +1,6 @@
 ---
 name: 0--claude
-description: One-shot CLAUDE.md initializer — creates a new CLAUDE.md from the single-source template (称呼规则 + Caveman 简洁规则 + Karpathy 编码准则 + 工作流路由 + 支撑层), or injects only the missing rule blocks into an existing CLAUDE.md. Non-destructive, structural detection (no fuzzy string matching). 触发词：初始化CLAUDE、创建CLAUDE.md、CLAUDE规则、caveman、karpathy、工作流路由。
+description: Initialize or repair CLAUDE.md from the single-source collaboration template, creating a new file or injecting only missing rule blocks non-destructively. Use when the user asks to initialize CLAUDE.md, add Claude project rules, or install the Caveman, Karpathy, and workflow-routing conventions.
 ---
 
 # 0--claude — CLAUDE.md 初始化器

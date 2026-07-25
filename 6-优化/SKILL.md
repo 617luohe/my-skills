@@ -1,6 +1,6 @@
 ---
 name: 6-优化
-description: Discover architectural friction points + create detailed incremental refactor plans with tiny safe commits. Use when code gets messy, modules grow too large, or you want to improve codebase structure. 触发词：优化、重构、改进、架构、代码混乱、耦合、refactor、cleanup。
+description: Discover architectural friction and create detailed incremental refactor plans with small safe commits. Use when code is messy, modules are oversized, coupling blocks change, tests are difficult, or the user asks to optimize, refactor, clean up, or improve architecture.
 ---
 
 # 6-优化 — 重构与架构改进

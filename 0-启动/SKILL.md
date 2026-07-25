@@ -1,6 +1,7 @@
 ---
 name: 0-启动
-description: One-shot new project bootstrap — creates scaffold, uv environment, pre-commit (Ruff + mypy + pytest), git init, and task tracking config. Use when starting a new Python project. 触发词：新项目、初始化、搭建、脚手架、创建项目、启动项目、uv、pre-commit。
+description: One-shot Python project bootstrap with scaffold, uv, pre-commit, git, and task tracking.
+disable-model-invocation: true
 ---
 
 # 0-启动 — 新项目初始化

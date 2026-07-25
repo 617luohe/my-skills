@@ -1,6 +1,7 @@
 ---
 name: use-skills
-description: Intelligent skill dispatcher — analyze natural language requests and automatically route to the best matching skills. Use when you want to accomplish a task but don't know which skill to call, or want to compose multiple skills. 触发词：use-skills、智能调度、用什么技能、匹配技能、调用技能、不知道该用哪个。
+description: Route a stated request to the appropriate skills and compose an execution path.
+disable-model-invocation: true
 ---
 
 # use-skills — 智能技能调度器
@@ -103,8 +104,8 @@ description: Intelligent skill dispatcher — analyze natural language requests 
 | 新项目初始化 | 新项目、初始化、搭建、脚手架、创建项目 | 🔧 工具 | 0-启动 | 目录结构 → uv 环境 → pre-commit → git init |
 | 方案规划 | 规划、方案、设计、PRD、拆任务、需求分析 | 📋 规划 | 1-规划 | 方案追问 → 术语表 → 接口设计 → PRD → 任务拆解 |
 | 代码分析 / 项目理解 | 分析、理解、概览、地图、看不懂、结构、陌生项目、项目索引 | 📖 分析 | 2-分析 | 直接读取仓库事实，输出模块地图 + 数据流 + 关键入口 + 架构位置 |
-| 辩证分析 / 矛盾分析 | 矛盾分析、辩证分析、战略判断、宏观局势、问题分析、决策复盘、逆境突破、统筹、逻辑分析 | 🧠 方法论 | 辩证矛盾分析法 | 基础哲学方法论 — 六步法分析复杂问题、制定战略决策 |
-| 交付节奏管理 | 老油条、交付节奏、分支切换、逐步交付、甲方交付、交付说明、控制交付、branch switch | 🧠 方法论 | 老油条 | 优先复用项目已有交付开关，无现成机制时回退 branch_config.json + 交付路线图 + 甲方交付说明 |
+| 辩证分析 / 矛盾分析 | 矛盾分析、辩证分析、战略判断、宏观局势、问题分析、决策复盘、逆境突破、统筹、逻辑分析 | 🧠 方法论 | 0--dialectic | 基础哲学方法论 — 六步法分析复杂问题、制定战略决策 |
+| 交付节奏管理 | 老油条、交付节奏、分支切换、逐步交付、甲方交付、交付说明、控制交付、branch switch | 🧠 方法论 | 0--laoyoutiao | 优先复用项目已有交付开关，无现成机制时回退 branch_config.json + 交付路线图 + 甲方交付说明 |
 | 快速原型 | 原型、验证、试错、不确定、快速验证、试试 | 🧪 验证 | 3-原型 | 一次性代码快速验证设计决策 |
 | 编码实现 | 开发、实现、编码、写代码、TDD、功能开发 | 💻 开发 | 4-开发 | TDD 红-绿-重构循环 |
 | 代码审查 | 审查、检查、验收、review、质量、issue | ✅ 质量 | 5-检查 | 双轴审查（标准+需求） / Bug报告 |

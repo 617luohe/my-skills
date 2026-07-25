@@ -1,6 +1,6 @@
 ---
 name: 0--laoyoutiao
-description: Python项目交付节奏管理。优先复用项目已有的特性开关、配置中心或实现选择框架；仅在没有现成机制时才回退到branch_config.json，逐步向甲方展示优化成果并生成交付说明。触发词：老油条、交付节奏、控制交付、分支切换、逐步交付、甲方交付、交付说明、这次交什么、branch switch、delivery pacing。
+description: Manage Python project delivery pacing by reusing existing feature flags, configuration centers, or implementation selectors, falling back to branch_config.json only when needed. Use for staged client delivery, controlled feature rollout, delivery recommendations, branch switching, roadmaps, and client-facing delivery notes.
 ---
 
 # 老油条 — Python 交付节奏管理

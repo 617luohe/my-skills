@@ -1,6 +1,6 @@
 ---
 name: 3-原型
-description: Build throwaway prototypes to validate uncertain design decisions — data models, state machines, algorithm choices, API schemas — before committing to full TDD implementation. Use when planning reveals open questions, or before starting formal development. 触发词：原型、快速验证、试错、不确定、验证设计、prototype。
+description: Build throwaway prototypes to validate uncertain design decisions — data models, state machines, algorithm choices, and API schemas — before formal implementation. Use when planning reveals open questions, the user asks for a prototype or quick validation, or a design needs evidence before TDD development.
 ---
 
 # 3-原型 — 快速原型验证

@@ -1,6 +1,7 @@
 ---
 name: 8-版本管理
-description: Full git version control — init, save, log, diff, rollback, branch, remote. Works locally by default; connect to GitHub on demand. Use for any version control needs. 触发词：版本管理、git、提交、推送、分支、回滚、保存、commit、push。
+description: Manage Git repositories, history, branches, remotes, rollback, and synchronization.
+disable-model-invocation: true
 ---
 
 # 8-版本管理 — Git 版本控制全流程

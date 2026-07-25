@@ -1,6 +1,7 @@
 ---
 name: 9-最后整理
-description: End-of-session wrap-up — summarize this session's changes, capture lessons/decisions into memory, tidy project structure, create a handoff document, and verify git safety guardrails. Focus is sedimenting THIS session's output, not global doc reconciliation (that's 0--neat-freak). Use when finishing a milestone, ending a work session, or handing off. 触发词：收尾、下班、结束、交接、handoff、总结、修改总结、复盘、沉淀经验、清理临时文件、整理项目结构。
+description: Wrap up the current work session with a change summary, handoff, cleanup, and captured decisions.
+disable-model-invocation: true
 ---
 
 # 9-最后整理 — 会话收尾与沉淀

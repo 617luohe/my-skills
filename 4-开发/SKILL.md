@@ -1,6 +1,6 @@
 ---
 name: 4-开发
-description: TDD red-green-refactor loop with pytest, guided by coding guardrails（先想后写、简单第一、手术刀式改动、目标驱动）. Use when implementing features or fixing bugs test-first. 触发词：开发、实现、编码、写代码、TDD、功能开发、test-driven。
+description: Implement features and bug fixes with a pytest-driven red-green-refactor loop and coding guardrails. Use when the user asks to develop, implement, code, or test-drive a change, especially after a plan or validated prototype exists.
 ---
 
 # 4-开发 — TDD 编码实现

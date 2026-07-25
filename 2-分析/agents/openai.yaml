@@ -1,0 +1,3 @@
+interface:
+  display_name: "Code Analysis"
+  short_description: "Map unfamiliar code and architecture"

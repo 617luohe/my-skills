@@ -1,0 +1,5 @@
+interface:
+  display_name: "Project Bootstrap"
+  short_description: "Bootstrap a Python project toolchain"
+policy:
+  allow_implicit_invocation: false

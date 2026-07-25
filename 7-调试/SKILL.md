@@ -1,6 +1,6 @@
 ---
 name: 7-调试
-description: Disciplined diagnosis loop for bugs and performance issues — reproduce → hypothesise → instrument → fix → regression test. Use when encountering a hard-to-reproduce bug or performance regression. 触发词：调试、debug、排查、诊断、报错、崩溃、性能问题、复现。
+description: Diagnose bugs and performance regressions through reproduce → hypothesize → instrument → fix → regression test. Use when errors, crashes, intermittent failures, unexplained behavior, or performance problems need systematic investigation.
 ---
 
 # 7-调试 — 结构化调试
