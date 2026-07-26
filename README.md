@@ -72,7 +72,7 @@ my-skills/
 |---|---|---|---|
 | 0 | **询问luohe** (`0-询问luohe`) | 路由器 — 不知道用哪个技能？问我 | - |
 | 0 | **初始化CLAUDE** (`0--claude`) | 一键生成 CLAUDE.md | - |
-| 0 | **启动** (`0-启动`) | 新项目脚手架 | - |
+| 0 | **启动** (`0-启动`) | 新项目最小脚手架（结构 + git + uv） | - |
 | 0 | **洁癖审查** (`0--neat-freak`) | 知识库洁癖审查 | - |
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |

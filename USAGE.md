@@ -401,19 +401,17 @@ Claude：Inline obj prop -> new ref -> re-render. `useMemo`.
 
 ## 0-启动 — 项目脚手架
 
-**场景**：开始一个全新的 Python 项目时使用。一条龙完成：目录结构 → uv 环境 → pre-commit → git 初始化 → 任务配置。
+**场景**：开始一个全新的 Python 项目时使用。最小三件套：项目结构 → 本地 git → uv 环境。ruff / mypy / pre-commit 不默认装，要才加。
 
 **触发方式**：`/0-启动`
 
 **对话示例**：
 ```
-你：新建一个项目叫 data-pipeline，帮我启动
-Claude：Python 版本？
-你：>=3.12，用 uv
-Claude：mypy 要 strict 吗？(y/N)
-你：N
-...
-Claude：项目已就绪。运行 `uv run pytest` 验证。
+你：/0-启动 新建一个项目叫 data-pipeline
+Claude：新建 data-pipeline/ 子目录，还是就在当前目录初始化？
+你：新建子目录
+Claude：[uv init --package --vcs git → tests/ → uv add --dev pytest]
+        1 passed，首次提交完成。要 ruff / mypy / pre-commit 说一声。
 ```
 
 ---
