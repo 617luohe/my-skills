@@ -33,8 +33,8 @@ if ($LASTEXITCODE -ne 0) {
     throw "Manifest publication failed with exit code $LASTEXITCODE"
 }
 $Publication = $PublicationJson | ConvertFrom-Json
-if (@($Publication.skills).Count -ne 17) {
-    throw "Publication must contain exactly 17 synchronized skills"
+if (@($Publication.skills).Count -ne 19) {
+    throw "Publication must contain exactly 19 synchronized skills"
 }
 
 Write-Host "my-skills : $MySkillsRoot"
