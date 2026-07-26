@@ -1,5 +1,0 @@
-interface:
-  display_name: "Skill Dispatcher"
-  short_description: "Route requests to the right skills"
-policy:
-  allow_implicit_invocation: false
