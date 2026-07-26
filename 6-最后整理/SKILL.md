@@ -1,10 +1,10 @@
 ---
-name: 9-最后整理
+name: 6-最后整理
 description: Wrap up the current work session with a change summary, handoff, cleanup, and captured decisions.
 disable-model-invocation: true
 ---
 
-# 9-最后整理 — 会话收尾与沉淀
+# 6-最后整理 — 会话收尾与沉淀
 
 会话收尾仪式，四件事：**修改总结**（本次改了什么）、**经验沉淀**（把教训/决策记进 memory）、**项目结构整理**（清临时文件、理目录）、**交接 + 护栏**。
 

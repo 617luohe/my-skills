@@ -1,10 +1,10 @@
 ---
-name: 4-开发
+name: 2-开发
 description: Implement features and bug fixes with a pytest-driven red-green-refactor loop and coding guardrails. Use when the user asks to develop, implement, code, or test-drive a change, especially after a plan or validated prototype exists.
 disable-model-invocation: false
 ---
 
-# 4-开发 — TDD 编码实现
+# 2-开发 — TDD 编码实现
 
 使用 `/vocabulary/tdd` 技能进行红-绿-重构循环开发。
 

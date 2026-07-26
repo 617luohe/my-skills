@@ -1,10 +1,10 @@
 ---
-name: 7-调试
+name: 4-调试
 description: Diagnose bugs and performance regressions through reproduce → hypothesize → instrument → fix → regression test. Use when errors, crashes, intermittent failures, unexplained behavior, or performance problems need systematic investigation.
 disable-model-invocation: false
 ---
 
-# 7-调试 — 结构化调试
+# 4-调试 — 结构化调试
 
 使用 `/vocabulary/diagnosing-bugs` 技能进行六阶段调试流程。
 

@@ -1,10 +1,10 @@
 ---
-name: 8-版本管理
+name: 5-版本管理
 description: Manage Git repositories, history, branches, remotes, rollback, and synchronization.
 disable-model-invocation: true
 ---
 
-# 8-版本管理 — Git 版本控制全流程
+# 5-版本管理 — Git 版本控制全流程
 
 覆盖 git 版本管理全部核心操作。默认本地仓库，需连接远程时按需配置。
 

@@ -64,8 +64,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 2-分析
-    path: 2-分析
+  - name: 2-开发
+    path: 2-开发
     version: 1.0.0
     status: stable
     invocation: model
@@ -73,8 +73,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 3-原型
-    path: 3-原型
+  - name: 3-检查
+    path: 3-检查
     version: 1.0.0
     status: stable
     invocation: model
@@ -82,8 +82,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 4-开发
-    path: 4-开发
+  - name: 4-调试
+    path: 4-调试
     version: 1.0.0
     status: stable
     invocation: model
@@ -91,35 +91,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 5-检查
-    path: 5-检查
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-  - name: 6-优化
-    path: 6-优化
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-  - name: 7-调试
-    path: 7-调试
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-  - name: 8-版本管理
-    path: 8-版本管理
+  - name: 5-版本管理
+    path: 5-版本管理
     version: 1.0.0
     status: stable
     invocation: user
@@ -127,8 +100,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 9-最后整理
-    path: 9-最后整理
+  - name: 6-最后整理
+    path: 6-最后整理
     version: 1.0.0
     status: stable
     invocation: user

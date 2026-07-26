@@ -1,10 +1,10 @@
 ---
-name: 5-检查
+name: 3-检查
 description: Review code on standards and specification compliance, or turn discovered bugs into actionable reports and GitHub issues. Use before merging, after feature completion, for acceptance checks, or when the user asks for review, inspection, quality validation, or bug reporting.
 disable-model-invocation: false
 ---
 
-# 5-检查 — 代码审查与验收
+# 3-检查 — 代码审查与验收
 
 两个模式：**代码审查**（Review）和 **Bug 报告**（QA）。进入时问用户走哪个。
 
