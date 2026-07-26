@@ -8,8 +8,6 @@ disable-model-invocation: true
 
 覆盖 git 版本管理全部核心操作。默认本地仓库，需连接远程时按需配置。
 
-## 操作清单
-
 ## MUST 规则
 
 1. **危险操作必须先确认再执行。** `git reset --hard`、`git push --force`、`git branch -D` 需要用户明确同意。
@@ -29,9 +27,11 @@ git init
 ### save — 保存版本
 
 ```bash
-git add .
+git add <具体文件或目录>
 git commit -m "<描述>"
 ```
+
+**优先暂存具体文件**，避免 `git add .` 误提交敏感文件（如 `.env`、临时文件）。
 
 如果未提供描述，自动根据变更生成提交信息。
 
@@ -93,10 +93,10 @@ git branch -d <name>      # 删除已合并的分支
 
 ```bash
 git remote add origin <url>
-git push -u origin main
+git push -u origin $(git branch --show-current)
 ```
 
-在你要求连接 GitHub 时执行。首次推送后告知你后续可直接用 `push` 和 `pull`。
+在你要求连接 GitHub 时执行。**动态获取当前分支名**，避免硬编码 `main`。首次推送后告知你后续可直接用 `push` 和 `pull`。
 
 ---
 
@@ -153,21 +153,21 @@ Claude：git remote add origin https://github.com/user/project.git
 
 **判断"功能阶段收尾" vs "中途存盘"**：
 
-**收尾信号**（满足任一条 → 转 9-最后整理）：
+**收尾信号**（满足任一条 → 转 6-最后整理）：
 - ✅ 用户明确说"完成了"、"收尾"、"下班"、"交接"
 - ✅ commit message 含 "完成"、"收尾"、"ready for review"
-- ✅ 上游来自 5-检查（审查通过后提交 → 说明功能完整）
+- ✅ 上游来自 3-检查（审查通过后提交 → 说明功能完整）
 - ✅ 当前会话已持续 >30 个交互轮次（长会话，建议整理）
 
 **中途存盘信号**（满足任一条 → 回到当前 skill）：
 - ✅ 用户说"先提交一下"、"保存进度"、"存个盘"
 - ✅ commit message 含 "WIP"、"checkpoint"、"临时提交"
-- ✅ 上游来自 4-开发、6-优化、7-调试（开发过程中提交 → 继续当前任务）
+- ✅ 上游来自 2-开发、4-调试（开发过程中提交 → 继续当前任务）
 
 **如果信号不明确**：
 - 询问用户："这是阶段收尾还是中途存盘？"
 - 提供推荐：根据 commit message 和上游 skill 推断
 
 **执行推进**：
-- 收尾 → 一句话提示 `→ 建议进入 /9-最后整理`，等待用户确认
-- 中途存盘 → 回到当前 skill（如 4-开发），继续执行
+- 收尾 → 一句话提示 `→ 建议进入 /6-最后整理`，等待用户确认
+- 中途存盘 → 回到当前 skill（如 2-开发），继续执行

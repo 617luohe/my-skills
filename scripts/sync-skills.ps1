@@ -33,8 +33,9 @@ if ($LASTEXITCODE -ne 0) {
     throw "Manifest publication failed with exit code $LASTEXITCODE"
 }
 $Publication = $PublicationJson | ConvertFrom-Json
-if (@($Publication.skills).Count -ne 19) {
-    throw "Publication must contain exactly 19 synchronized skills"
+$ExpectedCount = $Publication.synchronized_count + $Publication.host_provided_count
+if (@($Publication.skills).Count -ne $Publication.synchronized_count) {
+    throw "Publication skill count mismatch: expected $($Publication.synchronized_count) synchronized, got $(@($Publication.skills).Count)"
 }
 
 Write-Host "my-skills : $MySkillsRoot"
@@ -55,11 +56,20 @@ foreach ($RelativeTarget in $Targets) {
     Write-Host "==> $RelativeTarget"
     $ExistingEntries = @(Get-ChildItem -LiteralPath $TargetRoot -Force)
     foreach ($Entry in $ExistingEntries) {
+        $IsReparsePoint = ($Entry.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -ne 0
         if ($DryRun) {
-            Write-Host "REMOVE $($Entry.FullName)"
+            $TypeLabel = if ($IsReparsePoint) { "junction" } else { "dir" }
+            Write-Host "REMOVE [$TypeLabel] $($Entry.FullName)"
         } else {
-            Remove-Item -LiteralPath $Entry.FullName -Recurse -Force
-            Write-Host "REMOVE $($Entry.FullName)"
+            if ($IsReparsePoint) {
+                # Remove junction itself only, never traverse into target
+                Remove-Item -LiteralPath $Entry.FullName -Force
+                Write-Host "REMOVE [junction] $($Entry.FullName)"
+            } else {
+                # Normal directory: safe to recurse
+                Remove-Item -LiteralPath $Entry.FullName -Recurse -Force
+                Write-Host "REMOVE [dir] $($Entry.FullName)"
+            }
         }
     }
 

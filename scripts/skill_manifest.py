@@ -26,6 +26,7 @@ REQUIRED_FIELDS = {
     "sync",
     "dependencies",
 }
+OPTIONAL_FIELDS = {"layer"}
 
 
 def _scalar(text: str, line_number: int) -> Any:
@@ -58,7 +59,9 @@ def load_manifest(path: Path) -> dict[str, Any]:
     skills: list[dict[str, Any]] = []
     current: dict[str, Any] | None = None
 
-    for line_number, raw_line in enumerate(path.read_text(encoding="utf-8-sig").splitlines(), 1):
+    for line_number, raw_line in enumerate(
+        path.read_text(encoding="utf-8-sig").splitlines(), 1
+    ):
         if not raw_line.strip() or raw_line.lstrip().startswith("#"):
             continue
         indent = len(raw_line) - len(raw_line.lstrip(" "))
@@ -71,7 +74,9 @@ def load_manifest(path: Path) -> dict[str, Any]:
                 continue
             key, separator, value = stripped.partition(":")
             if not separator or not key or key in document:
-                raise ValueError(f"line {line_number}: invalid or duplicate top-level key")
+                raise ValueError(
+                    f"line {line_number}: invalid or duplicate top-level key"
+                )
             document[key] = _scalar(value, line_number)
             continue
 
@@ -86,7 +91,9 @@ def load_manifest(path: Path) -> dict[str, Any]:
         if indent == 4 and current is not None:
             key, separator, value = stripped.partition(":")
             if not separator or not key or key in current:
-                raise ValueError(f"line {line_number}: invalid or duplicate skill field")
+                raise ValueError(
+                    f"line {line_number}: invalid or duplicate skill field"
+                )
             current[key] = _scalar(value, line_number)
             continue
 
@@ -101,7 +108,9 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
     if manifest.get("schema_version") != 1:
         raise ValueError("schema_version must be 1")
     repository_version = manifest.get("repository_version")
-    if not isinstance(repository_version, str) or not SEMVER.fullmatch(repository_version):
+    if not isinstance(repository_version, str) or not SEMVER.fullmatch(
+        repository_version
+    ):
         raise ValueError("repository_version must be a semantic version")
 
     seen_names: set[str] = set()
@@ -109,7 +118,7 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
     host_provided = 0
     for index, skill in enumerate(manifest["skills"], 1):
         missing = REQUIRED_FIELDS - skill.keys()
-        extra = skill.keys() - REQUIRED_FIELDS
+        extra = skill.keys() - REQUIRED_FIELDS - OPTIONAL_FIELDS
         if missing or extra:
             raise ValueError(
                 f"skill {index}: fields mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
@@ -137,7 +146,9 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
 
         if skill["distribution"] == "synchronized":
             if skill["sync"] is not True:
-                raise ValueError(f"skill {name}: synchronized skills must set sync true")
+                raise ValueError(
+                    f"skill {name}: synchronized skills must set sync true"
+                )
             published.append({"name": name, "path": skill["path"]})
         elif skill["distribution"] == "host-provided":
             host_provided += 1
@@ -148,16 +159,12 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
         else:
             raise ValueError(f"skill {name}: unsupported distribution")
 
-    if len(published) != 17 or host_provided != 11:
-        raise ValueError(
-            f"manifest governance counts must be 17 synchronized and 11 host-provided; "
-            f"found {len(published)} and {host_provided}"
-        )
-
     return {
         "generated_by": "scripts/skill_manifest.py from skills-manifest.yaml",
         "schema_version": manifest["schema_version"],
         "repository_version": repository_version,
+        "synchronized_count": len(published),
+        "host_provided_count": host_provided,
         "skills": published,
     }
 

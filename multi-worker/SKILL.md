@@ -1,7 +1,7 @@
 ---
 name: multi-worker
 description: Orchestrate parallel implementation only when BOTH a clear existing development or design document defines the work AND the work contains genuinely independent development tasks. Use for parallel development when both conditions hold; otherwise use planning or sequential development instead.
-disable-model-invocation: true
+disable-model-invocation: false
 experimental: true
 ---
 
@@ -13,8 +13,8 @@ experimental: true
 
 ## 与主流程的关系
 
-- **主流程**：`/1-规划` → **串行** `/4-开发`（安全，默认）
-- **加速分支**：`/1-规划` → **multi-worker** → **并行** `/4-开发`（高风险，需要明确条件）
+- **主流程**：`/1-规划` → **串行** `/2-开发`（安全，默认）
+- **加速分支**：`/1-规划` → **multi-worker** → **并行** `/2-开发`（高风险，需要明确条件）
 
 ## 前置条件（全部满足才用）
 
@@ -25,10 +25,10 @@ experimental: true
 
 ## 何时不用
 
-- **任务有依赖**（A 的输出是 B 的输入）→ 串行 `/4-开发`
+- **任务有依赖**（A 的输出是 B 的输入）→ 串行 `/2-开发`
 - **设计文档不完整** → 先补完 `/1-规划`
-- **只有 1 个任务** → 直接 `/4-开发`
-- **任务会修改同一文件** → 串行 `/4-开发`
+- **只有 1 个任务** → 直接 `/2-开发`
+- **任务会修改同一文件** → 串行 `/2-开发`
 
 ## 流程
 
@@ -91,7 +91,7 @@ experimental: true
 
 建议：
 1. 创建 .claude/agents.yaml 并定义 worker-dev
-2. 或使用串行 /4-开发（安全默认）
+2. 或使用串行 /2-开发（安全默认）
 
 是否继续串行开发？
 ```
@@ -120,7 +120,7 @@ git worktree add ../worktree-T3 -b feat/multi-worker/T3-nl
 全部并行启动（不排队），每个 worker：
 - 运行在独立 worktree
 - 使用配置的开发 Agent（如 `worker-dev`）
-- 调用 `/4-开发` 执行任务
+- 调用 `/2-开发` 执行任务
 - 传入：任务描述 + 验收标准 + 项目约束（不传对话历史）
 
 ```bash
@@ -194,5 +194,5 @@ git worktree remove ../worktree-T3
 ## 与其他技能的关系
 
 - **输入** — `/1-规划` 产出的设计文档（PRD）
-- **调用** — `/1-规划`（任务拆解）→ N × `/4-开发`（并行）→ N × `/vocabulary/code-review`（验收）
-- **输出** — 集成分支（所有任务合并后的代码）→ `/8-版本管理`（可选 PR）
+- **调用** — `/1-规划`（任务拆解）→ N × `/2-开发`（并行）→ N × `/vocabulary/code-review`（验收）
+- **输出** — 集成分支（所有任务合并后的代码）→ `/5-版本管理`（可选 PR）

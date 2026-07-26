@@ -52,6 +52,66 @@ login(user_id=1, password="wrong")  # 仍然失败
 
 **退出门禁**：最小输入 + 最短路径，仍能复现。
 
+#### 2.1 非确定性 Bug 处理
+
+对于**偶发性、时序相关、并发竞态**等非确定性 bug，需要特殊策略。
+
+**统计复现率**：
+```bash
+# 运行 100 次，统计失败率
+for i in {1..100}; do
+    pytest tests/test_flaky.py -q && echo "PASS" || echo "FAIL"
+done | sort | uniq -c
+
+# 输出示例：
+#  73 PASS
+#  27 FAIL  # 复现率 27%
+```
+
+**pytest-repeat 工具**：
+```bash
+# 安装
+pip install pytest-repeat
+
+# 重复运行 100 次，第一次失败即停止
+pytest tests/test_flaky.py --count=100 -x
+
+# 统计模式（显示失败率）
+pytest tests/test_flaky.py --count=100 --count-report
+```
+
+**并发竞态检测**：
+```bash
+# Go: race detector
+go test -race ./...
+
+# C/C++: ThreadSanitizer
+clang -fsanitize=thread -g program.c
+./a.out
+
+# Python: 并发压测
+pytest tests/test_concurrent.py -n 8 --count=50  # 8 个进程，每个跑 50 次
+```
+
+**日志采样指引**：
+对于高频操作，用采样避免日志淹没：
+```python
+import random
+
+# 1% 采样率
+if random.random() < 0.01:
+    logger.debug(f"[SAMPLE] request_id={req_id}, state={state}")
+
+# 或：每 100 次记录一次
+if counter % 100 == 0:
+    logger.debug(f"[SAMPLE-{counter}] processed {counter} requests")
+```
+
+**退出门禁**：
+- 复现率 > 50%，或
+- 有工具能稳定触发（如 race detector 报告），或
+- 采样日志捕获到异常模式
+
 ---
 
 ### 3. 假设（3-5 条）
@@ -69,6 +129,12 @@ login(user_id=1, password="wrong")  # 仍然失败
 - 最近改动的代码
 - 复杂度高的模块
 - 已知的历史问题区域
+
+**非确定性 Bug 假设**：
+- 时序问题（异步回调顺序）
+- 竞态条件（共享状态无锁保护）
+- 环境差异（时区、locale、随机种子）
+- 资源竞争（连接池、文件句柄耗尽）
 
 **退出门禁**：至少 3 个具体假设，不是"可能是哪里的问题"。
 
@@ -126,7 +192,16 @@ def test_password_validation_boundary():
 **清理项**：
 - 删除 `breakpoint()`、`print()`、临时日志
 - 删除临时测试文件
+- **清除调试标签** — 如果插桩时用了 `[DEBUG-xxxx]` 标记，用 grep 清除：
+  ```bash
+  # 查找所有调试标签
+  grep -rn "\[DEBUG-" . --include="*.py" --include="*.js" --include="*.go"
+  
+  # 清除（手动确认后删除对应行）
+  ```
 - 提交修复 + 回归测试
+
+**退出门禁**：代码库无临时调试代码，回归测试已提交。
 
 ---
 
@@ -135,7 +210,7 @@ def test_password_validation_boundary():
 1. **不构建反馈回路不假设。** 先有可重复的失败信号，再做假设。
 2. **不验证假设不修复。** 用工具验证，不靠猜。
 3. **修复必带回归测试。** 防止问题再次出现。
-4. **最小改动。** 只修复根因，不顺手重构（重构留给 `/6-优化`）。
+4. **最小改动。** 只修复根因，不顺手重构。
 
 ## 何时使用
 
@@ -146,6 +221,8 @@ def test_password_validation_boundary():
 
 ## 工具速查
 
+### Python（主要语言）
+
 | 场景 | 工具 | 用法 |
 |------|------|------|
 | 检查变量值 | `breakpoint()` | 交互式调试 |
@@ -153,3 +230,43 @@ def test_password_validation_boundary():
 | CPU 性能瓶颈 | `cProfile`, `py-spy` | `python -m cProfile script.py` |
 | 内存泄漏 | `tracemalloc` | 追踪内存分配 |
 | 测试覆盖率 | `pytest --cov` | 查看未覆盖代码路径 |
+| 非确定性 bug | `pytest-repeat` | `pytest --count=100 -x` |
+| 并发压测 | `pytest-xdist` | `pytest -n 8 --count=50` |
+
+### JavaScript/TypeScript
+
+| 场景 | 工具 | 用法 |
+|------|------|------|
+| 检查变量值 | `debugger` | 断点调试 |
+| 追踪执行路径 | `console.debug()` | 插桩日志 |
+| CPU 性能瓶颈 | `node --prof`, `clinic.js` | `node --prof app.js` |
+| 内存泄漏 | Chrome DevTools, `heapdump` | 堆快照分析 |
+| 测试覆盖率 | `jest --coverage`, `c8` | 查看未覆盖代码路径 |
+
+### Go
+
+| 场景 | 工具 | 用法 |
+|------|------|------|
+| 检查变量值 | `delve` | `dlv debug` |
+| 追踪执行路径 | `log.Printf()` | 插桩日志 |
+| CPU 性能瓶颈 | `pprof` | `go test -cpuprofile=cpu.prof` |
+| 内存泄漏 | `pprof` | `go test -memprofile=mem.prof` |
+| 竞态检测 | `go test -race` | 检测数据竞争 |
+
+### C/C++
+
+| 场景 | 工具 | 用法 |
+|------|------|------|
+| 检查变量值 | `gdb`, `lldb` | `gdb ./program` |
+| 内存泄漏 | `valgrind` | `valgrind --leak-check=full ./program` |
+| 竞态检测 | ThreadSanitizer | `clang -fsanitize=thread` |
+| 未定义行为 | UBSan | `clang -fsanitize=undefined` |
+
+### Rust
+
+| 场景 | 工具 | 用法 |
+|------|------|------|
+| 检查变量值 | `lldb`, `rust-gdb` | `rust-gdb ./target/debug/app` |
+| 追踪执行路径 | `dbg!()` | 插桩宏 |
+| CPU 性能瓶颈 | `cargo flamegraph` | 生成火焰图 |
+| 测试覆盖率 | `cargo tarpaulin` | `cargo tarpaulin --out Html` |

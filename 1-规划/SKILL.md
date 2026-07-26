@@ -73,7 +73,7 @@ disable-model-invocation: true
 2. **少见** — 未来的读者看到代码会想"为什么这样做？"
 3. **真实取舍** — 有真实的备选方案和取舍理由
 
-使用 `/vocabulary/domain-modeling` 中的 ADR 格式，创建在 `docs/adr/NNNN-title.md`。
+使用 `references/adr-format.md` 中定义的标准模板，创建在 `docs/adr/NNNN-title.md`。
 
 ---
 
@@ -93,6 +93,8 @@ disable-model-invocation: true
 ### 阶段 4 — 输出 PRD
 
 基于阶段 1-3 已达成的共识综合整理，**不追问用户**。
+
+**输出路径**：`docs/plans/<feature>/PRD.md`
 
 **PRD 结构**：
 ```markdown
@@ -135,6 +137,8 @@ disable-model-invocation: true
 
 将 PRD 拆解为可独立执行的垂直切片（task list）。
 
+**输出路径**：`docs/plans/<feature>/tasks.md`
+
 每个任务包含：
 - **Task ID** — T001, T002, ...
 - **Title** — 简短标题
@@ -171,7 +175,7 @@ disable-model-invocation: true
 
 然后询问用户：**是否授权进入原型或开发？**
 
-- 用户确认 → 可以进入 `/3-原型` 或 `/4-开发`
+- 用户确认 → 可以进入 `/2-开发`
 - 用户指出问题 → 回到对应阶段修正
 
 ---
@@ -181,4 +185,6 @@ disable-model-invocation: true
 完整的决策树算法、frontier 计算规则、CONTEXT.md 格式详见：
 - `vocabulary/grilling/SKILL.md` — 询问循环的核心逻辑
 - `vocabulary/domain-modeling/SKILL.md` — 领域建模的详细规则
-- `references/mattpocock-skills/skills/engineering/grill-with-docs/` — 参考实现
+- `references/planning-rules.md` — frontier 算法和缓存规则
+- `references/context-format.md` — CONTEXT.md 格式规范
+- `references/adr-format.md` — ADR 编写指南

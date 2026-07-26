@@ -77,32 +77,13 @@ _Avoid_: Purchase, transaction
 A request for payment sent to a customer after delivery.
 _Avoid_: Bill, payment request
 
-## Relationships
-
-- An **Order** produces one or more **Invoices**
-
-## Example dialogue
-
-> **Dev:** "When a Customer places an Order, do we create the Invoice immediately?"
-> **PM:** "No, Invoices are created after delivery confirmation."
-
-## Flagged ambiguities
-
-- "account" was used to mean both Customer and User — resolved: these are distinct.
+**Customer** vs **User**:
+Customer is the billing entity; User is the person operating the system.
+_Previously ambiguous_: "account" referred to both
 ```
 
 ## ADR format
 
-Use Markdown ADRs in `docs/adr/NNNN-title.md`:
+Use the standard ADR template defined in `/references/adr-format.md`.
 
-```markdown
-# ADR NNNN: {Title}
-
-**Status:** Accepted | Superseded by [NNNN](NNNN-title.md) | Deprecated
-
-**Context:** {The situation that led to this decision}
-
-**Decision:** {What we decided to do}
-
-**Consequences:** {Trade-offs we accepted}
-```
+ADRs are created in `docs/adr/NNNN-title.md` with sequential numbering (0001, 0002, ...).

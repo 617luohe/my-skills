@@ -63,7 +63,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/grilling, vocabulary/domain-modeling]
   - name: 2-开发
     path: 2-开发
     version: 1.0.0
@@ -72,7 +72,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/tdd, vocabulary/code-review]
   - name: 3-检查
     path: 3-检查
     version: 1.0.0
@@ -81,7 +81,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/code-review]
   - name: 4-调试
     path: 4-调试
     version: 1.0.0
@@ -90,7 +90,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/diagnosing-bugs]
   - name: 5-版本管理
     path: 5-版本管理
     version: 1.0.0
@@ -131,7 +131,7 @@ skills:
     path: vocabulary/grilling
     version: 1.0.0
     status: stable
-    invocation: internal
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -141,7 +141,7 @@ skills:
     path: vocabulary/domain-modeling
     version: 1.0.0
     status: stable
-    invocation: internal
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -151,7 +151,7 @@ skills:
     path: vocabulary/tdd
     version: 1.0.0
     status: stable
-    invocation: internal
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -161,7 +161,7 @@ skills:
     path: vocabulary/code-review
     version: 1.0.0
     status: stable
-    invocation: internal
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -171,7 +171,7 @@ skills:
     path: vocabulary/diagnosing-bugs
     version: 1.0.0
     status: stable
-    invocation: internal
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized

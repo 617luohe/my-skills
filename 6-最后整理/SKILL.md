@@ -101,7 +101,7 @@ disable-model-invocation: true
 
 ### 5. 安全护栏确认
 
-检查 `0-安全护栏` 是否已配置并生效。
+检查 Git 安全护栏（见 `5-版本管理` 的 guardrails 段）是否已配置并生效。
 
 - [ ] `settings.json` 中 PreToolUse 钩子已注册
 - [ ] 钩子脚本存在并可执行

@@ -20,9 +20,26 @@ my-skills/
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 ├── multi-worker/                — 并行开发编排器（实验性）
-├── tools--*/                    — 工具类 skills（11 个，host-provided）
 └── scripts/                     — manifest 解析与精确镜像部署脚本
 ```
+
+## 命名规范
+
+所有技能命名遵循以下约定：
+
+| 类型 | 命名格式 | 示例 | 说明 |
+|---|---|---|---|
+| **阶段技能** | `N-中文名称` | `0-启动`、`1-规划`、`2-开发` | N 为阶段编号 0-6 |
+| **扩展能力** | `0--英文名称` | `0--claude`、`0--laoyoutiao` | 双连字符标识阶段 0 扩展 |
+| **路由器** | `0-询问luohe` | `0-询问luohe` | 唯一入口，独立前缀 |
+| **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling` | 可复用核心，不直接调用 |
+| **独立方法论** | `英文或中文名称` | `multi-worker` | 不属于主流程的独立技能 |
+
+**命名约束**：
+- 阶段技能必须以 `N-` 开头（N=0-6），后接中文名称
+- 扩展能力必须以 `0--` 开头，后接英文名称（双连字符区分单连字符阶段）
+- vocabulary 层必须位于 `vocabulary/` 子目录下，使用英文名称
+- 禁止在非阶段技能中使用 `N-` 格式（避免与阶段编号冲突）
 
 ## 调用分类
 
@@ -90,24 +107,6 @@ my-skills/
 | **老油条** (`0--laoyoutiao`) | Python 交付节奏管理（个人定制） |
 | **multi-worker** (`multi-worker`) | 并行开发编排器（实验性） |
 
-## 工具类 Skills
-
-| 目录 | 调用名 | 职责 |
-|---|---|---|
-| `tools--前端设计` | `/tools--前端设计` | 生产级前端界面设计与实现 |
-| `tools--图表生成` | `/tools--图表生成` | 图表和信息图生成 |
-| `tools--幻灯片生成` | `/tools--幻灯片生成` | 演示文稿创建与编辑 |
-| `tools--技能工坊` | `/tools--技能工坊` | 创建、评估和改进 skills |
-| `tools--数据可视化` | `/tools--数据可视化` | 图表、仪表盘与配色规范 |
-| `tools--文档生成` | `/tools--文档生成` | Word 文档创建与编辑 |
-| `tools--智能搜索` | `/tools--智能搜索` | 多源智能检索 |
-| `tools--深度研报生成` | `/tools--深度研报生成` | 深度研究与研报生成 |
-| `tools--画布设计` | `/tools--画布设计` | 画布式视觉设计 |
-| `tools--网页测试` | `/tools--网页测试` | Web 应用交互测试 |
-| `tools--表格生成` | `/tools--表格生成` | Excel 表格创建与分析 |
-
-> 11 个 `tools--*` 目录在 `skills-manifest.yaml` 中标记为 `host-provided`、`sync: false`；本仓库保留其参考/封装源码，但同步脚本不复制也不修改它们的行为。
-
 ## 部署方法
 
 将 `my-skills/<skill-name>/` 复制到 `.claude/skills/<skill-name>/` 即可使用。
@@ -124,9 +123,9 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步后的三个目标是**完整镜像**：脚本先删除每个已存在目标目录下的全部子项，再仅复制 manifest 发布的 17 个核心 skills + 5 个 vocabulary 技能。目标根不存在时只警告，不创建未知父目录。
+同步后的三个目标是**完整镜像**：脚本先删除每个已存在目标目录下的全部子项，再仅复制 manifest 发布的 19 个核心 skills + 5 个 vocabulary 技能。目标根不存在时只警告，不创建未知父目录。
 
-发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 17 个 `distribution: synchronized` 条目构成正式发布集；11 个 `distribution: host-provided` 工具条目只记录宿主提供关系；5 个 `layer: vocabulary` 条目是可复用核心。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
+发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 19 个 `distribution: synchronized` 条目构成正式发布集；5 个 `layer: vocabulary` 条目是可复用核心。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
 
 `-DryRun` 会逐项输出 `REMOVE` 和 `COPY`，但不改磁盘。正式运行会对 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/` 执行精确镜像。
 

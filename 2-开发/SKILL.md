@@ -1,6 +1,6 @@
 ---
 name: 2-开发
-description: Implement features and bug fixes with a pytest-driven red-green-refactor loop and coding guardrails. Use when the user asks to develop, implement, code, or test-drive a change, especially after a plan or validated prototype exists.
+description: Implement Python features and bug fixes with a pytest-driven red-green-refactor loop and coding guardrails. Use when the user asks to develop, implement, code, or test-drive a Python change, especially after a plan exists.
 disable-model-invocation: false
 ---
 
@@ -25,7 +25,7 @@ disable-model-invocation: false
 ## 开发流程
 
 ### 1. 理解任务
-- 从任务清单（`/1-规划` 产出）或 issue 中提取：
+- 从任务清单（`docs/plans/<feature>/tasks.md`，由 `/1-规划` 产出）或 issue 中提取：
   - 要实现的功能切片
   - 验收标准
   - AFK/HITL 标记
@@ -49,15 +49,20 @@ disable-model-invocation: false
 - 运行 linter：`ruff` 或 `flake8`（如果项目有配置）
 - 所有检查通过后进入下一步
 
-### 4. 代码审查
-开发完成后，自动调用 `/vocabulary/code-review`：
-- **审查基点** — 通常是当前分支相对 main 的变更
-- **Standards 审查** — 编码规范
-- **Spec 审查** — 需求符合度
+### 4. 自检
+开发完成后进行轻量自检，确保基本质量：
+- 运行完整测试套件通过
+- 类型检查通过（如果配置）
+- Linter 检查通过（如果配置）
+- 快速扫描代码：有明显重复吗？命名清晰吗？
 - 如果发现问题，修复后重新验证
 
+**注意**：自检不是正式审查。完成后应调用 `/3-检查` 进行正式验收，并显式传递上下文：
+- **审查基点** — 传递当前分支相对 main 的基点（如 `main`）
+- **需求来源** — 传递任务清单路径（`docs/plans/<feature>/tasks.md`）或 issue 引用
+
 ### 5. 提交
-审查通过后，提交代码：
+自检通过后，提交代码：
 ```bash
 git add <changed-files>
 git commit -m "feat: <简短描述>"
@@ -79,7 +84,8 @@ commit 消息格式：
 5. **绝不在 RED 时重构。** 全部变绿后才检查提取重复/加深模块。
 6. **测试通过公共接口验证行为，不验证实现细节。**
 7. **遇 HITL 任务时暂停决策。** 展示当前进度和待决策项，等待用户输入后继续。
-8. **开发完成后必须运行代码审查。** 不跳过审查直接提交。
+8. **开发完成后必须进行自检。** 确保测试、类型检查、linter 都通过，代码质量基本合格。
+9. **自检完成后交给 `/3-检查` 正式验收。** 不要跳过验收环节。
 
 ## 何时使用
 
@@ -89,6 +95,7 @@ commit 消息格式：
 
 ## 与其他技能的关系
 
-- **输入** — `/1-规划` 产出的任务清单、PRD、CONTEXT.md
-- **调用** — `/vocabulary/tdd`（核心循环）→ `/vocabulary/code-review`（质量门禁）
-- **输出** — 通过测试的代码 + 审查报告 → `/8-版本管理`（可选提交）
+- **输入** — `/1-规划` 产出的 `docs/plans/<feature>/tasks.md`、`docs/plans/<feature>/PRD.md`、`CONTEXT.md`
+- **调用** — `/vocabulary/tdd`（核心循环）
+- **输出** — 通过测试的代码 + 自检通过 → `/3-检查`（正式验收）→ `/5-版本管理`（可选提交）
+- **输出** — 通过测试的代码 + 审查报告 → `/5-版本管理`（可选提交）

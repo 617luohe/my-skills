@@ -24,27 +24,26 @@
 
 ## Context Caching Rules
 
-CONTEXT.md 设计遵循缓存友好原则：
+CONTEXT.md 设计遵循缓存友好原则（仅包含领域术语表）：
 
-1. **不变部分在前**：领域术语、架构决策放顶部（高缓存命中）
-2. **易变部分在后**：当前任务状态、待办清单放底部（缓存截断影响小）
-3. **更新策略**：
+1. **不变部分**：领域术语定义（高缓存命中）
+2. **更新策略**：
    - 新增领域术语 → 追加到术语表
-   - 新增架构决策 → 追加到 ADR 区块
-   - 任务完成 → 归档到历史区，更新当前任务
+   - 澄清歧义 → 在对应术语下补充辨析
+   - 架构决策 → 独立记录到 `docs/adr/NNNN-title.md`
 
 ## ADR Format
 
-每个重要设计决策记录格式：
+架构决策记录在 `docs/adr/NNNN-title.md` 独立文件：
 
 ```markdown
-### ADR-XXX: [简短标题]
+# ADR NNNN: {Title}
 
-**日期**：YYYY-MM-DD  
-**状态**：已采纳 | 已废弃 | 待定  
+**Status:** Accepted | Superseded by NNNN | Deprecated
 
-**问题**：需要解决什么？  
-**决策**：选择了什么方案？  
-**理由**：为什么？  
-**后果**：接受什么权衡？  
+**Context:** {The situation that led to this decision}
+
+**Decision:** {What we decided to do}
+
+**Consequences:** {Trade-offs we accepted}
 ```

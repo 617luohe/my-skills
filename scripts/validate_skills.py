@@ -20,9 +20,19 @@ LINK_RE = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
 SLASH_SKILL_RE = re.compile(r"(?<![\w.])/(?!/)([\w-]+(?:--?[\w-]+)+)", re.UNICODE)
 ROUTE_ROW_RE = re.compile(r"^\|[^\n]*\|\s*([^|`]+?)\s*\|[^\n]*$")
 
+# Naming convention patterns
+STAGE_SKILL_RE = re.compile(r"^[0-6]-[一-鿿]+$")  # N-中文
+EXTENSION_SKILL_RE = re.compile(r"^0--[a-z][a-z0-9-]*$")  # 0--lowercase
+VOCABULARY_SKILL_RE = re.compile(
+    r"^vocabulary/[a-z][a-z0-9-]*$"
+)  # vocabulary/lowercase
+ROUTER_SKILL = "0-询问luohe"
+
 
 def _load_manifest_module():
-    spec = importlib.util.spec_from_file_location("skill_manifest", MANIFEST_MODULE_PATH)
+    spec = importlib.util.spec_from_file_location(
+        "skill_manifest", MANIFEST_MODULE_PATH
+    )
     if spec is None or spec.loader is None:
         raise RuntimeError(f"cannot load {MANIFEST_MODULE_PATH}")
     module = importlib.util.module_from_spec(spec)
@@ -66,7 +76,7 @@ def _frontmatter(path: Path) -> dict[str, Any]:
         elif value == "false":
             parsed = False
         else:
-            parsed = value.strip('"\'')
+            parsed = value.strip("\"'")
         values[key.strip()] = parsed
     return values
 
@@ -83,10 +93,16 @@ def _implicit_invocation(path: Path) -> bool:
         if indent == 0:
             in_policy = stripped == "policy:"
             continue
-        if in_policy and indent == 2 and stripped.startswith("allow_implicit_invocation:"):
+        if (
+            in_policy
+            and indent == 2
+            and stripped.startswith("allow_implicit_invocation:")
+        ):
             raw_value = stripped.partition(":")[2].split("#", 1)[0].strip()
             if raw_value not in ("true", "false") or found is not None:
-                raise ValueError(f"line {line_number}: invalid allow_implicit_invocation")
+                raise ValueError(
+                    f"line {line_number}: invalid allow_implicit_invocation"
+                )
             found = raw_value == "true"
     return True if found is None else found
 
@@ -103,54 +119,205 @@ def _tree_hash(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _validate_manifest(manifest: dict[str, Any], root: Path, errors: list[dict[str, str]]) -> list[dict[str, Any]]:
+def _validate_naming(name: str) -> str | None:
+    """Validate skill name against naming conventions.
+
+    Returns None if valid, or an error message if invalid.
+    """
+    if name == ROUTER_SKILL:
+        return None
+    if STAGE_SKILL_RE.match(name):
+        return None
+    if EXTENSION_SKILL_RE.match(name):
+        return None
+    if VOCABULARY_SKILL_RE.match(name):
+        return None
+    # Allow standalone methodology skills (e.g., multi-worker, 0--dialectic with uppercase)
+    if "/" not in name and not name[0].isdigit():
+        return None
+    # Check for common naming violations
+    if re.match(r"^[0-6]-", name) and not STAGE_SKILL_RE.match(name):
+        return f"stage skill must follow 'N-中文' format, got '{name}'"
+    if name.startswith("0--") and not EXTENSION_SKILL_RE.match(name):
+        return f"extension skill must follow '0--lowercase' format, got '{name}'"
+    if name.startswith("vocabulary/") and not VOCABULARY_SKILL_RE.match(name):
+        return (
+            f"vocabulary skill must follow 'vocabulary/lowercase' format, got '{name}'"
+        )
+    return f"skill name '{name}' does not match any naming convention"
+
+
+def _validate_manifest(
+    manifest: dict[str, Any], root: Path, errors: list[dict[str, str]]
+) -> list[dict[str, Any]]:
     skills = manifest.get("skills")
     if manifest.get("schema_version") != 1:
-        errors.append(_finding("manifest", root / "skills-manifest.yaml", "schema_version must be 1", root))
+        errors.append(
+            _finding(
+                "manifest",
+                root / "skills-manifest.yaml",
+                "schema_version must be 1",
+                root,
+            )
+        )
     version = manifest.get("repository_version")
     if not isinstance(version, str) or not skill_manifest.SEMVER.fullmatch(version):
-        errors.append(_finding("manifest", root / "skills-manifest.yaml", "repository_version must be semantic", root))
+        errors.append(
+            _finding(
+                "manifest",
+                root / "skills-manifest.yaml",
+                "repository_version must be semantic",
+                root,
+            )
+        )
     if not isinstance(skills, list):
-        errors.append(_finding("manifest", root / "skills-manifest.yaml", "skills must be a sequence", root))
+        errors.append(
+            _finding(
+                "manifest",
+                root / "skills-manifest.yaml",
+                "skills must be a sequence",
+                root,
+            )
+        )
         return []
 
     names: set[str] = set()
     for index, skill in enumerate(skills, 1):
         path = root / str(skill.get("path", ""))
         missing = skill_manifest.REQUIRED_FIELDS - skill.keys()
-        extra = skill.keys() - skill_manifest.REQUIRED_FIELDS
+        extra = (
+            skill.keys()
+            - skill_manifest.REQUIRED_FIELDS
+            - skill_manifest.OPTIONAL_FIELDS
+        )
         name = skill.get("name")
         if missing or extra:
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"skill {index} fields mismatch", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"skill {index} fields mismatch",
+                    root,
+                )
+            )
             continue
         if not isinstance(name, str) or not name or name in names:
-            errors.append(_finding("manifest-name", root / "skills-manifest.yaml", f"skill {index} name must be unique", root))
+            errors.append(
+                _finding(
+                    "manifest-name",
+                    root / "skills-manifest.yaml",
+                    f"skill {index} name must be unique",
+                    root,
+                )
+            )
             continue
         names.add(name)
+        # Validate naming convention
+        naming_error = _validate_naming(name)
+        if naming_error:
+            errors.append(
+                _finding(
+                    "naming-convention",
+                    root / "skills-manifest.yaml",
+                    f"{name}: {naming_error}",
+                    root,
+                )
+            )
         if skill["path"] != name:
-            errors.append(_finding("manifest-path", root / "skills-manifest.yaml", f"{name}: path must equal name", root))
+            errors.append(
+                _finding(
+                    "manifest-path",
+                    root / "skills-manifest.yaml",
+                    f"{name}: path must equal name",
+                    root,
+                )
+            )
         if skill["version"] != version or skill["status"] != "stable":
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: invalid version or status", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid version or status",
+                    root,
+                )
+            )
         if skill["invocation"] not in ("user", "model"):
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: invalid invocation", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid invocation",
+                    root,
+                )
+            )
         if skill["hosts"] != ["claude", "cursor", "codex"]:
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: invalid hosts", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid hosts",
+                    root,
+                )
+            )
         distribution = skill["distribution"]
         if distribution == "synchronized" and skill["sync"] is not True:
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: synchronized requires sync true", root))
-        elif distribution == "host-provided" and (skill["sync"] is not False or skill["invocation"] != "model"):
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: invalid host-provided settings", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: synchronized requires sync true",
+                    root,
+                )
+            )
+        elif distribution == "host-provided" and (
+            skill["sync"] is not False or skill["invocation"] != "model"
+        ):
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid host-provided settings",
+                    root,
+                )
+            )
         elif distribution not in ("synchronized", "host-provided"):
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: invalid distribution", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid distribution",
+                    root,
+                )
+            )
         if not isinstance(skill["dependencies"], list):
-            errors.append(_finding("manifest", root / "skills-manifest.yaml", f"{name}: dependencies must be a list", root))
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: dependencies must be a list",
+                    root,
+                )
+            )
         if not path.is_dir() or not (path / "SKILL.md").is_file():
-            errors.append(_finding("manifest-path", path, f"{name}: source directory or SKILL.md missing", root))
+            errors.append(
+                _finding(
+                    "manifest-path",
+                    path,
+                    f"{name}: source directory or SKILL.md missing",
+                    root,
+                )
+            )
     return skills
 
 
-def _validate_dependencies(skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]) -> None:
-    by_name = {skill.get("name"): skill for skill in skills if isinstance(skill.get("name"), str)}
+def _validate_dependencies(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    by_name = {
+        skill.get("name"): skill
+        for skill in skills
+        if isinstance(skill.get("name"), str)
+    }
     for skill in skills:
         name = skill.get("name")
         dependencies = skill.get("dependencies")
@@ -158,12 +325,35 @@ def _validate_dependencies(skills: list[dict[str, Any]], root: Path, errors: lis
             continue
         for target in dependencies:
             if not isinstance(target, str) or target not in by_name:
-                errors.append(_finding("dependency-target", root / "skills-manifest.yaml", f"{name}: unknown dependency {target!r}", root))
-            elif skill.get("distribution") == "synchronized" and by_name[target].get("distribution") == "host-provided":
-                errors.append(_finding("dependency-direction", root / "skills-manifest.yaml", f"{name}: synchronized skill cannot depend on host-provided {target}", root))
+                errors.append(
+                    _finding(
+                        "dependency-target",
+                        root / "skills-manifest.yaml",
+                        f"{name}: unknown dependency {target!r}",
+                        root,
+                    )
+                )
+            elif (
+                skill.get("distribution") == "synchronized"
+                and by_name[target].get("distribution") == "host-provided"
+            ):
+                errors.append(
+                    _finding(
+                        "dependency-direction",
+                        root / "skills-manifest.yaml",
+                        f"{name}: synchronized skill cannot depend on host-provided {target}",
+                        root,
+                    )
+                )
 
 
-def _validate_skill(skill: dict[str, Any], root: Path, canonical: set[str], errors: list[dict[str, str]], warnings: list[dict[str, str]]) -> None:
+def _validate_skill(
+    skill: dict[str, Any],
+    root: Path,
+    canonical: set[str],
+    errors: list[dict[str, str]],
+    warnings: list[dict[str, str]],
+) -> None:
     if skill.get("distribution") == "host-provided":
         return
     name = skill.get("name")
@@ -178,8 +368,18 @@ def _validate_skill(skill: dict[str, Any], root: Path, canonical: set[str], erro
     except ValueError as exc:
         errors.append(_finding("frontmatter", document, str(exc), root))
         return
-    if frontmatter.get("name") != name:
-        errors.append(_finding("frontmatter-name", document, f"frontmatter name must be {name}", root))
+    # For nested skills (e.g., vocabulary/cat/skill), frontmatter name should match
+    # only the final component (e.g., "skill"), not the full path
+    expected_frontmatter_name = name.split("/")[-1] if "/" in name else name
+    if frontmatter.get("name") != expected_frontmatter_name:
+        errors.append(
+            _finding(
+                "frontmatter-name",
+                document,
+                f"frontmatter name must be {expected_frontmatter_name}",
+                root,
+            )
+        )
 
     user_only = skill.get("invocation") == "user"
     disabled = frontmatter.get("disable-model-invocation") is True
@@ -190,13 +390,34 @@ def _validate_skill(skill: dict[str, Any], root: Path, canonical: set[str], erro
         implicit = None
         errors.append(_finding("invocation-parity", openai, str(exc), root))
     if not openai.is_file() or disabled != user_only or implicit == user_only:
-        errors.append(_finding("invocation-parity", document, "manifest, frontmatter, and agents/openai.yaml invocation controls disagree", root))
+        errors.append(
+            _finding(
+                "invocation-parity",
+                document,
+                "manifest, frontmatter, and agents/openai.yaml invocation controls disagree",
+                root,
+            )
+        )
 
     line_count = len(document.read_text(encoding="utf-8-sig").splitlines())
     if line_count > 500:
-        errors.append(_finding("skill-size", document, f"SKILL.md has {line_count} lines; maximum is 500", root))
+        errors.append(
+            _finding(
+                "skill-size",
+                document,
+                f"SKILL.md has {line_count} lines; maximum is 500",
+                root,
+            )
+        )
     elif line_count > 200:
-        warnings.append(_finding("skill-size", document, f"SKILL.md has {line_count} lines; recommended maximum is 200", root))
+        warnings.append(
+            _finding(
+                "skill-size",
+                document,
+                f"SKILL.md has {line_count} lines; recommended maximum is 200",
+                root,
+            )
+        )
 
     for markdown in sorted(skill_path.rglob("*.md")):
         _validate_markdown(markdown, root, canonical, errors)
@@ -204,11 +425,20 @@ def _validate_skill(skill: dict[str, Any], root: Path, canonical: set[str], erro
         _validate_eval(eval_path, name, root, errors)
 
 
-def _validate_markdown(path: Path, root: Path, canonical: set[str], errors: list[dict[str, str]]) -> None:
+def _validate_markdown(
+    path: Path, root: Path, canonical: set[str], errors: list[dict[str, str]]
+) -> None:
     text = path.read_text(encoding="utf-8-sig")
     for banned in BANNED_SKILLS:
         if banned in text:
-            errors.append(_finding("banned-skill-reference", path, f"references removed skill {banned}", root))
+            errors.append(
+                _finding(
+                    "banned-skill-reference",
+                    path,
+                    f"references removed skill {banned}",
+                    root,
+                )
+            )
     for raw_target in LINK_RE.findall(text):
         target = raw_target.strip().strip("<>")
         if " " in target and not raw_target.strip().startswith("<"):
@@ -219,13 +449,24 @@ def _validate_markdown(path: Path, root: Path, canonical: set[str], errors: list
             continue
         local = target.split("#", 1)[0]
         if local and not (path.parent / local).resolve().exists():
-            errors.append(_finding("markdown-link", path, f"broken local link: {target}", root))
+            errors.append(
+                _finding("markdown-link", path, f"broken local link: {target}", root)
+            )
     for reference in SLASH_SKILL_RE.findall(text):
         if reference not in canonical:
-            errors.append(_finding("skill-reference", path, f"unknown canonical skill reference /{reference}", root))
+            errors.append(
+                _finding(
+                    "skill-reference",
+                    path,
+                    f"unknown canonical skill reference /{reference}",
+                    root,
+                )
+            )
 
 
-def _validate_routes(root: Path, canonical: set[str], errors: list[dict[str, str]]) -> None:
+def _validate_routes(
+    root: Path, canonical: set[str], errors: list[dict[str, str]]
+) -> None:
     route_path = root / "use-skills" / "SKILL.md"
     if not route_path.is_file():
         return
@@ -236,20 +477,40 @@ def _validate_routes(root: Path, canonical: set[str], errors: list[dict[str, str
             continue
         if in_table and line.startswith("## "):
             break
-        if not in_table or not line.startswith("|") or "---" in line or "匹配技能" in line:
+        if (
+            not in_table
+            or not line.startswith("|")
+            or "---" in line
+            or "匹配技能" in line
+        ):
             continue
-        columns = [column.strip().strip("`") for column in line.strip().strip("|").split("|")]
+        columns = [
+            column.strip().strip("`") for column in line.strip().strip("|").split("|")
+        ]
         if len(columns) >= 4 and columns[3] not in canonical:
-            errors.append(_finding("canonical-route", route_path, f"route uses unknown skill {columns[3]}", root))
+            errors.append(
+                _finding(
+                    "canonical-route",
+                    route_path,
+                    f"route uses unknown skill {columns[3]}",
+                    root,
+                )
+            )
 
 
-def _validate_eval(path: Path, skill_name: str, root: Path, errors: list[dict[str, str]]) -> None:
+def _validate_eval(
+    path: Path, skill_name: str, root: Path, errors: list[dict[str, str]]
+) -> None:
     try:
         payload = json.loads(path.read_text(encoding="utf-8-sig"))
     except (OSError, json.JSONDecodeError) as exc:
         errors.append(_finding("eval-shape", path, f"invalid JSON: {exc}", root))
         return
-    valid = isinstance(payload, dict) and payload.get("skill_name") == skill_name and isinstance(payload.get("evals"), list)
+    valid = (
+        isinstance(payload, dict)
+        and payload.get("skill_name") == skill_name
+        and isinstance(payload.get("evals"), list)
+    )
     if valid:
         ids: set[int] = set()
         for case in payload["evals"]:
@@ -265,33 +526,69 @@ def _validate_eval(path: Path, skill_name: str, root: Path, errors: list[dict[st
                 and all(isinstance(item, str) for item in case["files"])
                 and isinstance(case.get("expectations"), list)
                 and bool(case["expectations"])
-                and all(isinstance(item, str) and item.strip() for item in case["expectations"])
+                and all(
+                    isinstance(item, str) and item.strip()
+                    for item in case["expectations"]
+                )
             )
             if not case_valid:
                 valid = False
                 break
             ids.add(case["id"])
     if not valid:
-        errors.append(_finding("eval-shape", path, "eval JSON does not match the governance shape", root))
+        errors.append(
+            _finding(
+                "eval-shape",
+                path,
+                "eval JSON does not match the governance shape",
+                root,
+            )
+        )
 
 
-def _validate_deployments(root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]) -> None:
+def _validate_deployments(
+    root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]
+) -> None:
     published = sorted(
-        skill["name"] for skill in skills if skill.get("distribution") == "synchronized" and isinstance(skill.get("name"), str)
+        skill["name"]
+        for skill in skills
+        if skill.get("distribution") == "synchronized"
+        and isinstance(skill.get("name"), str)
     )
     expected_names = set(published)
     for host in HOSTS:
         deployment = root.parent / host / "skills"
         if not deployment.is_dir():
-            errors.append(_finding("deployment-names", deployment, f"{host} deployment root is missing", root))
+            errors.append(
+                _finding(
+                    "deployment-names",
+                    deployment,
+                    f"{host} deployment root is missing",
+                    root,
+                )
+            )
             continue
         actual_names = {item.name for item in deployment.iterdir()}
         if actual_names != expected_names:
-            errors.append(_finding("deployment-names", deployment, f"expected {published}; found {sorted(actual_names)}", root))
+            errors.append(
+                _finding(
+                    "deployment-names",
+                    deployment,
+                    f"expected {published}; found {sorted(actual_names)}",
+                    root,
+                )
+            )
             continue
         for name in published:
             if _tree_hash(root / name) != _tree_hash(deployment / name):
-                errors.append(_finding("deployment-hash", deployment / name, "deployment content hash differs from source", root))
+                errors.append(
+                    _finding(
+                        "deployment-hash",
+                        deployment / name,
+                        "deployment content hash differs from source",
+                        root,
+                    )
+                )
 
 
 def validate_repository(root: Path, check_deployments: bool = False) -> dict[str, Any]:
@@ -305,8 +602,18 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
         errors.append(_finding("manifest", manifest_path, str(exc), root))
         manifest = {"skills": []}
     skills = _validate_manifest(manifest, root, errors)
-    canonical = {skill["name"] for skill in skills if isinstance(skill.get("name"), str)}
-    discovered = {path.parent.name for path in root.glob("*/SKILL.md")}
+    canonical = {
+        skill["name"] for skill in skills if isinstance(skill.get("name"), str)
+    }
+    # Discover skills recursively: top-level and any nested under subdirectories
+    discovered = set()
+    for skill_md in root.rglob("*/SKILL.md"):
+        skill_dir = skill_md.parent
+        try:
+            relative_path = skill_dir.relative_to(root).as_posix()
+            discovered.add(relative_path)
+        except ValueError:
+            pass
     if discovered != canonical:
         errors.append(
             _finding(
@@ -329,9 +636,17 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--json", action="store_true", help="emit a deterministic JSON report")
-    parser.add_argument("--check-deployments", action="store_true", help="compare parent host deployments with source")
-    parser.add_argument("--root", type=Path, default=SCRIPT_DIR.parent, help=argparse.SUPPRESS)
+    parser.add_argument(
+        "--json", action="store_true", help="emit a deterministic JSON report"
+    )
+    parser.add_argument(
+        "--check-deployments",
+        action="store_true",
+        help="compare parent host deployments with source",
+    )
+    parser.add_argument(
+        "--root", type=Path, default=SCRIPT_DIR.parent, help=argparse.SUPPRESS
+    )
     args = parser.parse_args(argv)
     report = validate_repository(args.root, args.check_deployments)
     if args.json:
@@ -340,8 +655,12 @@ def main(argv: list[str] | None = None) -> int:
     else:
         for level in ("errors", "warnings"):
             for item in report[level]:
-                print(f"{level[:-1].upper()} [{item['code']}] {item['path']}: {item['message']}")
-        print(f"Validation {'passed' if report['ok'] else 'failed'}: {len(report['errors'])} error(s), {len(report['warnings'])} warning(s)")
+                print(
+                    f"{level[:-1].upper()} [{item['code']}] {item['path']}: {item['message']}"
+                )
+        print(
+            f"Validation {'passed' if report['ok'] else 'failed'}: {len(report['errors'])} error(s), {len(report['warnings'])} warning(s)"
+        )
     return 0 if report["ok"] else 1
 
 
