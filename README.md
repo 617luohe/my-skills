@@ -17,7 +17,7 @@ my-skills/
 │   ├── tdd/                     — TDD 循环
 │   ├── code-review/             — 代码审查
 │   └── diagnosing-bugs/         — Bug 诊断
-├── 0-启动/ ~ 9-最后整理/        — 阶段 0~9 开发流程
+├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 ├── multi-worker/                — 并行开发编排器（实验性）
 ├── tools--*/                    — 工具类 skills（11 个，host-provided）
@@ -26,8 +26,8 @@ my-skills/
 
 ## 调用分类
 
-- **仅用户调用**：`0-询问luohe`、`0-启动`、`1-规划`、`8-版本管理`、`9-最后整理`、`multi-worker`、`0--neat-freak`、`0--dialectic`。只能由用户显式输入调用。
-- **允许模型调用**：`2-分析`、`3-原型`、`4-开发`、`5-检查`、`6-优化`、`7-调试`、`0--claude`、`0--laoyoutiao`、`0--tokenless`。模型可按描述自动调用，用户也可显式调用。
+- **仅用户调用**：`0-询问luohe`、`0-启动`、`1-规划`、`5-版本管理`、`6-最后整理`、`multi-worker`、`0--neat-freak`、`0--dialectic`。只能由用户显式输入调用。
+- **允许模型调用**：`2-开发`、`3-检查`、`4-调试`、`0--claude`、`0--laoyoutiao`、`0--tokenless`。模型可按描述自动调用，用户也可显式调用。
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。被其他技能调用，不直接暴露给用户。
 
 ## 核心优化（2026-07-26）
@@ -36,11 +36,11 @@ my-skills/
 
 | 技能 | 职责 | 被谁调用 |
 |---|---|---|
-| **grilling** | 询问循环（批量/逐步模式、事实自查、决策推荐） | `/1-规划`、`/6-优化` |
+| **grilling** | 询问循环（批量/逐步模式、事实自查、决策推荐） | `/1-规划` |
 | **domain-modeling** | 领域建模（维护 CONTEXT.md、ADR、术语锐化） | `/1-规划` |
-| **tdd** | TDD 循环（红-绿-重构、测试策略、编码准则） | `/4-开发`、`/multi-worker` |
-| **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/4-开发`、`/5-检查`、`/multi-worker` |
-| **diagnosing-bugs** | Bug 诊断（六阶段：构建回路→复现→假设→验证→修复→清理） | `/7-调试` |
+| **tdd** | TDD 循环（红-绿-重构、测试策略、编码准则） | `/2-开发`、`/multi-worker` |
+| **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/2-开发`、`/3-检查`、`/multi-worker` |
+| **diagnosing-bugs** | Bug 诊断（六阶段：构建回路→复现→假设→验证→修复→清理） | `/4-调试` |
 
 **收益**：
 - 阶段技能从 150+ 行简化到 30-80 行（委托到 vocabulary）
@@ -52,9 +52,9 @@ my-skills/
 | 技能 | 优化前 | 优化后 | 变化 |
 |---|---|---|---|
 | **1-规划** | 150+ 行（6 个子阶段内联） | 80 行（委托 grilling + domain-modeling） | ↓ 47% |
-| **4-开发** | 80 行（TDD 流程内联） | 60 行（委托 tdd + code-review） | ↓ 25% |
-| **5-检查** | 100 行（审查逻辑内联） | 50 行（委托 code-review） | ↓ 50% |
-| **7-调试** | 100 行（诊断流程内联） | 50 行（委托 diagnosing-bugs） | ↓ 50% |
+| **2-开发** | 80 行（TDD 流程内联） | 60 行（委托 tdd + code-review） | ↓ 25% |
+| **3-检查** | 100 行（审查逻辑内联） | 50 行（委托 code-review） | ↓ 50% |
+| **4-调试** | 100 行（诊断流程内联） | 50 行（委托 diagnosing-bugs） | ↓ 50% |
 
 ### 创建路由器（统一入口）
 
@@ -66,7 +66,7 @@ my-skills/
 
 **替代原 use-skills**，指向更新到 CLAUDE.md 工作流路由表。
 
-## 开发流程 Skills（阶段 0~9）
+## 开发流程 Skills（阶段 0~6）
 
 | # | 技能 | 职责 | 委托到 |
 |---|---|---|---|
@@ -76,14 +76,11 @@ my-skills/
 | 0 | **洁癖审查** (`0--neat-freak`) | 知识库洁癖审查 | - |
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |
-| 2 | **分析** (`2-分析`) | 代码理解与概览 | - |
-| 3 | **原型** (`3-原型`) | 快速原型验证 | - |
-| 4 | **开发** (`4-开发`) | TDD 编码实现 | `vocabulary/tdd` + `vocabulary/code-review` |
-| 5 | **检查** (`5-检查`) | 代码审查与验收 | `vocabulary/code-review` |
-| 6 | **优化** (`6-优化`) | 重构与架构改进 | - |
-| 7 | **调试** (`7-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
-| 8 | **版本管理** (`8-版本管理`) | Git 版本控制 | - |
-| 9 | **最后整理** (`9-最后整理`) | 会话收尾与沉淀 | - |
+| 2 | **开发** (`2-开发`) | TDD 编码实现 | `vocabulary/tdd` + `vocabulary/code-review` |
+| 3 | **检查** (`3-检查`) | 代码审查与验收 | `vocabulary/code-review` |
+| 4 | **调试** (`4-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
+| 5 | **版本管理** (`5-版本管理`) | Git 版本控制 | - |
+| 6 | **最后整理** (`6-最后整理`) | 会话收尾与沉淀 | - |
 
 ## 独立方法论 Skills
 
