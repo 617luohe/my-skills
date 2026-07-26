@@ -145,8 +145,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: use-skills
-    path: use-skills
+  - name: 0-询问luohe
+    path: 0-询问luohe
     version: 1.0.0
     status: stable
     invocation: user
@@ -252,4 +252,54 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: host-provided
     sync: false
+    dependencies: []
+  - name: vocabulary/grilling
+    path: vocabulary/grilling
+    version: 1.0.0
+    status: stable
+    invocation: internal
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/domain-modeling
+    path: vocabulary/domain-modeling
+    version: 1.0.0
+    status: stable
+    invocation: internal
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/tdd
+    path: vocabulary/tdd
+    version: 1.0.0
+    status: stable
+    invocation: internal
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/code-review
+    path: vocabulary/code-review
+    version: 1.0.0
+    status: stable
+    invocation: internal
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/diagnosing-bugs
+    path: vocabulary/diagnosing-bugs
+    version: 1.0.0
+    status: stable
+    invocation: internal
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
     dependencies: []

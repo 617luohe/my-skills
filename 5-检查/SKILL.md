@@ -1,6 +1,7 @@
 ---
 name: 5-检查
 description: Review code on standards and specification compliance, or turn discovered bugs into actionable reports and GitHub issues. Use before merging, after feature completion, for acceptance checks, or when the user asks for review, inspection, quality validation, or bug reporting.
+disable-model-invocation: false
 ---
 
 # 5-检查 — 代码审查与验收
@@ -9,158 +10,92 @@ description: Review code on standards and specification compliance, or turn disc
 
 ---
 
-## MUST 规则
-
-1. **审查基点和需求来源必须先确认再开始。** 不问清楚不审查。
-2. **两个子代理必须并行运行。** Standards 和 Spec 独立，不互相污染上下文。
-3. **标准审查结果和需求审查结果不合并、不排序、不重排优先级。**
-4. **Bug issue 不包含文件路径和行号。** 使用项目领域术语，不描述代码。
-
 ## 模式 A — 代码审查
 
-对代码变更进行双轴审查。两个评估用**并行子代理**独立执行，避免互相污染上下文。
+使用 `/vocabulary/code-review` 技能进行双轴审查。
 
-### 步骤
+### 快速调用
 
-1. **确定审查基点** — 从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
-   - 统一记录：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）
-   - 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`
-   - 如果你没给 fixed-point，先问清楚再继续，不能默认替你决定
-2. **定位需求来源** — 按顺序查找：
-   - commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 取对应 issue
-   - 你传入的路径参数
-   - 项目中的 PRD/spec 文件
-   - 如果都没找到，问你需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"
-3. **定位规范来源** — 收集 CLAUDE.md、CONTRIBUTING.md、CONTEXT.md/CONTEXT-MAP.md、ADR、以及 linter/formatter/tsconfig 等工具配置
-4. **识别门禁关注点** — 从上游 skill（1-规划的 PRD、7-调试的目标基线、6-优化的性能目标）提取门禁维度：
-   
-   **代码质量门禁**（默认，始终检查）：
-   - 命名规范、类型注解、异常处理、import 组织、公共 API 文档字符串
-   
-   **功能目标门禁**（按需，上游有明确目标时增加）：
-   - **性能指标**（如 PRD 要求"API 响应<100ms"）→ 审查时运行性能测试或检查 benchmark 结果
-   - **可靠性指标**（如"复现率<1%"）→ 审查时检查压力测试报告或重复运行测试
-   - **资源消耗**（如"内存<500MB"）→ 审查时检查资源监控数据或 profiler 输出
-   - **覆盖率**（如"测试覆盖率>80%"）→ 审查时检查覆盖率报告
-   
-   如无法自动验证功能目标门禁 → 在审查报告中标注 `⚠️ 需手动验证：XXX 指标`
+```
+luohe，帮我审查一下当前分支
+```
 
-### 并行审查
+会自动：
+1. 确定审查基点（通常是 main）
+2. 定位需求来源（commit 消息中的 issue 引用、PRD 文件）
+3. 定位规范来源（CLAUDE.md、CONTRIBUTING.md、CONTEXT.md、ADR）
+4. 并行运行 Standards 和 Spec 子代理
+5. 输出汇总报告
 
-启动两个并行子代理（Agent tool），各自独立报告：
+### 详细说明
 
-**上下文管理**：
-- 如果 diff 较小（<500 行变更）→ 并行运行两个子代理
-- 如果 diff 较大（≥500 行变更）→ 串行运行，避免上下文超限：
-  - 先运行 Standards 子代理（轻量，主要看规范）
-  - Standards 完成后，再运行 Spec 子代理（重量，需理解需求）
-  - 在最终汇总时标注："diff 较大，串行审查"
-
-**Standards 子代理** — 读规范文件 + 读 diff，逐文件报告违反规范的地方（跳过已被工具自动强约束的事项）：
-- 命名规范：snake_case 函数/变量、PascalCase 类
-- 类型注解是否完整
-- 异常处理是否捕获过于宽泛的 Exception
-- import 组织：标准库 → 三方库 → 本地模块
-- 公共 API 是否缺少文档字符串
-- 是否使用 Python 惯用写法（上下文管理器、列表推导）
-
-**Spec 子代理** — 读需求文档 + 读 diff，报告：
-- 需求中要求但缺失或部分实现的功能
-- 代码中出现但需求没要求的（范围蔓延）
-- 实现方式有问题的地方
-
-### 汇总报告
-
-两个结果并排展示（`## Standards` + `## Spec` 标题），**不合并、不排序、不重排优先级**；只允许轻量清理表述。
-
-末尾一行总结：每个轴各多少发现，最严重的问题是什么。
+完整流程见 `/vocabulary/code-review/SKILL.md`：
+- 审查准备（确定基点、定位需求和规范来源）
+- 并行审查（Standards 子代理 + Spec 子代理）
+- 汇总报告（两轴并排展示，不合并）
 
 ---
 
 ## 模式 B — Bug 报告
 
-交互式 QA。你口述遇到的问题，我澄清、探索代码、提交 issue。
+你口述问题现象，AI 探索代码并提交 GitHub issue。
 
 ### 流程
 
-1. **倾听 + 轻量澄清** — 最多问 2-3 个简短问题
-2. **后台探索代码** — 一边对话一边启动 Agent 了解领域上下文和领域术语
-3. **判断范围** — 是不是应该拆成多个独立 issue？
-4. **提交 issue** — 用 `gh issue create` 提交，从用户视角写，不包含文件路径
+1. **现象采集** — 你描述观察到的问题：
+   - 什么操作触发？
+   - 预期行为是什么？
+   - 实际发生了什么？
+   - 能稳定复现吗？
+   - 有错误日志吗？
 
-**决定是否拆分**：
+2. **代码探索** — AI 根据现象：
+   - 定位可能相关的代码模块
+   - 读取相关代码和测试
+   - 尝试理解根因（不一定能找到）
 
-| 拆成多个 | 保留一个 |
-|---|---|
-| 修复涉及多个独立区域 | 同一处行为错误的单点问题 |
-| 不同人可并行处理 | 所有症状由同一根因导致 |
-| 多个不同的失败模式 | |
+3. **生成 issue** — 使用项目领域术语（CONTEXT.md）描述问题：
+   ```markdown
+   # Bug: {使用领域术语的标题}
+   
+   ## 现象
+   {用户视角的问题描述}
+   
+   ## 复现步骤
+   1. {步骤1}
+   2. {步骤2}
+   3. {观察到的结果}
+   
+   ## 预期行为
+   {应该发生什么}
+   
+   ## 相关模块
+   {领域层面的模块名，不是文件路径}
+   
+   ## 可能的根因（如果找到）
+   {简短描述，不包含代码片段}
+   ```
 
-**Issue 规则**：
-- ❌ 不包含文件路径和行号（会过期）
-- ✅ 使用项目领域术语描述
-- ✅ 描述行为，不描述代码
-- ✅ 复现步骤必须可执行
-- ✅ 30 秒内能读完
+4. **提交** — 使用 `gh` CLI 提交到 GitHub：
+   ```bash
+   gh issue create --title "..." --body "..."
+   ```
 
-### Issue 模板
+### MUST 规则
 
-**单 issue**：
-
-```
-## What happened
-[实际行为]
-
-## What I expected
-[期望行为]
-
-## Steps to reproduce
-1. [具体步骤]
-```
-
-**拆分多 issue**（按依赖顺序提交，先建阻塞项）：
-
-```
-## Parent issue
-#<父 issue 号> 或在 QA 中报告
-
-## What's wrong
-[这一片的具体问题]
-
-## Blocked by
-- #<阻塞项> 或 "无，可直接开始"
-
-```
-
-### 继续循环
-
-提完所有 issue 后问：**"继续下一个，还是完成了？"** 直到你说完成。
+- **Bug issue 不包含文件路径和行号。** 使用项目领域术语，不描述代码。
+- **现象描述从用户视角出发。** 不假设读者知道代码结构。
+- **不编造根因。** 如果没找到，就标记为"待调查"。
 
 ---
 
-## 什么时候用
+## 何时使用
 
-- **模式 A**：提 PR 前自审、审查团队成员代码、合并前把关
-- **模式 B**：发现 bug 但不想手动写 issue、做系统性 QA
+- **代码审查** — 合并前、功能完成后、验收检查
+- **Bug 报告** — 发现问题时，需要记录并追踪
 
-## 案例
+## 与其他技能的关系
 
-```
-你：帮我检查一下 payment-service 分支
-Claude：Standards 审查结果：
-       ❌ payment/processor.py:45 — processPayment → 应改为 process_payment
-       ❌ payment/views.py:102 — except Exception: 过宽
-       ⚠️ 3 个函数缺少类型注解
-
-       Spec 审查结果：
-       ❌ 缺失需求: PRD §3.2 "退款原路返回" 未实现
-       ❌ 范围蔓延: payment_logger.py 需求中没要求
-```
-
-## 完成后 — 自动推进
-
-审查/QA 结束后按发现决定去向，一句话报出下一步再执行：
-
-- 发现 bug 或阻断项 → 转 `/7-调试`（结构化排查根因）。
-- 发现是架构摩擦、耦合过深 → 转 `/6-优化`。
-- 审查通过、无阻断 → 转 `/8-版本管理` 保存；阶段收尾 → `/9-最后整理`。
+- **输入** — git diff（代码审查）或问题现象（Bug 报告）
+- **调用** — `/vocabulary/code-review`（代码审查模式）
+- **输出** — 审查报告（代码审查）或 GitHub issue（Bug 报告）
