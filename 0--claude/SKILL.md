@@ -1,13 +1,13 @@
 ---
 name: 0--claude
-description: Initialize or repair CLAUDE.md from the single-source collaboration template, creating a new file or injecting only missing rule blocks non-destructively. Use when the user asks to initialize CLAUDE.md, add Claude project rules, or install the Caveman, Karpathy, and workflow-routing conventions.
+description: 初始化或修复 CLAUDE.md，从模板注入缺失规则块
 ---
 
 # 0--claude — CLAUDE.md 初始化器
 
 luohe，我来处理项目的 CLAUDE.md。
 
-**唯一数据源**：所有规则块的正文只存在于 `references/template.md`。本 SKILL.md 不再内联任何规则正文——读模板、切块、注入，改规则只改模板一处。
+**唯一数据源**：所有规则块的正文只存在于 `references/template.md`。本文件不内联任何规则正文——读模板、切块、注入，改规则只改模板一处。
 
 核心逻辑：
 - **没有 CLAUDE.md** → 用 template.md 新建完整文件
@@ -16,7 +16,7 @@ luohe，我来处理项目的 CLAUDE.md。
 
 ## MUST 规则
 
-1. **模板是唯一源。** 规则正文一律从 `references/template.md` 读取，禁止在别处（含本文件）复制粘贴规则文字。
+1. **模板是唯一源。** 规则正文一律从 `references/template.md` 读取，禁止在别处复制粘贴规则文字。
 2. **非破坏式注入。** 已有内容一字不动，只在缺失位置嵌入。
 3. **结构化检测，不做模糊匹配。** 按 H2 标题精确匹配判断块是否存在（见下表），不靠 grep 关键词。
 4. **已有则跳过。** 块都在 → 告知无需改动，不写文件。
@@ -30,7 +30,7 @@ luohe，我来处理项目的 CLAUDE.md。
 | Karpathy 编码准则 | `## Karpathy 编码准则` | template.md 同名 H2 段 |
 | 工作流路由 | `## 工作流路由` | template.md 的 `## 工作流路由` + 紧随的 `## 支撑层` 两段 |
 
-检测按整行 H2 标题匹配。标题被改写（如加了后缀）视为"缺失"是可接受的——用户可手动合并，本 skill 不猜测同义标题。
+检测按整行 H2 标题匹配。标题被改写视为"缺失"——用户可手动合并，本 skill 不猜测同义标题。
 
 ## 流程
 

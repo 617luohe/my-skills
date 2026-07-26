@@ -1,6 +1,6 @@
 ---
 name: 0-询问luohe
-description: 不知道用哪个技能？直接问我，我帮你找到合适的流程。
+description: 技能路由指南
 disable-model-invocation: true
 ---
 

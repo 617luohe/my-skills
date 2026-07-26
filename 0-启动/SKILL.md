@@ -1,6 +1,6 @@
 ---
 name: 0-启动
-description: One-shot Python project bootstrap with scaffold, uv, pre-commit, git, and task tracking.
+description: Python 项目一键初始化
 disable-model-invocation: true
 ---
 
@@ -10,10 +10,10 @@ disable-model-invocation: true
 
 ## MUST 规则
 
-1. **依次确认关键选项，不跳过。** Python版本 → mypy strict? → Ruff 行长度/引号风格。
-2. **uv 不可用时自动安装。** 不询问用户。
-3. **所有生成文件均展示预览，确认后再写盘。**
-4. **最终必须通过验证清单：** `uv run pytest` + `pre-commit run --all-files` 均通过。
+1. **依次确认关键选项，不跳过** — Python版本 → mypy strict? → Ruff 行长度/引号风格
+2. **uv 不可用时自动安装** — 不询问用户
+3. **所有生成文件均展示预览，确认后再写盘**
+4. **最终必须通过验证清单** — `uv run pytest` + `pre-commit run --all-files` 均通过
 
 ## 流程
 
@@ -51,10 +51,6 @@ project-name/
 ├── .pre-commit-config.yaml
 ├── pyproject.toml
 └── README.md
-```
-
-```bash
-mkdir -p src/project_name tests
 ```
 
 ### 4. 生成入口文件和测试
@@ -96,15 +92,15 @@ requires-python = ">=3.12"
 dependencies = []
 
 [tool.ruff]
-line-length = 88           # 或用户选择
+line-length = 88
 target-version = "py312"
 
 [tool.ruff.format]
-quote-style = "double"     # 或用户选择
+quote-style = "double"
 
 [tool.mypy]
 python_version = "3.12"
-strict = false             # 或 true，基于用户选择
+strict = false
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
@@ -146,7 +142,7 @@ repos:
 - mypy — 类型错误阻塞提交
 - pytest — 全部测试，失败则阻塞
 
-如果用户选择跳过 mypy，则省略对应 hook。如果尚无测试，省略 pytest hook 并告知用户。
+用户选择跳过 mypy 时省略对应 hook。尚无测试时省略 pytest hook 并告知用户。
 
 ### 9. 安装 pre-commit 钩子
 
