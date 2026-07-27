@@ -133,7 +133,7 @@ my-skills/
   .\my-skills\scripts\sync-skills.ps1 -TakeOwnership
   ```
 
-`-DryRun` 会准确输出 `ADD`、`UPDATE`、`REMOVE MANAGED` 和 `CONFLICT`，且不改磁盘。正式同步先完成复制暂存，再替换受管目录；受管清单只会在复制和替换成功后更新。目标根不存在时只警告，不创建未知父目录。
+`-DryRun` 会准确输出 `ADD`、`UPDATE`、`REMOVE MANAGED` 和 `CONFLICT`，且不改磁盘。正式同步先为**所有**目标完成复制暂存；随后对每个宿主目标把将变更的受管目录和旧状态文件同卷重命名到私有 backup，再移入新内容并发布新状态。状态发布采用旧状态先重命名到 backup、再移动新状态的方式，不存在先删除旧状态的窗口。任一步失败会删除该目标及此前已提交目标的新内容，并恢复其旧目录和旧状态；若恢复本身失败，会汇总报告并保留 backup 现场。此补偿机制尽力恢复跨 `.claude`、`.cursor`、`.codex` 的一致性，但文件系统崩溃或恢复操作失败时不能保证严格全局原子性。目标根不存在时只警告，不创建未知父目录。
 
 发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 19 个 `distribution: synchronized` 条目构成正式发布集；5 个 `layer: vocabulary` 条目是可复用核心。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
 
@@ -146,7 +146,7 @@ python scripts/validate_skills.py
 python scripts/validate_skills.py --json
 ```
 
-验证父目录下 `.claude/.cursor/.codex` 的 skill 名称和内容哈希与源码完全一致：
+验证父目录下 `.claude/.cursor/.codex` 的受管清单和受管内容与源码一致，忽略未受管的额外技能：
 
 ```bash
 python scripts/validate_skills.py --check-deployments

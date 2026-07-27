@@ -15,6 +15,7 @@ from validate_skills import (
     LINK_RE,
     SLASH_SKILL_RE,
     _validate_document_authority,
+    _validate_deployments,
     _validate_eval,
 )
 
@@ -96,6 +97,82 @@ class TestEvalQualityValidation(unittest.TestCase):
             errors = []
             _validate_eval(path, "example", root, errors)
         self.assertEqual(errors[0]["code"], "eval-shape")
+
+
+class TestDeploymentValidation(unittest.TestCase):
+    """Deployment checks trust only the explicit managed-skill state."""
+
+    def setUp(self):
+        self.temporary_directory = tempfile.TemporaryDirectory()
+        self.project_root = Path(self.temporary_directory.name)
+        self.root = self.project_root / "my-skills"
+        self.root.mkdir()
+        self.skills = [
+            {"name": "managed-skill", "distribution": "synchronized"},
+        ]
+        source = self.root / "managed-skill"
+        source.mkdir()
+        (source / "SKILL.md").write_text("source", encoding="utf-8")
+
+    def tearDown(self):
+        self.temporary_directory.cleanup()
+
+    def _deployment(self, host):
+        deployment = self.project_root / host / "skills"
+        deployment.mkdir(parents=True)
+        managed = deployment / "managed-skill"
+        managed.mkdir()
+        (managed / "SKILL.md").write_text("source", encoding="utf-8")
+        return deployment
+
+    @staticmethod
+    def _write_state(deployment, skills):
+        (deployment / ".my-skills-managed.json").write_text(
+            json.dumps({"schema_version": 1, "skills": skills}), encoding="utf-8"
+        )
+
+    def _validate(self):
+        errors = []
+        _validate_deployments(self.root, self.skills, errors)
+        return errors
+
+    def test_allows_extra_unmanaged_directories(self):
+        for host in (".claude", ".cursor", ".codex"):
+            deployment = self._deployment(host)
+            self._write_state(deployment, ["managed-skill"])
+            (deployment / "third-party").mkdir()
+
+        self.assertEqual(self._validate(), [])
+
+    def test_rejects_missing_managed_state(self):
+        for host in (".claude", ".cursor", ".codex"):
+            self._deployment(host)
+
+        self.assertTrue(any(error["code"] == "deployment-state" for error in self._validate()))
+
+    def test_rejects_managed_state_drift(self):
+        for host in (".claude", ".cursor", ".codex"):
+            deployment = self._deployment(host)
+            self._write_state(deployment, ["retired-skill"])
+
+        self.assertTrue(any(error["code"] == "deployment-state-drift" for error in self._validate()))
+
+    def test_rejects_managed_content_hash_drift(self):
+        for host in (".claude", ".cursor", ".codex"):
+            deployment = self._deployment(host)
+            self._write_state(deployment, ["managed-skill"])
+        ((self.project_root / ".cursor" / "skills" / "managed-skill") / "SKILL.md").write_text(
+            "changed", encoding="utf-8"
+        )
+
+        self.assertTrue(any(error["code"] == "deployment-hash" for error in self._validate()))
+
+    def test_accepts_matching_managed_state_and_content(self):
+        for host in (".claude", ".cursor", ".codex"):
+            deployment = self._deployment(host)
+            self._write_state(deployment, ["managed-skill"])
+
+        self.assertEqual(self._validate(), [])
 
 
 class TestLinkRegex(unittest.TestCase):

@@ -248,6 +248,9 @@ class TestMultiWorkerContract(unittest.TestCase):
         self.assertIn("已由用户确认的 `tasks.md`", skill)
         self.assertIn("停止，不得拆解、建分支或派发", skill)
         self.assertIn("请用户显式运行 `/1-规划`", skill)
+        self.assertIn("slug", skill)
+        self.assertIn("Task ID", skill)
+        self.assertNotIn("任务分支名", skill)
         self.assertNotIn("调用 `/1-规划`", skill)
         self.assertNotIn("调用 `/2-开发`", skill)
 

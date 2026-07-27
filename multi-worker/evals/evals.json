@@ -7,7 +7,8 @@
       "expected_output": "停止，不拆解、不建分支、不创建 worktree 或派发，并要求用户先确认 tasks.md。",
       "files": [],
       "expectations": [
-        "要求已确认的 tasks.md 含 Task ID、目标、文件、验收、依赖和分支",
+        "要求已确认的 tasks.md 含 Task ID、目标、文件、验收和依赖",
+        "任务分支和 worktree 名在派发确认后由 Task ID 与 slug 确定性生成",
         "不在缺失或未确认 tasks.md 时自行拆解",
         "不创建 worktree、分支或派发 worker",
         "明确建议用户运行 /1-规划 后确认任务清单"

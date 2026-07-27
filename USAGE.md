@@ -252,7 +252,7 @@ Claude：验证通过，sort 有 parallel 实现。
 
 **触发方式**：仅可由用户显式调用：`/multi-worker <已确认的 docs/plans/<feature>/tasks.md 路径>`。不因自然语言中的“并行开发”“分头开发”自动触发。
 
-**输入门禁**：`docs/plans/<feature>/tasks.md` 必须已由用户确认，并逐项包含任务、允许修改的文件、验收标准、依赖关系和分支名。缺失、未确认或任务不独立时停止，要求用户显式运行 `/1-规划` 生成并确认任务清单；`multi-worker` 不调用该 user-only 入口。
+**输入门禁**：`docs/plans/<feature>/tasks.md` 必须已由用户确认，并逐项包含 Task ID、任务、允许修改的文件、验收标准和依赖关系。任务分支和 worktree 名不属于规划产物；用户确认派发后，`multi-worker` 根据 Task ID 与任务 slug 确定性生成并展示。缺失、未确认或任务不独立时停止，要求用户显式运行 `/1-规划` 生成并确认任务清单；`multi-worker` 不调用该 user-only 入口。
 
 **前置门禁**：
 1. 设计文档必须包含目标、模块划分、接口约定和验收标准。

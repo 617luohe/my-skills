@@ -602,30 +602,81 @@ def _validate_deployments(
         if not deployment.is_dir():
             errors.append(
                 _finding(
-                    "deployment-names",
+                    "deployment-state",
                     deployment,
                     f"{host} deployment root is missing",
                     root,
                 )
             )
             continue
-        actual_names = {item.name for item in deployment.iterdir()}
-        if actual_names != expected_names:
+
+        state_path = deployment / ".my-skills-managed.json"
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8-sig"))
+        except FileNotFoundError:
             errors.append(
                 _finding(
-                    "deployment-names",
-                    deployment,
-                    f"expected {published}; found {sorted(actual_names)}",
+                    "deployment-state",
+                    state_path,
+                    "managed state file is missing; cannot infer managed skills from directory entries",
                     root,
                 )
             )
             continue
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append(
+                _finding("deployment-state", state_path, f"invalid managed state: {exc}", root)
+            )
+            continue
+
+        managed = state.get("skills") if isinstance(state, dict) else None
+        state_valid = (
+            isinstance(state, dict)
+            and state.get("schema_version") == 1
+            and isinstance(managed, list)
+            and all(isinstance(name, str) and name for name in managed)
+            and len(managed) == len(set(managed))
+        )
+        if not state_valid:
+            errors.append(
+                _finding(
+                    "deployment-state",
+                    state_path,
+                    "managed state must contain schema_version 1 and a unique list of non-empty skill names",
+                    root,
+                )
+            )
+            continue
+
+        managed_names = set(managed)
+        if managed_names != expected_names:
+            errors.append(
+                _finding(
+                    "deployment-state-drift",
+                    state_path,
+                    f"expected managed skills {published}; found {sorted(managed_names)}",
+                    root,
+                )
+            )
+
+        # Only names in the source publication are managed by this validation.
+        # Other deployment entries are explicitly left untouched by synchronization.
         for name in published:
-            if _tree_hash(root / name) != _tree_hash(deployment / name):
+            deployed_skill = deployment / name
+            if not deployed_skill.is_dir():
                 errors.append(
                     _finding(
                         "deployment-hash",
-                        deployment / name,
+                        deployed_skill,
+                        "managed deployment directory is missing",
+                        root,
+                    )
+                )
+            elif _tree_hash(root / name) != _tree_hash(deployed_skill):
+                errors.append(
+                    _finding(
+                        "deployment-hash",
+                        deployed_skill,
                         "deployment content hash differs from source",
                         root,
                     )
