@@ -152,14 +152,4 @@ python scripts/validate_skills.py --json
 python scripts/validate_skills.py --check-deployments
 ```
 
-运行标准库 `unittest` 测试：
-
-```bash
-python -m unittest discover -s tests -v
-```
-
-警告不影响退出码；治理错误返回非零退出码。CI 只验证独立源码，不依赖宿主部署目录，也不运行行为模型评测。
-
-### Eval 契约
-
-部分高风险技能在各自的 `evals/evals.json` 中随 skill 一起发布，供后续 runner 消费。CI 当前仅验证这些 JSON 的结构、每个用例的非空且具体的预期，以及关键高风险分支的覆盖契约；**不会调用 LLM、外部服务或 benchmark**，因此这不是对模型行为已经实测的声明。
+警告不影响退出码；治理错误返回非零退出码。CI 只运行 `python scripts/validate_skills.py` 静态治理验证，不依赖宿主部署目录。

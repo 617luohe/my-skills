@@ -421,8 +421,6 @@ def _validate_skill(
 
     for markdown in sorted(skill_path.rglob("*.md")):
         _validate_markdown(markdown, root, canonical, errors)
-    for eval_path in sorted(skill_path.glob("evals/*.json")):
-        _validate_eval(eval_path, name, root, errors)
 
 
 def _validate_document_authority(
@@ -535,65 +533,6 @@ def _validate_routes(
                     root,
                 )
             )
-
-
-def _validate_eval(
-    path: Path, skill_name: str, root: Path, errors: list[dict[str, str]]
-) -> None:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8-sig"))
-    except (OSError, json.JSONDecodeError) as exc:
-        errors.append(_finding("eval-shape", path, f"invalid JSON: {exc}", root))
-        return
-    valid = (
-        isinstance(payload, dict)
-        and payload.get("skill_name") == skill_name
-        and isinstance(payload.get("evals"), list)
-        and bool(payload.get("evals"))
-    )
-    if valid:
-        ids: set[int] = set()
-        for case in payload["evals"]:
-            if not isinstance(case, dict):
-                valid = False
-                break
-
-            files = case.get("files")
-            expectations = case.get("expectations")
-            files_valid = isinstance(files, list) and all(
-                isinstance(item, str) for item in files
-            )
-            expectations_valid = (
-                isinstance(expectations, list)
-                and all(isinstance(item, str) for item in expectations)
-                and len(expectations) >= 2
-                and len(set(expectations)) == len(expectations)
-                and all(len(item.strip()) >= 8 for item in expectations)
-            )
-            case_valid = (
-                isinstance(case.get("id"), int)
-                and not isinstance(case.get("id"), bool)
-                and case["id"] not in ids
-                and isinstance(case.get("prompt"), str)
-                and bool(case["prompt"].strip())
-                and isinstance(case.get("expected_output"), str)
-                and bool(case["expected_output"].strip())
-                and files_valid
-                and expectations_valid
-            )
-            if not case_valid:
-                valid = False
-                break
-            ids.add(case["id"])
-    if not valid:
-        errors.append(
-            _finding(
-                "eval-shape",
-                path,
-                "eval JSON does not match the governance shape",
-                root,
-            )
-        )
 
 
 def _validate_deployments(
