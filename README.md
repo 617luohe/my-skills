@@ -20,7 +20,7 @@ my-skills/
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 ├── multi-worker/                — 并行开发编排器（实验性）
-└── scripts/                     — manifest 解析与精确镜像部署脚本
+└── scripts/                     — manifest 解析与受管技能部署脚本
 ```
 
 ## 命名规范
@@ -123,11 +123,19 @@ my-skills/
 .\my-skills\scripts\sync-skills.ps1 -DryRun
 ```
 
-同步后的三个目标是**完整镜像**：脚本先删除每个已存在目标目录下的全部子项，再仅复制 manifest 发布的 19 个核心 skills + 5 个 vocabulary 技能。目标根不存在时只警告，不创建未知父目录。
+同步只管理本仓库拥有的技能，不会清空 `.claude/skills/`、`.cursor/skills/` 或 `.codex/skills/` 根目录。每个目标根会维护 `.my-skills-managed.json`，记录上一次成功同步时由本仓库管理的 skill 名称：
+
+- 上次受管、但已不在当前 manifest 发布集中的名称会显示为 `REMOVE MANAGED` 并被删除；受管的当前名称会显示为 `UPDATE`，新名称显示为 `ADD`。
+- 不在该清单中的现有目录永远不会被删除或覆盖。如果当前发布名称与这种目录同名，脚本会显示 `CONFLICT`、停止且不写入任何目标。
+- 确认要由本仓库接管同名目录时，必须显式授权：
+
+  ```powershell
+  .\my-skills\scripts\sync-skills.ps1 -TakeOwnership
+  ```
+
+`-DryRun` 会准确输出 `ADD`、`UPDATE`、`REMOVE MANAGED` 和 `CONFLICT`，且不改磁盘。正式同步先完成复制暂存，再替换受管目录；受管清单只会在复制和替换成功后更新。目标根不存在时只警告，不创建未知父目录。
 
 发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 19 个 `distribution: synchronized` 条目构成正式发布集；5 个 `layer: vocabulary` 条目是可复用核心。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
-
-`-DryRun` 会逐项输出 `REMOVE` 和 `COPY`，但不改磁盘。正式运行会对 `.claude/skills/`、`.cursor/skills/`、`.codex/skills/` 执行精确镜像。
 
 ## 治理验证
 
