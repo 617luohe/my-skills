@@ -58,7 +58,7 @@ disable-model-invocation: true
 - **场景压力测试** — 用具体场景探测边界
 - **内联更新** — 每当一个术语被确认，立即更新 CONTEXT.md
 
-**输出**：`CONTEXT.md` — 项目唯一领域语言文档，包含规范术语、关系、示例对话和已标记歧义。
+**输出**：`CONTEXT.md` — 项目唯一领域 glossary，只包含规范术语、关系、少量领域场景及已标记歧义；ADR、技术栈/模块地图、任务状态和历史归档不写入其中。
 
 > 如果项目已有 CONTEXT.md，在其基础上更新。如果项目没有 CONTEXT.md，这里按需创建。
 
@@ -73,7 +73,7 @@ disable-model-invocation: true
 2. **少见** — 未来的读者看到代码会想"为什么这样做？"
 3. **真实取舍** — 有真实的备选方案和取舍理由
 
-使用 `references/adr-format.md` 中定义的标准模板，创建在 `docs/adr/NNNN-title.md`。
+使用 `/vocabulary/domain-modeling` 技能拥有的 [ADR 模板](../vocabulary/domain-modeling/references/adr-format.md)，创建在 `docs/adr/NNNN-title.md`。
 
 ---
 
@@ -185,6 +185,6 @@ disable-model-invocation: true
 完整的决策树算法、frontier 计算规则、CONTEXT.md 格式详见：
 - `vocabulary/grilling/SKILL.md` — 询问循环的核心逻辑
 - `vocabulary/domain-modeling/SKILL.md` — 领域建模的详细规则
-- `references/planning-rules.md` — frontier 算法和缓存规则
-- `references/context-format.md` — CONTEXT.md 格式规范
-- `references/adr-format.md` — ADR 编写指南
+- `references/planning-rules.md` — frontier 算法和文档权威边界
+- `references/context-format.md` — CONTEXT.md glossary 格式规范
+- `../vocabulary/domain-modeling/references/adr-format.md` — ADR 编写指南

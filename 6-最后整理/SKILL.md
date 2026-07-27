@@ -73,7 +73,7 @@ disable-model-invocation: true
 创建交接文档，让下个会话无缝继续。
 
 **规则**：
-- 保存到临时文件，返回路径给你
+- 保存到 `docs/handoff/` 下的交接文件，返回路径给你
 - 不重复已在其他产物（PRD、commit、diff）中的内容，引用路径或 URL 即可
 - 建议下个会话要用到的技能
 
@@ -129,7 +129,7 @@ disable-model-invocation: true
 - 归位/调整：xxx
 
 ### 交接
-- 交接文档 → handoff-xxxx.md
+- 交接文档 → `docs/handoff/handoff-xxxx.md`
 
 ### 安全护栏
 - 已配置 / 需安装
@@ -152,7 +152,7 @@ disable-model-invocation: true
 Claude：1. 修改总结 → 改了 payment 模块 3 个文件，决定用原路退款
         2. 经验沉淀 → memory 新增"退款网关有 5% 超时，需重试"
         3. 项目结构整理 → 删掉 scratch_test.py 等 2 个临时文件
-        4. 交接 → handoff-a7k3.md
+        4. 交接 → docs/handoff/handoff-a7k3.md
         5. 安全护栏 → 已配置
 
         注：CLAUDE.md 里 payment 路由表看着有点旧，建议跑一次 0--neat-freak 做全局同步。

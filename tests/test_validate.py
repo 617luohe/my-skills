@@ -8,7 +8,12 @@ import sys
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from validate_skills import BANNED_SKILLS, LINK_RE, SLASH_SKILL_RE
+from validate_skills import (
+    BANNED_SKILLS,
+    LINK_RE,
+    SLASH_SKILL_RE,
+    _validate_document_authority,
+)
 
 
 class TestBannedSkills(unittest.TestCase):
@@ -69,5 +74,45 @@ class TestSlashSkillRegex(unittest.TestCase):
         self.assertEqual(matches, [])
 
 
-if __name__ == "__main__":
-    unittest.main()
+class TestDocumentAuthority(unittest.TestCase):
+    """Test CONTEXT, ADR, and task-status authority boundaries."""
+
+    def test_accepts_authoritative_document_locations(self):
+        errors = []
+        root = Path("/repository")
+        _validate_document_authority(
+            Path("/repository/vocabulary/domain-modeling/SKILL.md"),
+            """\
+CONTEXT.md is a glossary of domain terms.
+Record architecture decisions in `docs/adr/NNNN-title.md`.
+Record task status in `plans/tasks/issue/handoff`.
+Use [the ADR template](references/adr-format.md).
+""",
+            root,
+            errors,
+        )
+        self.assertEqual(errors, [])
+
+    def test_rejects_embedded_adr_in_context_format(self):
+        errors = []
+        root = Path("/repository")
+        path = root / "1-规划/references/context-format.md"
+        _validate_document_authority(
+            path,
+            "## Architecture Decision Records (ADR)\n### ADR-001: embedded decision",
+            root,
+            errors,
+        )
+        self.assertEqual(errors[0]["code"], "context-authority")
+
+    def test_rejects_unpublished_cross_skill_adr_template(self):
+        errors = []
+        root = Path("/repository")
+        path = root / "vocabulary/domain-modeling/SKILL.md"
+        _validate_document_authority(
+            path,
+            "Use the template defined in `/references/adr-format.md`.",
+            root,
+            errors,
+        )
+        self.assertEqual(errors[0]["code"], "adr-template-owner")

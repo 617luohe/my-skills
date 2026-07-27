@@ -11,7 +11,7 @@ disable-model-invocation: true
 ## 主流程：想法 → 交付
 
 1. **`/1-规划`** — 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解
-   - 有代码库时从这里开始（更新 CONTEXT.md 和 ADR）
+   - 有代码库时从这里开始（维护 glossary-only 的 CONTEXT.md；ADR 单独写入 `docs/adr/`）
    - 默认批量询问（frontier 中独立决策集中问）
    - 用户说"逐步"/"一步一步"时切换为一次一问
 

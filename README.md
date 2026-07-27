@@ -54,7 +54,7 @@ my-skills/
 | 技能 | 职责 | 被谁调用 |
 |---|---|---|
 | **grilling** | 询问循环（批量/逐步模式、事实自查、决策推荐） | `/1-规划` |
-| **domain-modeling** | 领域建模（维护 CONTEXT.md、ADR、术语锐化） | `/1-规划` |
+| **domain-modeling** | 领域建模（维护仅含术语的 CONTEXT.md、独立 ADR、术语锐化） | `/1-规划` |
 | **tdd** | TDD 循环（红-绿-重构、测试策略、编码准则） | `/2-开发`、`/multi-worker` |
 | **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/3-检查`、`/multi-worker` |
 | **diagnosing-bugs** | Bug 诊断（六阶段：构建回路→复现→假设→验证→修复→清理） | `/4-调试` |

@@ -2,90 +2,59 @@
 
 ## Purpose
 
-CONTEXT.md 是项目协作的单一真相源，缓存友好设计确保 AI 会话启动快速且一致。
+`CONTEXT.md` is the project's domain glossary. It records stable ubiquitous language so people and agents use the same words for the same domain concepts.
+
+It is **not** a project overview, technical-stack record, module map, ADR register, task tracker, or historical archive.
 
 ## Structure
 
 ```markdown
-# [项目名称] 协作上下文
+# {Project name}
 
-> 最后更新：YYYY-MM-DD
+{One-sentence domain scope, if useful.}
 
-## 1. 项目概览
+## Language
 
-[一段话项目定位]
+**Order**:
+A customer's request to purchase products.
+_Avoid_: Purchase, transaction
 
-**技术栈**：[语言、框架、工具链]  
-**目标用户**：[谁用、解决什么问题]
+**Customer** vs **User**:
+Customer is the billing entity; User is the person operating the system.
+_Previously ambiguous_: "account" referred to both.
 
-## 2. 领域术语表
+## Relationships
 
-| 术语 | 定义 | 用例 |
-|------|------|------|
-| Grilling | 追问式需求澄清 | 规划阶段识别隐含假设 |
-| ... | ... | ... |
+- An **Order** contains one or more **Order Lines**.
+- An **Invoice** requests payment for an **Order**.
 
-## 3. 架构决策记录（ADR）
+## Domain scenarios
 
-### ADR-001: [标题]
-**日期**：YYYY-MM-DD  
-**状态**：已采纳  
-**决策**：[简述]  
-**理由**：[why]  
-**后果**：[trade-offs]
+- If an Order is partially shipped, only its unshipped Order Lines are cancellable.
 
----
+## Flagged ambiguities
 
-### ADR-002: ...
-
-## 4. 模块地图
-
-```
-src/
-├── domain/          # 核心业务逻辑
-├── adapters/        # 外部系统接口
-└── infrastructure/  # 框架胶水层
+- "Cancellation" must state whether it applies to the whole Order or an Order Line.
 ```
 
-[各模块职责 1-2 句话]
+## Allowed content
 
-## 5. 当前任务
+- Canonical terms and concise definitions
+- Relationships between domain concepts
+- Avoided, overloaded, or previously ambiguous words
+- A small number of domain scenarios that clarify a boundary
 
-**活跃分支**：`feature/xxx`  
-**目标**：[本轮工作目标]  
-**进度**：
-- [x] 完成 A
-- [ ] 进行中 B
-- [ ] 待办 C
+## Update rules
 
-## 6. 历史归档
-
-### 2026-07-20 Sprint
-- 完成用户认证模块
-- 引入 Redis 缓存层
-```
-
-## Caching Strategy
-
-### High-cache sections (top)
-- 项目概览
-- 领域术语表
-- ADR（按时间倒序，最新在前）
-- 模块地图
-
-### Low-cache sections (bottom)
-- 当前任务（频繁变动）
-- 历史归档（可选择性加载）
-
-## Update Guidelines
-
-1. **新术语**：直接追加到术语表
-2. **新决策**：在 ADR 区最前面插入新记录
-3. **任务更新**：替换"当前任务"整个区块
-4. **归档**：任务完成后移到历史归档，保留关键里程碑
+1. Add a term when its meaning is resolved.
+2. Clarify ambiguity beside the relevant term or in **Flagged ambiguities**.
+3. Keep examples domain-facing, not implementation-facing.
+4. Record architectural decisions only in `docs/adr/NNNN-title.md`.
+5. Record task status only in `docs/plans/`, a task list, issue, or `docs/handoff/` document.
 
 ## Anti-patterns
 
-❌ 把实现细节写进 CONTEXT（应在代码注释）  
-❌ 重复 README 的项目介绍（保持一句话定位）  
-❌ 记录临时调试信息（用会话内 TODO）
+- Technical stack, implementation details, or module maps
+- Embedded ADRs or a list of ADR decisions
+- Current branch, progress checklist, active task, or sprint status
+- Historical changelog or session archive

@@ -36,7 +36,7 @@ Claude：[下一层 frontier] 如果订单已部分发货，取消范围如何�
 
 ## domain-modeling — 领域建模
 
-**职责**：维护 `CONTEXT.md`（领域术语表）和 ADR（架构决策记录）。
+**职责**：维护仅含领域 glossary 的 `CONTEXT.md`，并将架构决策记录为 `docs/adr/NNNN-title.md` 中独立的 ADR。任务状态记录在 `docs/plans/`、task、issue 或 `docs/handoff/` 中。
 
 **被谁调用**：`/1-规划`
 
@@ -45,7 +45,7 @@ Claude：[下一层 frontier] 如果订单已部分发货，取消范围如何�
 - **模糊语言锐化** — 提议精确的规范术语（如"account"是 Customer 还是 User？）
 - **场景压力测试** — 用具体场景探测边界
 - **内联更新** — 术语确认后立即更新 CONTEXT.md
-- **ADR 节制** — 只有（难逆转 + 少见 + 真实取舍）三条件全满足才创建 ADR
+**ADR**：仅当难逆转、少见且存在真实取舍时创建；使用 `docs/adr/NNNN-title.md`，模板由 `vocabulary/domain-modeling/references/adr-format.md` 发布。
 
 **CONTEXT.md 格式**：
 ```markdown
@@ -253,9 +253,9 @@ Claude：验证通过，sort 有 parallel 实现。
 
 **位置**：多 Agent 协同入口。`multi-worker` 消费已确认任务，并管理 Agent 配置检查、worktree 隔离、并行派发、验收和集成。
 
-**触发方式**：仅可由用户显式调用：`/multi-worker <已确认的 tasks.md 路径>`。不因自然语言中的“并行开发”“分头开发”自动触发。
+**触发方式**：仅可由用户显式调用：`/multi-worker <已确认的 docs/plans/<feature>/tasks.md 路径>`。不因自然语言中的“并行开发”“分头开发”自动触发。
 
-**输入门禁**：`tasks.md` 必须已由用户确认，并逐项包含任务、允许修改的文件、验收标准、依赖关系和分支名。缺失、未确认或任务不独立时停止，要求用户显式运行 `/1-规划` 生成并确认 `tasks.md`；`multi-worker` 不调用该 user-only 入口。
+**输入门禁**：`docs/plans/<feature>/tasks.md` 必须已由用户确认，并逐项包含任务、允许修改的文件、验收标准、依赖关系和分支名。缺失、未确认或任务不独立时停止，要求用户显式运行 `/1-规划` 生成并确认任务清单；`multi-worker` 不调用该 user-only 入口。
 
 **前置门禁**：
 1. 设计文档必须包含目标、模块划分、接口约定和验收标准。
@@ -263,19 +263,19 @@ Claude：验证通过，sort 有 parallel 实现。
 3. 未找到兼容的开发 worker 时停止并报告配置缺口；不得直接使用 Agent，也不得静默回退到通用 Agent。
 4. 工作区必须干净；每个 worker 使用独立分支和 worktree。
 
-**核心流程**：已确认 `tasks.md` → 独立性与 Agent 配置检查 → 用户确认派发 → Git 基线与任务分支 → 并行派发 → 逐项验收 → 合并 → 集成分支完整测试、适用 lint/type check 与最终 diff review → 清理。
+**核心流程**：已确认的任务清单 → 独立性与 Agent 配置检查 → 用户确认派发 → Git 基线与任务分支 → 并行派发 → 逐项验收 → 合并 → 集成分支完整测试、适用 lint/type check 与最终 diff review → 清理。
 
 任一 worker、合并或集成检查失败时保留 worktree 和集成分支，报告失败而不报告完成。
 
 **对话示例**：
 ```
 你：/multi-worker docs/plans/text-tools/tasks.md
-Claude：已读取用户确认的 tasks.md，包含 3 个互不冲突的任务。
+Claude：已读取用户确认的 docs/plans/text-tools/tasks.md，包含 3 个互不冲突的任务。
         已确认 worker-dev 的工具权限、模型与 worktree 能力。
-        请确认是否按该 tasks.md 创建 worktree 并派发 3 个 worker？
+        请确认是否按该任务清单创建 worktree 并派发 3 个 worker？
 ```
 
-**边界**：没有已确认 `tasks.md` 时停止并请用户显式运行 `/1-规划`；任务有强依赖则按依赖顺序执行。合并后必须先在集成分支完成完整测试、适用 lint/type check 和最终 diff review，全部通过后才能清理 worktree。
+**边界**：没有已确认的任务清单时停止并请用户显式运行 `/1-规划`；任务有强依赖则按依赖顺序执行。合并后必须先在集成分支完成完整测试、适用 lint/type check 和最终 diff review，全部通过后才能清理 worktree。
 
 ---
 
@@ -522,7 +522,7 @@ Claude：仓库 URL 是什么？
 Claude：1. 修改总结 → 改了 payment 模块 3 个文件，决定用原路退款
         2. 经验沉淀 → memory 新增"退款网关有 5% 超时，需重试"
         3. 项目结构整理 → 删掉 scratch_test.py 等 2 个临时文件
-        4. 交接 → handoff-a7k3.md；安全护栏 → 已配置
+        4. 交接 → docs/handoff/handoff-a7k3.md；安全护栏 → 已配置
 
         注：CLAUDE.md 里 payment 路由表看着有点旧，建议跑一次 0--neat-freak 做全局同步。
 ```

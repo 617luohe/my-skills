@@ -22,28 +22,8 @@
 └─ 终止：所有模块接口明确
 ```
 
-## Context Caching Rules
+## Document Authority
 
-CONTEXT.md 设计遵循缓存友好原则（仅包含领域术语表）：
-
-1. **不变部分**：领域术语定义（高缓存命中）
-2. **更新策略**：
-   - 新增领域术语 → 追加到术语表
-   - 澄清歧义 → 在对应术语下补充辨析
-   - 架构决策 → 独立记录到 `docs/adr/NNNN-title.md`
-
-## ADR Format
-
-架构决策记录在 `docs/adr/NNNN-title.md` 独立文件：
-
-```markdown
-# ADR NNNN: {Title}
-
-**Status:** Accepted | Superseded by NNNN | Deprecated
-
-**Context:** {The situation that led to this decision}
-
-**Decision:** {What we decided to do}
-
-**Consequences:** {Trade-offs we accepted}
-```
+- `CONTEXT.md` is only the domain glossary: terms, relationships, avoided or ambiguous words, and a few domain scenarios.
+- Architecture decisions are standalone files at `docs/adr/NNNN-title.md`, using the template owned by `vocabulary/domain-modeling/references/adr-format.md`.
+- Task status belongs in `docs/plans/`, a task list, issue, or `docs/handoff/` document; it never belongs in `CONTEXT.md`.

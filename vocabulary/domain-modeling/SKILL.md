@@ -84,6 +84,6 @@ _Previously ambiguous_: "account" referred to both
 
 ## ADR format
 
-Use the standard ADR template defined in `/references/adr-format.md`.
+Use this skill's published [ADR template](references/adr-format.md).
 
-ADRs are created in `docs/adr/NNNN-title.md` with sequential numbering (0001, 0002, ...).
+ADRs are created only in `docs/adr/NNNN-title.md` with sequential numbering (0001, 0002, ...). Task status belongs in `docs/plans/`, task lists, issues, or `docs/handoff/` — never in `CONTEXT.md`.

@@ -425,10 +425,49 @@ def _validate_skill(
         _validate_eval(eval_path, name, root, errors)
 
 
+def _validate_document_authority(
+    path: Path, text: str, root: Path, errors: list[dict[str, str]]
+) -> None:
+    """Enforce the repository's CONTEXT, ADR, and task-status boundaries."""
+    relative = path.resolve().relative_to(root.resolve()).as_posix()
+    normalized = text.lower()
+
+    if relative == "1-规划/references/context-format.md":
+        forbidden = (
+            "技术栈",
+            "模块地图",
+            "当前任务",
+            "历史归档",
+            "architecture decision",
+            "## adr",
+            "### adr",
+        )
+        if any(term in normalized for term in forbidden):
+            errors.append(
+                _finding(
+                    "context-authority",
+                    path,
+                    "CONTEXT format may contain only glossary, relationships, ambiguities, and domain scenarios",
+                    root,
+                )
+            )
+
+    if re.search(r"(?<![.\w-])/references/adr-format\.md", text):
+        errors.append(
+            _finding(
+                "adr-template-owner",
+                path,
+                "ADR template must be owned by vocabulary/domain-modeling/references/adr-format.md",
+                root,
+            )
+        )
+
+
 def _validate_markdown(
     path: Path, root: Path, canonical: set[str], errors: list[dict[str, str]]
 ) -> None:
     text = path.read_text(encoding="utf-8-sig")
+    _validate_document_authority(path, text, root, errors)
     for banned in BANNED_SKILLS:
         if banned in text:
             errors.append(
