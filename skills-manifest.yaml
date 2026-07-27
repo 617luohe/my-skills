@@ -113,7 +113,7 @@ skills:
     path: multi-worker
     version: 1.0.0
     status: stable
-    invocation: model
+    invocation: user
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true

@@ -251,9 +251,11 @@ Claude：验证通过，sort 有 parallel 实现。
 
 **场景**：已有完整设计文档，且可以拆成 2–5 个互不修改同一文件的独立子任务，需要调用宿主内置 worker Agent 并行实现。
 
-**位置**：多 Agent 协同入口。`multi-worker` 管理内置 worker 的任务拆解、Agent 配置检查、worktree 隔离、并行派发、审查和合并。
+**位置**：多 Agent 协同入口。`multi-worker` 消费已确认任务，并管理 Agent 配置检查、worktree 隔离、并行派发、验收和集成。
 
-**触发方式**：`/multi-worker <设计文档路径>`，或自然语言提到“并行开发”“分头开发”“同时开发多个独立模块”。
+**触发方式**：仅可由用户显式调用：`/multi-worker <已确认的 tasks.md 路径>`。不因自然语言中的“并行开发”“分头开发”自动触发。
+
+**输入门禁**：`tasks.md` 必须已由用户确认，并逐项包含任务、允许修改的文件、验收标准、依赖关系和分支名。缺失、未确认或任务不独立时停止，要求用户显式运行 `/1-规划` 生成并确认 `tasks.md`；`multi-worker` 不调用该 user-only 入口。
 
 **前置门禁**：
 1. 设计文档必须包含目标、模块划分、接口约定和验收标准。
@@ -261,17 +263,19 @@ Claude：验证通过，sort 有 parallel 实现。
 3. 未找到兼容的开发 worker 时停止并报告配置缺口；不得直接使用 Agent，也不得静默回退到通用 Agent。
 4. 工作区必须干净；每个 worker 使用独立分支和 worktree。
 
-**核心流程**：设计文档 → 独立任务拆解 → 用户确认 → Agent 配置检查 → Git 基线与任务分支 → 并行派发 → 逐项验收 → 合并。
+**核心流程**：已确认 `tasks.md` → 独立性与 Agent 配置检查 → 用户确认派发 → Git 基线与任务分支 → 并行派发 → 逐项验收 → 合并 → 集成分支完整测试、适用 lint/type check 与最终 diff review → 清理。
+
+任一 worker、合并或集成检查失败时保留 worktree 和集成分支，报告失败而不报告完成。
 
 **对话示例**：
 ```
-你：/multi-worker docs/design-text-tools.md
-Claude：设计文档可拆为 3 个互不冲突的任务。
-        先检查 Agent 配置：已确认 worker-dev 的工具权限、模型与 worktree 能力。
-        工作区和分支准备完成后，并行派发 3 个 worker；逐项测试通过后合并到集成分支。
+你：/multi-worker docs/plans/text-tools/tasks.md
+Claude：已读取用户确认的 tasks.md，包含 3 个互不冲突的任务。
+        已确认 worker-dev 的工具权限、模型与 worktree 能力。
+        请确认是否按该 tasks.md 创建 worktree 并派发 3 个 worker？
 ```
 
-**边界**：没有设计文档先用 `/1-规划`；任务有强依赖则先拆解并按依赖顺序执行。
+**边界**：没有已确认 `tasks.md` 时停止并请用户显式运行 `/1-规划`；任务有强依赖则按依赖顺序执行。合并后必须先在集成分支完成完整测试、适用 lint/type check 和最终 diff review，全部通过后才能清理 worktree。
 
 ---
 
