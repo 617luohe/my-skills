@@ -81,7 +81,7 @@ description: Two-axis review of code changes - Standards (coding standards) and 
 
 ## 验收裁决
 
-审查完成后，基于发现的问题严重程度输出 PASS/FAIL 裁决。
+审查完成后，基于发现的问题严重程度输出 **PASS**、**PASS WITH WARNINGS** 或 **FAIL** 正式验收裁决。
 
 ### 阻断级别定义
 
@@ -179,5 +179,5 @@ description: Two-axis review of code changes - Standards (coding standards) and 
 1. **审查基点和需求来源必须先确认再开始。** 不问清楚不审查。
 2. **两个子代理必须并行运行（小 diff）或串行运行（大 diff）。** Standards 和 Spec 独立，不互相污染上下文。
 3. **标准审查结果和需求审查结果不合并、不排序、不重排优先级。**
-4. **必须输出验收裁决（PASS/FAIL）。** 根据阻断级别问题判定，明确标注是否可合并。
+4. **必须输出验收裁决（PASS、PASS WITH WARNINGS 或 FAIL）。** 根据阻断级别问题判定，明确标注是否可合并。
 5. **功能目标门禁必须验证。** 自动验证或标注需手动验证，未验证的门禁降级为警告。

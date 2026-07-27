@@ -34,6 +34,55 @@ class TestDevelopmentReviewVersioningContract(unittest.TestCase):
         self.assertIn("git diff --cached", review_core)
         self.assertIn("无新增提交，审查未提交改动", review_core)
 
+    def test_check_routes_from_input_contract_without_mode_prompt(self):
+        review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("fixed point/base", review)
+        self.assertIn("spec/需求来源", review)
+        self.assertIn("diff 审查意图", review)
+        self.assertIn("强制进入 Review", review)
+        self.assertIn("不再询问模式", review)
+        self.assertIn("立即修复", review)
+        self.assertIn("/4-调试", review)
+        self.assertIn("仅在输入确实模糊时", review)
+        self.assertIn("一个澄清问题", review)
+
+    def test_check_review_decision_is_a_formal_optional_versioning_handoff(self):
+        review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+        review_core = (REPO_ROOT / "vocabulary" / "code-review" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+
+        for verdict in ("PASS", "PASS WITH WARNINGS", "FAIL"):
+            self.assertIn(verdict, review)
+            self.assertIn(verdict, review_core)
+        self.assertIn("正式交接产物", review)
+        self.assertIn("可选进入 `/5-版本管理`", review)
+        self.assertIn("用户明确授权", review)
+
+    def test_router_includes_independent_review_issue_only_and_root_cause_paths(self):
+        router = (REPO_ROOT / "0-询问luohe" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("独立 Review", router)
+        self.assertIn("只建单", router)
+        self.assertIn("根因修复", router)
+        self.assertIn("/3-检查", router)
+        self.assertIn("/4-调试", router)
+
+    def test_review_routing_is_documented_in_usage_readme_and_template(self):
+        usage = (REPO_ROOT / "USAGE.md").read_text(encoding="utf-8")
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+        template = (REPO_ROOT / "0--claude" / "references" / "template.md").read_text(
+            encoding="utf-8"
+        )
+
+        for document in (usage, readme, template):
+            self.assertIn("/3-检查", document)
+            self.assertIn("/4-调试", document)
+        self.assertIn("只建单", usage)
+        self.assertIn("根因修复", readme)
+        self.assertIn("输入契约", template)
+
 
 class TestMultiWorkerContract(unittest.TestCase):
     """Prevent unsafe implicit orchestration and premature cleanup."""

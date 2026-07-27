@@ -94,7 +94,7 @@ my-skills/
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |
 | 2 | **开发** (`2-开发`) | TDD 编码实现与自检 | `vocabulary/tdd` |
-| 3 | **检查** (`3-检查`) | 代码审查与验收 | `vocabulary/code-review` |
+| 3 | **检查** (`3-检查`) | 由输入契约路由正式 Review、只建单或根因修复；Review 输出 PASS/PASS WITH WARNINGS/FAIL | `vocabulary/code-review` |
 | 4 | **调试** (`4-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
 | 5 | **版本管理** (`5-版本管理`) | Git 版本控制 | - |
 | 6 | **最后整理** (`6-最后整理`) | 会话收尾与沉淀 | - |
