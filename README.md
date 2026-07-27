@@ -55,9 +55,9 @@ my-skills/
 |---|---|---|
 | **grilling** | 询问循环（批量/逐步模式、事实自查、决策推荐） | `/1-规划` |
 | **domain-modeling** | 领域建模（维护仅含术语的 CONTEXT.md、独立 ADR、术语锐化） | `/1-规划` |
-| **tdd** | TDD 循环（红-绿-重构、测试策略、编码准则） | `/2-开发`、`/multi-worker` |
+| **tdd** | TDD 循环（红-绿-重构、按行为风险确定测试、编码准则） | `/2-开发`、`/multi-worker` |
 | **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/3-检查`、`/multi-worker` |
-| **diagnosing-bugs** | Bug 诊断（六阶段：构建回路→复现→假设→验证→修复→清理） | `/4-调试` |
+| **diagnosing-bugs** | Bug 诊断（六阶段：可比较观测→复现→假设→验证→修复→清理） | `/4-调试` |
 
 **收益**：
 - 阶段技能从 150+ 行简化到 30-80 行（委托到 vocabulary）
@@ -93,9 +93,9 @@ my-skills/
 | 0 | **洁癖审查** (`0--neat-freak`) | 知识库洁癖审查 | - |
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |
-| 2 | **开发** (`2-开发`) | TDD 编码实现与自检 | `vocabulary/tdd` |
+| 2 | **开发** (`2-开发`) | TDD 编码实现与自检；按行为风险决定自动化回归测试并记录例外验证证据 | `vocabulary/tdd` |
 | 3 | **检查** (`3-检查`) | 由输入契约路由正式 Review、只建单、架构评估或根因修复；Review 输出 PASS/PASS WITH WARNINGS/FAIL | `vocabulary/code-review` |
-| 4 | **调试** (`4-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
+| 4 | **调试** (`4-调试`) | 结构化调试；以可比较观测信号启动调查，并以稳定或统计可信复现验收修复 | `vocabulary/diagnosing-bugs` |
 | 5 | **版本管理** (`5-版本管理`) | Git 版本控制 | - |
 | 6 | **最后整理** (`6-最后整理`) | 会话收尾与沉淀 | - |
 

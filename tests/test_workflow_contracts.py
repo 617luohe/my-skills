@@ -171,6 +171,43 @@ class TestDevelopmentReviewVersioningContract(unittest.TestCase):
         self.assertIn("根因修复", readme)
         self.assertIn("输入契约", template)
 
+    def test_tdd_and_development_share_behavior_risk_test_policy(self):
+        tdd = (REPO_ROOT / "vocabulary" / "tdd" / "SKILL.md").read_text(encoding="utf-8")
+        development = (REPO_ROOT / "2-开发" / "SKILL.md").read_text(encoding="utf-8")
+
+        required_policy = (
+            "行为变化默认新增自动化回归测试",
+            "纯文档、格式或机械生成物",
+            "现有公共接口测试已覆盖",
+            "记录验证证据",
+            "seam 缺失和风险",
+        )
+        for document in (tdd, development):
+            for policy in required_policy:
+                self.assertIn(policy, document)
+            self.assertNotIn("<50行", document)
+            self.assertNotIn("3-5 个核心行为", document)
+            self.assertNotIn("直接实现 + 手动验证", document)
+
+    def test_diagnosis_allows_observation_before_stable_reproduction(self):
+        diagnosis = (REPO_ROOT / "vocabulary" / "diagnosing-bugs" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        debugging = (REPO_ROOT / "4-调试" / "SKILL.md").read_text(encoding="utf-8")
+
+        required_policy = (
+            "可比较的观测信号",
+            "trace、metrics、安全采样、请求样本、profile、内存快照",
+            "稳定或统计可信的复现用于修复验收",
+            "不是进入调查的前置条件",
+            "一次只改一个变量",
+            "根因证据",
+        )
+        for document in (diagnosis, debugging):
+            for policy in required_policy:
+                self.assertIn(policy, document)
+        self.assertNotIn("有一条命令，运行必现问题", diagnosis)
+
 
 class TestMultiWorkerContract(unittest.TestCase):
     """Prevent unsafe implicit orchestration and premature cleanup."""
