@@ -47,6 +47,47 @@ class TestDevelopmentReviewVersioningContract(unittest.TestCase):
         self.assertIn("仅在输入确实模糊时", review)
         self.assertIn("一个澄清问题", review)
 
+    def test_bug_reporting_uses_one_detected_tracker_and_stops_safely(self):
+        review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+        bug_report = review.split("## Bug 报告 — 只建单", 1)[1].split("## 边界", 1)[0]
+
+        self.assertIn("GitHub（`gh`）", bug_report)
+        self.assertIn("GitLab（`glab`）", bug_report)
+        self.assertIn("Jira", bug_report)
+        self.assertIn("探测 → 查重 → 创建 → URL/编号", bug_report)
+        self.assertIn("同一 tracker", bug_report)
+        self.assertIn("标题、完整正文和目标 tracker", bug_report)
+        self.assertIn("用户确认", bug_report)
+        self.assertIn("不跨 tracker 回退", bug_report)
+        self.assertIn("CLI 缺失", bug_report)
+        self.assertIn("认证失败", bug_report)
+        self.assertIn("查重失败", bug_report)
+        self.assertIn("创建失败", bug_report)
+
+    def test_bug_reporting_never_uses_gh_for_gitlab_or_jira(self):
+        review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+        bug_report = review.split("## Bug 报告 — 只建单", 1)[1].split("## 边界", 1)[0]
+        gitlab = bug_report.split("### GitLab", 1)[1].split("### Jira", 1)[0]
+        jira = bug_report.split("### Jira", 1)[1].split("### 无远程", 1)[0]
+
+        self.assertIn("`glab`", gitlab)
+        self.assertIn("不改用 `gh`", gitlab)
+        self.assertNotIn("`gh issue", gitlab)
+        self.assertIn("不执行 `gh`、`glab`", jira)
+        self.assertIn("任何别的平台 CLI", jira)
+
+    def test_jira_and_missing_tracker_create_docs_issue_drafts_without_false_creation(self):
+        review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+        bug_report = review.split("## Bug 报告 — 只建单", 1)[1].split("## 边界", 1)[0]
+        jira = bug_report.split("### Jira", 1)[1].split("### 无远程", 1)[0]
+        no_tracker = bug_report.split("### 无远程", 1)[1]
+
+        for section in (jira, no_tracker):
+            self.assertIn("`docs/issues/", section)
+            self.assertIn("未提交", section)
+        self.assertIn("不得声称已自动创建", jira)
+        self.assertIn("不声称远程 issue 已创建", no_tracker)
+
     def test_check_review_decision_is_a_formal_optional_versioning_handoff(self):
         review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
         review_core = (REPO_ROOT / "vocabulary" / "code-review" / "SKILL.md").read_text(
