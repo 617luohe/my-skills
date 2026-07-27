@@ -5,9 +5,7 @@
       "id": 1,
       "prompt": "/3-检查 开发已交接未提交 diff：审查 base 是 main，spec 是 docs/plans/discount/tasks.md。请验收这份 diff。",
       "expected_output": "强制执行正式 Review，记录 base、spec 和 diff 范围，并产出唯一 PASS、PASS WITH WARNINGS 或 FAIL 裁决。",
-      "files": [
-        "docs/plans/discount/tasks.md"
-      ],
+      "files": [],
       "expectations": [
         "不再询问用户要选择哪种模式",
         "同时按 Standards 和 Spec 审查",
@@ -19,9 +17,7 @@
       "id": 2,
       "prompt": "/3-检查 只建 issue：支付页偶尔显示重复扣款提示。仓库 remote 指向 Jira，但没有已验证的 Jira CLI；请记录，不要排查或修复。",
       "expected_output": "仅在同一 tracker 范围内探测和查重；因 Jira 无可靠 CLI，将 issue 草稿写到 docs/issues/，不创建远程 issue。",
-      "files": [
-        "docs/issues/duplicate-charge-warning.md"
-      ],
+      "files": [],
       "expectations": [
         "不转入 /4-调试、不猜测根因或修改生产代码",
         "不使用 gh 或 glab 跨 tracker 回退",

@@ -5,11 +5,7 @@
       "id": 1,
       "prompt": "/2-开发 实现订单折扣码校验。用户明确说：不要提交，完成自检后把未提交的改动、审查 base 和需求 docs/plans/discount/tasks.md 交给 /3-检查。",
       "expected_output": "以 TDD 完成最小实现和验证，保持工作区改动未提交，并交接给 /3-检查。",
-      "files": [
-        "docs/plans/discount/tasks.md",
-        "src/discounts.py",
-        "tests/test_discounts.py"
-      ],
+      "files": [],
       "expectations": [
         "不执行 git add、git commit 或调用 /5-版本管理",
         "运行适用的测试和已配置的类型或 lint 检查",

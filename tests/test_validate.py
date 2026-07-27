@@ -53,6 +53,14 @@ class TestHighRiskEvalCoverage(unittest.TestCase):
         for skill_name, relative_path in self.EVAL_PATHS.items():
             self.assertIn(skill_name, Path(relative_path).parts)
 
+    def test_eval_files_are_empty_without_provided_fixtures(self):
+        for skill_name in self.EVAL_PATHS:
+            for case in self._cases(skill_name):
+                self.assertEqual(
+                    case["files"], [],
+                    f"{skill_name} case {case['id']} must not reference absent fixtures",
+                )
+
     def test_key_scenarios_are_covered(self):
         required_terms = {
             "2-开发": ("git commit", "/3-"),
