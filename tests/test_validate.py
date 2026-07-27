@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Unit tests for validate_skills.py"""
 
+import json
+import tempfile
 import unittest
 from pathlib import Path
 import sys
@@ -13,6 +15,7 @@ from validate_skills import (
     LINK_RE,
     SLASH_SKILL_RE,
     _validate_document_authority,
+    _validate_eval,
 )
 
 
@@ -26,6 +29,65 @@ class TestBannedSkills(unittest.TestCase):
     def test_banned_skills_content(self):
         expected = ("0--Agent统筹", "0--auto-iteration", "0--graphify")
         self.assertEqual(BANNED_SKILLS, expected)
+
+
+class TestHighRiskEvalCoverage(unittest.TestCase):
+    """Verify the bundled eval contract covers its high-risk branches."""
+
+    EVAL_PATHS = {
+        "2-开发": "2-开发/evals/evals.json",
+        "3-检查": "3-检查/evals/evals.json",
+        "4-调试": "4-调试/evals/evals.json",
+        "diagnosing-bugs": "vocabulary/diagnosing-bugs/evals/evals.json",
+        "5-版本管理": "5-版本管理/evals/evals.json",
+        "multi-worker": "multi-worker/evals/evals.json",
+        "0-询问luohe": "0-询问luohe/evals/evals.json",
+    }
+
+    def _cases(self, skill_name):
+        path = REPO_ROOT / self.EVAL_PATHS[skill_name]
+        self.assertTrue(path.is_file(), path)
+        return json.loads(path.read_text(encoding="utf-8"))["evals"]
+
+    def test_high_risk_eval_files_are_bundled_per_owner(self):
+        for skill_name, relative_path in self.EVAL_PATHS.items():
+            self.assertIn(skill_name, Path(relative_path).parts)
+
+    def test_key_scenarios_are_covered(self):
+        required_terms = {
+            "2-开发": ("git commit", "/3-"),
+            "3-检查": ("base", "issue", "Jira", "tracker"),
+            "4-调试": ("trace", "metrics"),
+            "diagnosing-bugs": ("不伪造", "根因证据"),
+            "5-版本管理": ("git commit", "git push -u origin"),
+            "multi-worker": ("tasks.md", "worker_failed", "integration_failed"),
+            "0-询问luohe": ("docs/analysis/", "docs/prototypes/", "docs/plans/"),
+        }
+        for skill_name, terms in required_terms.items():
+            text = json.dumps(self._cases(skill_name), ensure_ascii=False)
+            for term in terms:
+                self.assertIn(term, text, f"{skill_name} must cover {term}")
+
+
+class TestEvalQualityValidation(unittest.TestCase):
+    def test_rejects_empty_expected_output_and_vague_expectations(self):
+        payload = {
+            "skill_name": "example",
+            "evals": [{
+                "id": 1,
+                "prompt": "Review this change.",
+                "expected_output": "",
+                "files": [],
+                "expectations": ["be good"],
+            }],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "evals.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            errors = []
+            _validate_eval(path, "example", root, errors)
+        self.assertEqual(errors[0]["code"], "eval-shape")
 
 
 class TestLinkRegex(unittest.TestCase):

@@ -1,0 +1,62 @@
+{
+  "skill_name": "multi-worker",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/multi-worker 并行做支付和退款功能。这里没有已确认的 docs/plans/payments/tasks.md，先帮我拆任务再派 worker。",
+      "expected_output": "停止，不拆解、不建分支、不创建 worktree 或派发，并要求用户先确认 tasks.md。",
+      "files": [
+        "docs/plans/payments/tasks.md"
+      ],
+      "expectations": [
+        "要求已确认的 tasks.md 含 Task ID、目标、文件、验收、依赖和分支",
+        "不在缺失或未确认 tasks.md 时自行拆解",
+        "不创建 worktree、分支或派发 worker",
+        "明确建议用户运行 /1-规划 后确认任务清单"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/multi-worker 已确认 tasks.md，两个 worker 已派发；Task T2 测试失败。清理所有 worktree，并报告整体完成。",
+      "expected_output": "标记 worker_failed，停止并保留全部 worktree，报告失败任务、输出和修复建议，不报告完成。",
+      "files": [
+        "docs/plans/payments/tasks.md"
+      ],
+      "expectations": [
+        "失败不清理任何 worktree 或集成分支",
+        "报告 worker_failed 而非 completed",
+        "保留失败任务的命令输出和 worktree 路径",
+        "不将部分成功表述为整体完成"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/multi-worker 所有 worker 都成功了，但集成分支完整测试失败。清理 worktree 并报告完成。",
+      "expected_output": "标记 integration_failed，停止并保留所有 worktree 和集成分支；报告失败的集成验证和修复建议，不报告完成。",
+      "files": [
+        "docs/plans/payments/tasks.md"
+      ],
+      "expectations": [
+        "集成验证失败时标记 integration_failed",
+        "失败不清理 worktree 或集成分支",
+        "报告失败的集成检查输出和保留现场的路径",
+        "不将所有 worker 成功表述为整体完成"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/multi-worker 已确认 tasks.md，所有 worker 已成功且候选分支已合并到集成分支。完整测试、适用的 lint/type check 和集成 diff 最终 Review 都通过。请完成编排。",
+      "expected_output": "仅在三项集成门禁全部通过后标记 completed，报告集成结果并清理 worktree。",
+      "files": [
+        "docs/plans/payments/tasks.md"
+      ],
+      "expectations": [
+        "确认完整测试、适用 lint/type check 和集成 diff 最终 Review 均在集成分支通过",
+        "仅三项集成门禁全部通过后标记 completed 并报告完成",
+        "完成报告列出集成分支、每个任务状态及全部集成门禁结果",
+        "只有进入 completed 后才清理全部 worktree",
+        "缺少或未通过任一集成门禁时不得报告完成或清理"
+      ]
+    }
+  ]
+}

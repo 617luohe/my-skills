@@ -561,12 +561,14 @@ def _validate_eval(
                 and isinstance(case.get("prompt"), str)
                 and bool(case["prompt"].strip())
                 and isinstance(case.get("expected_output"), str)
+                and bool(case["expected_output"].strip())
                 and isinstance(case.get("files"), list)
                 and all(isinstance(item, str) for item in case["files"])
                 and isinstance(case.get("expectations"), list)
-                and bool(case["expectations"])
+                and len(case["expectations"]) >= 2
+                and len(set(case["expectations"])) == len(case["expectations"])
                 and all(
-                    isinstance(item, str) and item.strip()
+                    isinstance(item, str) and len(item.strip()) >= 8
                     for item in case["expectations"]
                 )
             )

@@ -1,0 +1,17 @@
+{
+  "skill_name": "5-版本管理",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "/5-版本管理 Review 已通过，但不要保存、提交或推送。请告诉我若以后获得授权首次推送，会怎么做。",
+      "expected_output": "不执行任何写入 Git 历史或远程的操作；说明获得明确授权后的首次推送会动态获取当前分支并设置 upstream。",
+      "files": [],
+      "expectations": [
+        "明确说明用户已要求不要保存、提交或推送，因此不执行 git add、git commit 或 git push",
+        "不将 Review 通过视为提交或推送授权",
+        "说明获得明确授权后的首次推送使用 git branch --show-current 获取当前分支名",
+        "说明首次推送使用 git push -u origin 当前分支，不硬编码 main"
+      ]
+    }
+  ]
+}
