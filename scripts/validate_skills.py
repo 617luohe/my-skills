@@ -17,7 +17,16 @@ MANIFEST_MODULE_PATH = SCRIPT_DIR / "skill_manifest.py"
 BANNED_SKILLS = ("0--Agent统筹", "0--auto-iteration", "0--graphify")
 HOSTS = (".claude", ".cursor", ".codex")
 LINK_RE = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
-SLASH_SKILL_RE = re.compile(r"(?<![\w.])/(?!/)([\w-]+(?:--?[\w-]+)+)", re.UNICODE)
+SLASH_SKILL_RE = re.compile(
+    r"(?<![\w.])/(?!/)([\w-]+/[\w-]+(?:--?[\w-]+)*|[\w-]+(?:--?[\w-]+)+)",
+    re.UNICODE,
+)
+# Vault path references that look like skill names to SLASH_SKILL_RE but aren't
+SKILL_REF_EXCLUSIONS = frozenset({
+    "0-Inbox", "1-Atlas", "2-Projects", "3-Areas",
+    "4-Resources", "5-Journal", "6-People", "7-Sources",
+    "raw",
+})
 ROUTE_ROW_RE = re.compile(r"^\|[^\n]*\|\s*([^|`]+?)\s*\|[^\n]*$")
 
 # Naming convention patterns
@@ -26,6 +35,9 @@ EXTENSION_SKILL_RE = re.compile(r"^0--[a-z][a-z0-9-]*$")  # 0--lowercase
 VOCABULARY_SKILL_RE = re.compile(
     r"^vocabulary/[a-z][a-z0-9-]*$"
 )  # vocabulary/lowercase
+MY_NOTE_SKILL_RE = re.compile(
+    r"^my-note/[a-z][a-z0-9-]*(-[a-z][a-z0-9-]*)*$"
+)  # my-note/lowercase-hyphenated
 ROUTER_SKILL = "0-询问luohe"
 
 
@@ -132,6 +144,8 @@ def _validate_naming(name: str) -> str | None:
         return None
     if VOCABULARY_SKILL_RE.match(name):
         return None
+    if MY_NOTE_SKILL_RE.match(name):
+        return None
     # Allow standalone methodology skills (e.g., multi-worker, 0--dialectic with uppercase)
     if "/" not in name and not name[0].isdigit():
         return None
@@ -143,6 +157,10 @@ def _validate_naming(name: str) -> str | None:
     if name.startswith("vocabulary/") and not VOCABULARY_SKILL_RE.match(name):
         return (
             f"vocabulary skill must follow 'vocabulary/lowercase' format, got '{name}'"
+        )
+    if name.startswith("my-note/") and not MY_NOTE_SKILL_RE.match(name):
+        return (
+            f"my-note skill must follow 'my-note/lowercase' format, got '{name}'"
         )
     return f"skill name '{name}' does not match any naming convention"
 
@@ -490,6 +508,8 @@ def _validate_markdown(
                 _finding("markdown-link", path, f"broken local link: {target}", root)
             )
     for reference in SLASH_SKILL_RE.findall(text):
+        if reference in SKILL_REF_EXCLUSIONS:
+            continue
         if reference not in canonical:
             errors.append(
                 _finding(

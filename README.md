@@ -17,6 +17,11 @@ my-skills/
 │   ├── tdd/                     — TDD 循环
 │   ├── code-review/             — 代码审查
 │   └── diagnosing-bugs/         — Bug 诊断
+├── my-note/                      — 知识管理技能体系（类比 vocabulary 层）
+│   ├── noteall/                 — 路由器（唯一入口）
+│   ├── info-digester/           — 外部信息消化
+│   ├── note-composer/           — 笔记撰写
+│   └── ...（共15个技能）
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 ├── multi-worker/                — 并行开发编排器（实验性）
@@ -33,6 +38,7 @@ my-skills/
 | **扩展能力** | `0--英文名称` | `0--claude`、`0--laoyoutiao` | 双连字符标识阶段 0 扩展 |
 | **路由器** | `0-询问luohe` | `0-询问luohe` | 唯一入口，独立前缀 |
 | **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling` | 可复用核心，不直接调用 |
+| **my-note 层** | `my-note/英文名称` | `my-note/noteall`、`my-note/info-digester` | 知识管理层，noteall 为用户入口 |
 | **独立方法论** | `英文或中文名称` | `multi-worker` | 不属于主流程的独立技能 |
 
 **命名约束**：
@@ -46,6 +52,7 @@ my-skills/
 - **仅用户调用**：`0-询问luohe`、`0-启动`、`1-规划`、`5-版本管理`、`6-最后整理`、`multi-worker`、`0--neat-freak`、`0--dialectic`。只能由用户显式输入调用。
 - **允许模型调用**：`2-开发`、`3-检查`、`4-调试`、`0--claude`、`0--laoyoutiao`、`0--tokenless`。模型可按描述自动调用，用户也可显式调用。
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。被其他技能调用，不直接暴露给用户。
+- **my-note 层**：`noteall` 为用户调用入口（知识库路由器）；其余 14 个为 model-invoked，由 noteall 路由调度，不直接暴露给用户。
 
 ## 核心优化（2026-07-26）
 
@@ -106,6 +113,34 @@ my-skills/
 | **辩证矛盾分析法** (`0--dialectic`) | 六步法分析复杂问题、制定战略决策 |
 | **老油条** (`0--laoyoutiao`) | Python 交付节奏管理（个人定制） |
 | **multi-worker** (`multi-worker`) | 并行开发编排器（实验性） |
+
+## 知识管理 Skills（my-note 体系）
+
+> 从 Obsidian vault 知识库技能体系提炼。`noteall` 为入口路由器（用户调用）；其余 14 个为内部技能（模型调用，由 noteall 调度）。
+
+### 工作流概览
+
+```
+Intake → Compose → Polish → Index（+ 维护 & 收尾）
+```
+
+| # | 技能 | 职责 | 阶段 |
+|---|---|---|---|
+| - | **noteall** (`my-note/noteall`) | 路由器 — NL解析 + 工作流路由 | 入口 |
+| - | **info-digester** (`my-note/info-digester`) | 外部内容→结构化笔记（summary/detailed/atomic） | Intake |
+| - | **raw-ingester** (`my-note/raw-ingester`) | raw/ 文件处理（扫描→盘问→路由） | Intake |
+| - | **batch-curator** (`my-note/batch-curator`) | 批量知识整理（6阶段流水线） | Intake |
+| - | **note-composer** (`my-note/note-composer`) | 模板化笔记撰写 + wikilink推荐 | Compose |
+| - | **article-writer** (`my-note/article-writer`) | 深度长文写作（5阶段：研究→大纲→草稿→修订→发布） | Compose |
+| - | **meeting-minutes** (`my-note/meeting-minutes`) | 结构化会议纪要 + 行动项提取 | Compose |
+| - | **reading-digester** (`my-note/reading-digester`) | 阅读笔记（高亮/批注/章节/全书） | Compose |
+| - | **note-polisher** (`my-note/note-polisher`) | 6维质量审计 + 自动/建议修复 | Polish |
+| - | **concept-atomizer** (`my-note/concept-atomizer`) | 长笔记→原子概念笔记 + 互链 | Polish |
+| - | **index-keeper** (`my-note/index-keeper`) | INDEX 全量/增量/健康检查 | Index |
+| - | **vault-cartographer** (`my-note/vault-cartographer`) | MOC生成、知识聚类、链接分析 | Index |
+| - | **file-organizer** (`my-note/file-organizer`) | 5维诊断→批量文件整理 | 维护 |
+| - | **daily-concierge** (`my-note/daily-concierge`) | 日记/周记/月记 + 知识提炼 | 维护 |
+| - | **workflow-wrapup** (`my-note/workflow-wrapup`) | raw/归档 + 处理报告 | 收尾 |
 
 ## 部署方法
 

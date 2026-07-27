@@ -177,3 +177,153 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: my-note/noteall
+    path: my-note/noteall
+    version: 1.0.0
+    status: stable
+    invocation: user
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: [my-note/info-digester, my-note/raw-ingester, my-note/batch-curator, my-note/note-composer, my-note/article-writer, my-note/meeting-minutes, my-note/reading-digester, my-note/note-polisher, my-note/concept-atomizer, my-note/index-keeper, my-note/vault-cartographer, my-note/file-organizer, my-note/daily-concierge, my-note/workflow-wrapup]
+  - name: my-note/info-digester
+    path: my-note/info-digester
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/raw-ingester
+    path: my-note/raw-ingester
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/batch-curator
+    path: my-note/batch-curator
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/note-composer
+    path: my-note/note-composer
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/article-writer
+    path: my-note/article-writer
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/meeting-minutes
+    path: my-note/meeting-minutes
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/reading-digester
+    path: my-note/reading-digester
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/note-polisher
+    path: my-note/note-polisher
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/concept-atomizer
+    path: my-note/concept-atomizer
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/index-keeper
+    path: my-note/index-keeper
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/vault-cartographer
+    path: my-note/vault-cartographer
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/file-organizer
+    path: my-note/file-organizer
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/daily-concierge
+    path: my-note/daily-concierge
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: my-note/workflow-wrapup
+    path: my-note/workflow-wrapup
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []

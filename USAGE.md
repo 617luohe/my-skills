@@ -522,3 +522,100 @@ Claude：1. 修改总结 → 改了 payment 模块 3 个文件，决定用原路
 
         注：CLAUDE.md 里 payment 路由表看着有点旧，建议跑一次 0--neat-freak 做全局同步。
 ```
+
+---
+
+# My-Note 层（知识管理）
+
+> 知识库管理技能体系，从 Obsidian vault 技能体系提炼。`noteall` 为入口路由器（用户调用），其余 14 个为内部技能（模型调用）。标记为 `layer: my-note`。
+
+---
+
+## noteall — 知识库路由器
+
+**职责**：NL解析意图 → 提取参数 → 路由到对应流程。主流程：Intake → Compose → Polish → Index。
+
+**调用方式**：用户显式调用 `/my-note/noteall`
+
+**核心特性**：
+- **环境检测** — 自动检测 vault 目录或读取默认知识库配置
+- **NL路由** — 根据信号词（URL/日记/笔记/会议等）自动匹配技能
+- **工作流路由** — 4阶段流程（Intake/Compose/Polish/Index）覆盖完整知识生命周期
+- **快捷穿透** — `note 消化 {URL}`、`note 写关于{主题}` 直接路由
+
+**示例**：
+```
+你：/my-note/noteall 消化 https://example.com/article
+Claude：[检测环境→路由到 info-digester] 请确认：消化深度？（summary/detailed/atomic）
+你：detailed
+Claude：[创建来源笔记到 7-Sources/，含元数据/论点/wikilink]
+```
+
+```
+你：/my-note/noteall 写一篇关于REST API设计的笔记
+Claude：[路由到 note-composer] 为什么需要这篇笔记？笔记类型？
+你：记录知识，知识概念
+Claude：[盘问领域→撰写→推荐wikilink→生成到 4-Resources/]
+```
+
+---
+
+## Intake 层（内容进入）
+
+### info-digester — 外部信息消化
+URL/PDF/文本→结构化笔记。3种深度：summary（300字摘要）/ detailed（来源笔记）/ atomic（来源+概念笔记）。
+
+### raw-ingester — 原始数据摄入
+raw/ 文件扫描→分步盘问→路由到 daily-concierge / info-digester / note-composer / workflow-wrapup。
+
+### batch-curator — 批量知识整理
+6阶段流水线：Scan→Analyze→Plan（一次确认）→Execute→Index→Archive。支持 .md/.csv/.json/.pdf/.pptx 等格式。
+
+---
+
+## Compose 层（笔记撰写）
+
+### note-composer — 笔记撰写
+盘问（类型/领域/深度）→匹配模板→生成笔记+wikilink→补全frontmatter。
+
+### article-writer — 深度长文
+5阶段：Research→Outline→Draft→Revise→Publish。面向2000+字深度内容。
+
+### meeting-minutes — 会议纪要
+自动链接参会人、提取行动项（含负责人+截止日期）、生成跟进清单。
+
+### reading-digester — 阅读笔记
+书籍/长文的高亮、批注、章节摘要、跨书概念引用、书架管理。
+
+---
+
+## Polish 层（质量提升）
+
+### note-polisher — 笔记润色
+6维检查（元数据/结构/链接/内容/格式/Confidence），自动修复+建议修复。批量模式评分 A/B/C/D。
+
+### concept-atomizer — 概念原子化
+长笔记→原子概念笔记，建立互链，生成/更新 MOC。
+
+---
+
+## Index 层（导航维护）
+
+### index-keeper — 索引维护
+全量/增量/健康检查/缺失补全 4种模式。只维护 _INDEX.md，MANUAL区域不碰。
+
+### vault-cartographer — 知识库制图
+MOC生成与更新、知识聚类发现、链接分析（中枢/入口/不对称）、导航健康诊断。
+
+---
+
+## 维护与收尾
+
+### file-organizer — 文件整理
+5维诊断→计划一次确认→批量执行。不删除，只归档。
+
+### daily-concierge — 日记管家
+每日日记+晚间反思+知识提炼+周/月回顾+待办追踪。
+
+### workflow-wrapup — 收尾归档
+确认产出→raw/归档到7-Sources/→生成报告→建议后续。
