@@ -14,15 +14,15 @@ description: Two-axis review of code changes - Standards (coding standards) and 
 
 ### 1. 确定审查基点
 从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
-- 统一记录：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）
-- 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`
+- 统一记录基点：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）；如存在未提交改动，再附加 `git diff` 和 `git diff --cached`
+- 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`；无提交时明确标注“无新增提交，审查未提交改动”
 - **如果上游已显式提供 fixed-point**（如 `/2-开发` 传递），直接使用，跳过追问
 - 如果没有给 fixed-point，先问清楚再继续
 
 ### 2. 定位需求来源
 按顺序查找：
 - **上游显式传递的需求来源**（如 `/2-开发` 传递的任务清单或 issue 路径）→ 优先使用
-- commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 取对应 issue
+- commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 仅作为上游未提供来源时的后备线索
 - 传入的路径参数
 - 项目中的 PRD/spec 文件
 - 如果都没找到，询问需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"

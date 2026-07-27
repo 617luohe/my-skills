@@ -56,7 +56,7 @@ my-skills/
 | **grilling** | 询问循环（批量/逐步模式、事实自查、决策推荐） | `/1-规划` |
 | **domain-modeling** | 领域建模（维护 CONTEXT.md、ADR、术语锐化） | `/1-规划` |
 | **tdd** | TDD 循环（红-绿-重构、测试策略、编码准则） | `/2-开发`、`/multi-worker` |
-| **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/2-开发`、`/3-检查`、`/multi-worker` |
+| **code-review** | 代码审查（Standards + Spec 双轴、并行子代理） | `/3-检查`、`/multi-worker` |
 | **diagnosing-bugs** | Bug 诊断（六阶段：构建回路→复现→假设→验证→修复→清理） | `/4-调试` |
 
 **收益**：
@@ -93,7 +93,7 @@ my-skills/
 | 0 | **洁癖审查** (`0--neat-freak`) | 知识库洁癖审查 | - |
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |
-| 2 | **开发** (`2-开发`) | TDD 编码实现 | `vocabulary/tdd` + `vocabulary/code-review` |
+| 2 | **开发** (`2-开发`) | TDD 编码实现与自检 | `vocabulary/tdd` |
 | 3 | **检查** (`3-检查`) | 代码审查与验收 | `vocabulary/code-review` |
 | 4 | **调试** (`4-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
 | 5 | **版本管理** (`5-版本管理`) | Git 版本控制 | - |

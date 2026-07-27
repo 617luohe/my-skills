@@ -72,7 +72,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: [vocabulary/tdd, vocabulary/code-review]
+    dependencies: [vocabulary/tdd]
   - name: 3-检查
     path: 3-检查
     version: 1.0.0

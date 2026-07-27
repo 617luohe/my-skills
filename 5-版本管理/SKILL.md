@@ -13,6 +13,7 @@ disable-model-invocation: true
 1. **危险操作必须先确认再执行。** `git reset --hard`、`git push --force`、`git branch -D` 需要用户明确同意。
 2. **回滚默认用 revert，不用 reset。** 除非用户明确要求 reset。
 3. **首次推送自动设置上游分支。** `git push -u origin main`。
+4. **保存版本必须由用户明确授权。** `/2-开发` 和 `/3-检查` 不默认提交；审查通过后，只有用户明确要求保存、提交或调用 `/5-版本管理`，才执行 `git add` 或 `git commit`。
 
 ### init — 初始化仓库
 
