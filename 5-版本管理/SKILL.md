@@ -12,7 +12,7 @@ disable-model-invocation: true
 
 1. **危险操作必须先确认再执行。** `git reset --hard`、`git push --force`、`git branch -D` 需要用户明确同意。
 2. **回滚默认用 revert，不用 reset。** 除非用户明确要求 reset。
-3. **首次推送自动设置上游分支。** `git push -u origin main`。
+3. **首次推送自动设置当前分支的上游分支。** 使用 `git branch --show-current` 动态获取分支名。
 4. **保存版本必须由用户明确授权。** `/2-开发` 和 `/3-检查` 不默认提交；审查通过后，只有用户明确要求保存、提交或调用 `/5-版本管理`，才执行 `git add` 或 `git commit`。
 
 ### init — 初始化仓库
@@ -133,8 +133,8 @@ git pull                  # 拉取远程更新
 
 ```
 你：帮我保存一下进度，我改了用户模块
-Claude：git add . && git commit -m "feat: 完成用户模块基础功能"
-       [main abc1234] feat: 完成用户模块基础功能
+Claude：git add src/users.py tests/test_users.py && git commit -m "feat: 完成用户模块基础功能"
+       [<当前分支> abc1234] feat: 完成用户模块基础功能
 
 你：看看改了什么
 Claude：git log --oneline --graph
@@ -145,7 +145,7 @@ Claude：git log --oneline --graph
 Claude：仓库 URL 是什么？
 你：https://github.com/user/project.git
 Claude：git remote add origin https://github.com/user/project.git
-       git push -u origin main
+       git push -u origin $(git branch --show-current)
 ```
 
 ## 完成后 — 自动推进

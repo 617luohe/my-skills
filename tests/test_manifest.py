@@ -8,7 +8,7 @@ import sys
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from skill_manifest import _scalar, load_manifest, SEMVER
+from skill_manifest import _scalar, load_manifest, publication, SEMVER
 
 
 class TestScalarParsing(unittest.TestCase):
@@ -66,6 +66,27 @@ class TestSemverRegex(unittest.TestCase):
         self.assertIsNone(SEMVER.fullmatch("v1.0.0"))
         self.assertIsNone(SEMVER.fullmatch("1.0.0-beta"))
         self.assertIsNone(SEMVER.fullmatch("1.0.0.0"))
+
+
+class TestPublication(unittest.TestCase):
+    """Keep documented publication counts derived from the manifest."""
+
+    def test_readme_publication_counts_match_manifest(self):
+        manifest = load_manifest(REPO_ROOT / "skills-manifest.yaml")
+        result = publication(manifest, REPO_ROOT)
+        vocabulary_count = sum(
+            skill.get("layer") == "vocabulary" for skill in manifest["skills"]
+        )
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertIn(
+            f"其中 {result['synchronized_count']} 个 `distribution: synchronized` 条目",
+            readme,
+        )
+        self.assertIn(
+            f"{vocabulary_count} 个 `layer: vocabulary` 条目",
+            readme,
+        )
 
 
 if __name__ == "__main__":

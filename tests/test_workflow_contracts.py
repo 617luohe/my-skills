@@ -21,6 +21,15 @@ class TestDevelopmentReviewVersioningContract(unittest.TestCase):
         self.assertNotIn("### 5. 提交", development)
         self.assertNotIn("git commit -m", development)
 
+    def test_versioning_uses_current_branch_for_first_push_and_specific_paths_for_staging(self):
+        versioning = (REPO_ROOT / "5-版本管理" / "SKILL.md").read_text(encoding="utf-8")
+
+        self.assertIn("git push -u origin $(git branch --show-current)", versioning)
+        self.assertNotIn("git push -u origin main", versioning)
+        self.assertNotIn("Claude：git add .", versioning)
+        self.assertIn("git add <具体文件或目录>", versioning)
+        self.assertIn("git add src/users.py tests/test_users.py", versioning)
+
     def test_review_requires_explicit_user_authorization_before_versioning(self):
         review = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
         versioning = (REPO_ROOT / "5-版本管理" / "SKILL.md").read_text(encoding="utf-8")
