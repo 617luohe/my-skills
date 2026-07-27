@@ -110,6 +110,53 @@ class TestDevelopmentReviewVersioningContract(unittest.TestCase):
         self.assertIn("/3-检查", router)
         self.assertIn("/4-调试", router)
 
+    def test_removed_endpoints_have_executable_replacement_paths(self):
+        router = (REPO_ROOT / "0-询问luohe" / "SKILL.md").read_text(encoding="utf-8")
+        template = (REPO_ROOT / "0--claude" / "references" / "template.md").read_text(
+            encoding="utf-8"
+        )
+        planning = (REPO_ROOT / "1-规划" / "SKILL.md").read_text(encoding="utf-8")
+        check = (REPO_ROOT / "3-检查" / "SKILL.md").read_text(encoding="utf-8")
+
+        for document in (router, template):
+            self.assertNotIn("已废弃", document)
+        self.assertIn("docs/analysis/<topic>.md", router)
+        self.assertIn("只读调查", router)
+        self.assertIn("停止条件", router)
+        self.assertIn("/1-规划", router)
+        self.assertIn("docs/prototypes/<topic>/", planning)
+        self.assertIn("throwaway prototype", planning)
+        self.assertIn("docs/plans", planning)
+        self.assertIn("架构评估", check)
+        self.assertIn("docs/analysis/<topic>.md", check)
+        self.assertIn("docs/plans", check)
+        self.assertIn("不进入 Review、Bug 报告或 `/4-调试`", check)
+        self.assertIn("## Review — 正式验收", check)
+        self.assertLess(
+            check.index("## 架构评估 — 只评估，不改造"),
+            check.index("## Review — 正式验收"),
+        )
+
+    def test_routing_examples_do_not_reference_removed_use_skills_entrypoint(self):
+        cases = (REPO_ROOT / "测试用例.md").read_text(encoding="utf-8")
+        readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
+
+        self.assertNotIn("/use-skills", cases)
+        self.assertNotIn("use-skills", readme)
+        self.assertIn("/0-询问luohe", cases)
+
+    def test_runtime_routing_documents_do_not_offer_deprecated_endpoints(self):
+        documents = (
+            REPO_ROOT / "0-询问luohe" / "SKILL.md",
+            REPO_ROOT / "0--claude" / "references" / "template.md",
+            REPO_ROOT / "README.md",
+            REPO_ROOT / "USAGE.md",
+            REPO_ROOT / "测试用例.md",
+        )
+
+        for document in documents:
+            self.assertNotIn("已废弃", document.read_text(encoding="utf-8"), document)
+
     def test_review_routing_is_documented_in_usage_readme_and_template(self):
         usage = (REPO_ROOT / "USAGE.md").read_text(encoding="utf-8")
         readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")

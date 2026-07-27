@@ -77,11 +77,11 @@ my-skills/
 
 **0-询问luohe** — 中文版 ask-matt，包含：
 - 主流程：想法 → 交付
-- 上游：陌生代码、难搞 bug、代码腐烂
+- 上游：陌生代码只读调查后按结果进入规划、检查或调试；代码腐烂明确进入架构评估
 - 支撑层：初始化、压缩、整理、洁癖审查
-- 快速判断表（15 种常见情况）
+- 快速判断表（含一次性调查、原型验证和架构评估路径）
 
-**替代原 use-skills**，指向更新到 CLAUDE.md 工作流路由表。
+路由器同步到 CLAUDE.md 工作流路由表。
 
 ## 开发流程 Skills（阶段 0~6）
 
@@ -94,7 +94,7 @@ my-skills/
 | 0 | **Tokenless** (`0--tokenless`) | 超压缩沟通模式 | - |
 | 1 | **规划** (`1-规划`) | 方案设计与任务拆解 | `vocabulary/grilling` + `vocabulary/domain-modeling` |
 | 2 | **开发** (`2-开发`) | TDD 编码实现与自检 | `vocabulary/tdd` |
-| 3 | **检查** (`3-检查`) | 由输入契约路由正式 Review、只建单或根因修复；Review 输出 PASS/PASS WITH WARNINGS/FAIL | `vocabulary/code-review` |
+| 3 | **检查** (`3-检查`) | 由输入契约路由正式 Review、只建单、架构评估或根因修复；Review 输出 PASS/PASS WITH WARNINGS/FAIL | `vocabulary/code-review` |
 | 4 | **调试** (`4-调试`) | 结构化调试 | `vocabulary/diagnosing-bugs` |
 | 5 | **版本管理** (`5-版本管理`) | Git 版本控制 | - |
 | 6 | **最后整理** (`6-最后整理`) | 会话收尾与沉淀 | - |
