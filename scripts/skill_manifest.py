@@ -104,6 +104,16 @@ def load_manifest(path: Path) -> dict[str, Any]:
     return document
 
 
+def safe_skill_path(value: Any) -> bool:
+    """Return whether value is a relative, traversal-free skill path."""
+    if not isinstance(value, str) or not value or "\\" in value:
+        return False
+    if value.startswith(("/", "\\")) or re.match(r"^[A-Za-z]:", value):
+        return False
+    parts = value.split("/")
+    return all(part and part not in {".", ".."} for part in parts)
+
+
 def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
     if manifest.get("schema_version") != 1:
         raise ValueError("schema_version must be 1")
@@ -124,11 +134,11 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
                 f"skill {index}: fields mismatch; missing={sorted(missing)}, extra={sorted(extra)}"
             )
         name = skill["name"]
-        if not isinstance(name, str) or name in seen_names:
-            raise ValueError(f"skill {index}: name must be a unique string")
+        if not isinstance(name, str) or name in seen_names or not safe_skill_path(name):
+            raise ValueError(f"skill {index}: name must be a unique safe relative path")
         seen_names.add(name)
-        if skill["path"] != name:
-            raise ValueError(f"skill {name}: path must equal name")
+        if skill["path"] != name or not safe_skill_path(skill["path"]):
+            raise ValueError(f"skill {name}: path must equal a safe name")
         if skill["version"] != repository_version:
             raise ValueError(f"skill {name}: version must equal repository_version")
         if skill["status"] != "stable":

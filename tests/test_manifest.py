@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Unit tests for skill_manifest.py"""
 
+import copy
 import unittest
 from pathlib import Path
 import sys
@@ -8,7 +9,7 @@ import sys
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from skill_manifest import _scalar, load_manifest, publication, SEMVER
+from skill_manifest import _scalar, load_manifest, publication, safe_skill_path, SEMVER
 
 
 class TestScalarParsing(unittest.TestCase):
@@ -68,8 +69,36 @@ class TestSemverRegex(unittest.TestCase):
         self.assertIsNone(SEMVER.fullmatch("1.0.0.0"))
 
 
+class TestSafeSkillPath(unittest.TestCase):
+    def test_rejects_unsafe_paths(self):
+        for value in ("../x", "/x", "C:/x", "a\\b", "./x"):
+            with self.subTest(value=value):
+                self.assertFalse(safe_skill_path(value))
+
+    def test_allows_nested_relative_path(self):
+        self.assertTrue(safe_skill_path("vocabulary/tdd"))
+
+
 class TestPublication(unittest.TestCase):
-    """Keep documented publication counts derived from the manifest."""
+    """Validate publication paths and documented manifest counts."""
+
+    def test_rejects_unsafe_skill_paths(self):
+        manifest = load_manifest(REPO_ROOT / "skills-manifest.yaml")
+        for value in ("../x", "/x", "C:/x", "a\\b", "./x"):
+            with self.subTest(value=value):
+                invalid = copy.deepcopy(manifest)
+                invalid["skills"][0]["name"] = value
+                invalid["skills"][0]["path"] = value
+                with self.assertRaises(ValueError):
+                    publication(invalid, REPO_ROOT)
+
+    def test_accepts_nested_skill_path(self):
+        manifest = load_manifest(REPO_ROOT / "skills-manifest.yaml")
+        self.assertTrue(safe_skill_path("vocabulary/tdd"))
+        self.assertIn(
+            "vocabulary/tdd", [skill["path"] for skill in manifest["skills"]]
+        )
+        publication(manifest, REPO_ROOT)
 
     def test_readme_publication_counts_match_manifest(self):
         manifest = load_manifest(REPO_ROOT / "skills-manifest.yaml")

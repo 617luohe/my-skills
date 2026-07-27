@@ -336,6 +336,20 @@ foreach ($Plan in $Plans) {
             foreach ($CompletedBackup in $CompletedBackups) {
                 try { Move-Item -LiteralPath $CompletedBackup.Backup -Destination $CompletedBackup.Destination } catch { $RollbackErrors += "global restore '$($CompletedBackup.Destination)': $($_.Exception.Message)" }
             }
+            try {
+                if (Test-Path -LiteralPath $Completed.BackupRoot) {
+                    $RemainingBackup = Get-ChildItem -LiteralPath $Completed.BackupRoot -Force | Select-Object -First 1
+                    if ($null -ne $RemainingBackup) { throw "backup is not empty" }
+                    Remove-Item -LiteralPath $Completed.BackupRoot -Force
+                }
+            } catch { $RollbackErrors += "remove rollback backup '$($Completed.BackupRoot)': $($_.Exception.Message)" }
+        }
+        foreach ($PreparedPlan in $Plans) {
+            try {
+                if ($PreparedPlan.PSObject.Properties['StagingRoot'] -and (Test-Path -LiteralPath $PreparedPlan.StagingRoot)) {
+                    Remove-Item -LiteralPath $PreparedPlan.StagingRoot -Recurse -Force
+                }
+            } catch { $RollbackErrors += "remove rollback staging '$($PreparedPlan.StagingRoot)': $($_.Exception.Message)" }
         }
         if ($RollbackErrors.Count -gt 0) {
             throw "Sync failed: $($Failure.Exception.Message). Rollback also failed: $($RollbackErrors -join '; '). Backup retained at '$BackupRoot'."

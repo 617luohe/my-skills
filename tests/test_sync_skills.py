@@ -146,6 +146,9 @@ class TestSyncSkillsOwnership(unittest.TestCase):
         self.assertIn("rollback", output.lower())
         self.assertEqual((old_skill / "old.txt").read_text(encoding="utf-8"), "old")
         self.assertEqual((self.target / MANAGED_FILE).read_text(encoding="utf-8"), old_state)
+        for target in (self.target, second_target):
+            self.assertFalse(any(target.glob(".my-skills-staging-*")))
+            self.assertFalse(any(target.glob(".my-skills-backup-*")))
 
     def test_take_ownership_updates_only_managed_names_and_preserves_unmanaged(self):
         unmanaged = self.target / "third-party"
