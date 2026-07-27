@@ -549,28 +549,37 @@ def _validate_eval(
         isinstance(payload, dict)
         and payload.get("skill_name") == skill_name
         and isinstance(payload.get("evals"), list)
+        and bool(payload.get("evals"))
     )
     if valid:
         ids: set[int] = set()
         for case in payload["evals"]:
+            if not isinstance(case, dict):
+                valid = False
+                break
+
+            files = case.get("files")
+            expectations = case.get("expectations")
+            files_valid = isinstance(files, list) and all(
+                isinstance(item, str) for item in files
+            )
+            expectations_valid = (
+                isinstance(expectations, list)
+                and all(isinstance(item, str) for item in expectations)
+                and len(expectations) >= 2
+                and len(set(expectations)) == len(expectations)
+                and all(len(item.strip()) >= 8 for item in expectations)
+            )
             case_valid = (
-                isinstance(case, dict)
-                and isinstance(case.get("id"), int)
+                isinstance(case.get("id"), int)
                 and not isinstance(case.get("id"), bool)
-                and case.get("id") not in ids
+                and case["id"] not in ids
                 and isinstance(case.get("prompt"), str)
                 and bool(case["prompt"].strip())
                 and isinstance(case.get("expected_output"), str)
                 and bool(case["expected_output"].strip())
-                and isinstance(case.get("files"), list)
-                and all(isinstance(item, str) for item in case["files"])
-                and isinstance(case.get("expectations"), list)
-                and len(case["expectations"]) >= 2
-                and len(set(case["expectations"])) == len(case["expectations"])
-                and all(
-                    isinstance(item, str) and len(item.strip()) >= 8
-                    for item in case["expectations"]
-                )
+                and files_valid
+                and expectations_valid
             )
             if not case_valid:
                 valid = False

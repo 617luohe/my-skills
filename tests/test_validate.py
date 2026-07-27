@@ -79,6 +79,63 @@ class TestHighRiskEvalCoverage(unittest.TestCase):
 
 
 class TestEvalQualityValidation(unittest.TestCase):
+    @staticmethod
+    def _case(case_id=1):
+        return {
+            "id": case_id,
+            "prompt": "Review this change.",
+            "expected_output": "Report the review findings.",
+            "files": [],
+            "expectations": [
+                "Identify the relevant implementation behavior.",
+                "Explain the result with actionable evidence.",
+            ],
+        }
+
+    def test_rejects_malformed_eval_shapes(self):
+        valid_case = self._case()
+        cases = {
+            "empty evals": {"skill_name": "example", "evals": []},
+            "expectations dict": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "expectations": {"bad": "shape"}}],
+            },
+            "expectations contains dict": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "expectations": ["A long enough expectation.", {}]}],
+            },
+            "expectations contains list": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "expectations": ["A long enough expectation.", []]}],
+            },
+            "duplicate expectations": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "expectations": ["A duplicated expectation."] * 2}],
+            },
+            "files is not a list": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "files": "fixture.txt"}],
+            },
+            "files contains non-string": {
+                "skill_name": "example",
+                "evals": [{**valid_case, "files": [1]}],
+            },
+            "case is not a dict": {"skill_name": "example", "evals": [[]]},
+            "duplicate ids": {
+                "skill_name": "example",
+                "evals": [valid_case, self._case()],
+            },
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "evals.json"
+            for name, payload in cases.items():
+                with self.subTest(name=name):
+                    path.write_text(json.dumps(payload), encoding="utf-8")
+                    errors = []
+                    _validate_eval(path, "example", root, errors)
+                    self.assertEqual([error["code"] for error in errors], ["eval-shape"])
+
     def test_rejects_empty_expected_output_and_vague_expectations(self):
         payload = {
             "skill_name": "example",
