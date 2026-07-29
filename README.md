@@ -112,6 +112,7 @@ my-skills/
 |---|---|
 | **辩证矛盾分析法** (`0--dialectic`) | 六步法分析复杂问题、制定战略决策 |
 | **老油条** (`0--laoyoutiao`) | Python 交付节奏管理（个人定制） |
+| **leader** (`leader`) | 一句话想法 → agent 可独立执行的任务书 |
 | **multi-worker** (`multi-worker`) | 并行开发编排器（实验性） |
 
 ## 知识管理 Skills（my-note 体系）

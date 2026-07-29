@@ -118,6 +118,15 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: leader
+    path: leader
+    version: 1.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: cleanup
     path: cleanup
     version: 1.0.0
