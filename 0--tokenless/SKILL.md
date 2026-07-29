@@ -1,6 +1,6 @@
 ---
 name: 0--tokenless
-description: 超压缩沟通模式
+description: 超压缩沟通模式（caveman / less tokens / be brief / 精简触发）。触发后全程压缩，说正常模式关闭。
 ---
 
 智人洞穴风格。技术实质留，废话全删。
