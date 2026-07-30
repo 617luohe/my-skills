@@ -1,7 +1,7 @@
 ---
 name: 0-询问luohe
 description: 技能路由指南
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 0-询问luohe — 技能路由器

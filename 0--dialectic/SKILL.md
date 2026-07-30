@@ -1,7 +1,7 @@
 ---
 name: 0--dialectic
 description: 战略问题的六步矛盾分析框架
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 辩证矛盾分析法

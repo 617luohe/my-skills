@@ -1,7 +1,7 @@
 ---
 name: 0--neat-freak
 description: 项目知识库洁癖审查
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 0--neat-freak — 知识库洁癖审查

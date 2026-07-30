@@ -2,7 +2,7 @@
 name: noteall
 layer: my-note
 description: 知识库流程路由器。NL解析意图→提取参数→路由到对应流程。主流程：Intake→Compose→Polish→Index。触发：note、笔记、写、创建、记录、整理、noteall、知识库。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # noteall — 知识库流程路由器

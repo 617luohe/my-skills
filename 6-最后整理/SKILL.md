@@ -1,7 +1,7 @@
 ---
 name: 6-最后整理
 description: Wrap up the current work session with a change summary, handoff, cleanup, and captured decisions.
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 6-最后整理 — 会话收尾与沉淀
