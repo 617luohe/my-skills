@@ -21,12 +21,29 @@ SLASH_SKILL_RE = re.compile(
     r"(?<![\w.])/(?!/)([\w-]+/[\w-]+(?:--?[\w-]+)*|[\w-]+(?:--?[\w-]+)+)",
     re.UNICODE,
 )
-# Vault path references that look like skill names to SLASH_SKILL_RE but aren't
-SKILL_REF_EXCLUSIONS = frozenset({
-    "0-Inbox", "1-Atlas", "2-Projects", "3-Areas",
-    "4-Resources", "5-Journal", "6-People", "7-Sources",
-    "raw",
-})
+# Vault / system path references that look like skill names to SLASH_SKILL_RE
+# but aren't (matched by first path segment)
+SKILL_REF_EXCLUSIONS = frozenset(
+    {
+        "0-Inbox",
+        "1-Atlas",
+        "2-Projects",
+        "3-Areas",
+        "4-Resources",
+        "5-Journal",
+        "6-People",
+        "7-Sources",
+        "raw",
+        "docs",
+        "memory",
+        "Library",
+        "tmp",
+        "Desktop",
+        "Data",
+        "Music",
+        "Cleanup-Image",
+    }
+)
 ROUTE_ROW_RE = re.compile(r"^\|[^\n]*\|\s*([^|`]+?)\s*\|[^\n]*$")
 
 # Naming convention patterns
@@ -79,6 +96,8 @@ def _frontmatter(path: Path) -> dict[str, Any]:
         raise ValueError("missing closing ---") from exc
     values: dict[str, Any] = {}
     for line_number, line in enumerate(lines[1:end], 2):
+        if not line.strip() or line[0] in " \t":
+            continue  # blank or block-scalar continuation line
         key, separator, raw_value = line.partition(":")
         if not separator or not key.strip() or key.strip() in values:
             raise ValueError(f"line {line_number}: invalid or duplicate field")
@@ -159,9 +178,7 @@ def _validate_naming(name: str) -> str | None:
             f"vocabulary skill must follow 'vocabulary/lowercase' format, got '{name}'"
         )
     if name.startswith("my-note/") and not MY_NOTE_SKILL_RE.match(name):
-        return (
-            f"my-note skill must follow 'my-note/lowercase' format, got '{name}'"
-        )
+        return f"my-note skill must follow 'my-note/lowercase' format, got '{name}'"
     return f"skill name '{name}' does not match any naming convention"
 
 
@@ -399,7 +416,6 @@ def _validate_skill(
             )
         )
 
-    user_only = skill.get("invocation") == "user"
     disabled = frontmatter.get("disable-model-invocation") is True
     openai = skill_path / "agents" / "openai.yaml"
     try:
@@ -407,7 +423,9 @@ def _validate_skill(
     except ValueError as exc:
         implicit = None
         errors.append(_finding("invocation-parity", openai, str(exc), root))
-    if not openai.is_file() or disabled != user_only or implicit == user_only:
+    # disable-model-invocation is the single source of truth: the agents file
+    # must not allow implicit invocation when model invocation is disabled.
+    if not openai.is_file() or implicit == disabled:
         errors.append(
             _finding(
                 "invocation-parity",
@@ -508,7 +526,7 @@ def _validate_markdown(
                 _finding("markdown-link", path, f"broken local link: {target}", root)
             )
     for reference in SLASH_SKILL_RE.findall(text):
-        if reference in SKILL_REF_EXCLUSIONS:
+        if reference.split("/", 1)[0] in SKILL_REF_EXCLUSIONS:
             continue
         if reference not in canonical:
             errors.append(
@@ -593,7 +611,12 @@ def _validate_deployments(
             continue
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(
-                _finding("deployment-state", state_path, f"invalid managed state: {exc}", root)
+                _finding(
+                    "deployment-state",
+                    state_path,
+                    f"invalid managed state: {exc}",
+                    root,
+                )
             )
             continue
 
