@@ -1,6 +1,6 @@
 # My Skills Library
 
-个人技能库；My Note 子域负责将外部资料整理并发布到固定个人知识库。
+个人技能库；My Note 子域负责将外部资料整理并发布到固定个人知识库。技能内容通过镜像同步分发到外部配置仓库副本。
 
 ## Language
 
@@ -43,6 +43,19 @@ _Avoid_: 整个工作区、`git add .`
 **遗留提交（Pending Push）**:
 先前 Noteall 流水线已在固定知识库本地成功提交、但尚未推送到跟踪远端的提交。下一次新收录前优先重试推送。
 
+**技能清单（Skills Manifest）**:
+`skills-manifest.yaml`，声明每个技能的名称、路径、调用方式与分发属性（`sync: true`）的唯一权威文件。镜像同步据此执行。
+_Avoid_: 手工同步清单（如已废弃的 sync-map.json）
+
+**镜像同步（Sync）**:
+依据技能清单，把 my-skills 内容单向分发到同步目标副本的过程。只从权威源到目标，不回写。
+
+**同步目标（Sync Target）**:
+接收镜像同步的外部副本目录；当前唯一目标为 `ai-vibe-coding-config/skills/`。
+
+**严格镜像（Strict Mirror）**:
+同步目标与权威源精确一致：目标中权威源不存在的旧内容（如已删除的技能目录）会被清除，顶层共享文件（manifest/README/USAGE/CONTEXT/scripts）同步进目标；开发测试设施（tests/、pyproject.toml、缓存）不进入目标。
+
 ## Relationships
 
 - Noteall 依次编排收录、整理和发布。
@@ -51,3 +64,5 @@ _Avoid_: 整个工作区、`git add .`
 - 维护模式是收录流水线的变体，跳过 Intake，直接执行 Curate 维护步骤并进入 Publish。
 - 发布只处理流水线拥有路径，并且授权范围仅限固定知识库。
 - 遗留提交必须在新一轮收录开始前完成推送或明确失败停止。
+- 镜像同步依据技能清单执行，单向分发到同步目标。
+- 严格镜像要求同步目标与权威源精确一致；开发测试设施不进入同步目标。
