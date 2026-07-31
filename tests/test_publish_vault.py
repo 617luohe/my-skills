@@ -9,6 +9,7 @@ Exit codes:
 
 from __future__ import annotations
 
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -87,6 +88,26 @@ def test_publish_success_pushes(vault_pair):
     res = run_script(vault, ["new.md"], "notes(resource): ingest new")
     assert res.returncode == EXIT_OK, res.stdout + res.stderr
     assert origin_has(origin, "new.md")
+
+
+def test_chinese_path_owned_and_deleted(vault_pair):
+    # git porcelain escapes non-ASCII paths by default (core.quotepath=true);
+    # a Chinese owned path must still be accepted, and a Chinese deletion
+    # (raw -> 7-Sources archive move) must be stageable via owned paths.
+    vault, origin = vault_pair
+    (vault / "raw").mkdir()
+    (vault / "raw" / "2026年工作总结.pptx").write_text("ppt", encoding="utf-8")
+    git(vault, "add", ".")
+    assert git(vault, "commit", "-m", "add raw").returncode == 0
+    os.replace(vault / "raw" / "2026年工作总结.pptx", vault / "7-Sources.md")
+    res = run_script(
+        vault,
+        ["raw/2026年工作总结.pptx", "7-Sources.md"],
+        "notes(source): ingest 工作总结（归档）",
+    )
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+    assert not origin_has(origin, "raw/2026年工作总结.pptx")
+    assert origin_has(origin, "7-Sources.md")
 
 
 def test_dirty_worktree_stops(vault_pair):

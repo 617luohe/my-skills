@@ -37,6 +37,7 @@ def run_git(vault: Path, *args: str) -> subprocess.CompletedProcess[str]:
         ["git", "-C", str(vault), *args],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         env=env,
     )
 
@@ -65,7 +66,16 @@ def validate_vault(vault: Path) -> None:
 
 def require_clean_worktree(vault: Path, owned_paths: list[str]) -> None:
     owned_abs = {_norm(vault, p) for p in owned_paths}
-    r = run_git(vault, "status", "--porcelain", "--untracked-files=all")
+    # core.quotepath=false: porcelain must emit raw UTF-8 paths, not C-escaped
+    # ones ("\xe5..." octal sequences), or Chinese paths fail owned-path matching.
+    r = run_git(
+        vault,
+        "-c",
+        "core.quotepath=false",
+        "status",
+        "--porcelain",
+        "--untracked-files=all",
+    )
     if r.returncode != 0:
         die("git status failed", EXIT_PRECONDITION)
     for line in r.stdout.splitlines():
