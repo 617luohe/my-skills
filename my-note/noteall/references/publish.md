@@ -8,7 +8,21 @@
 - 基本完整性：笔记 frontmatter 完整、无空文件。
 - 无任何 owned paths → 不提交、不调用脚本。
 
-## Step 2 — 调用 vault-publisher
+## Step 2 — 增量健康检查
+
+对**本次变更影响面**做轻量检查（由 index-keeper 健康检查模式执行），输出报告：
+
+| 检查项 | 方法 |
+|--------|------|
+| 断链 | 变更涉及的新/改 wikilink 是否有对应笔记（排除有意占位） |
+| 孤岛 | 本次新建笔记是否有入链；来源↔概念双链是否成对 |
+| INDEX 缺失条目 | 新建/移动文件是否已在所在文件夹 `_INDEX.md`（含领域 `_INDEX.md`） |
+| 统计过期 | 受影响 `_INDEX.md` 的统计值是否与实际文件数一致 |
+
+- 发现问题 → 先修复可自动修复项（补 INDEX 条目、更新统计），再输出剩余项。
+- **不阻塞发布**：剩余问题写入报告随 Step 4 输出；严重问题（大量断链）提示用户是否继续。
+
+## Step 3 — 调用 vault-publisher
 
 执行确定性脚本，模型不自由组合 Git 命令：
 
@@ -24,7 +38,7 @@ python my-note/vault-publisher/scripts/publish_vault.py \
 - `<type>` 为 profile/类型（meeting/reading/journal/article/resource/note 等）。
 - 提交信息不含敏感正文。
 
-## Step 3 — 报告结果
+## Step 4 — 报告结果
 
 向用户输出：
 - 写入位置（笔记/索引/归档文件）

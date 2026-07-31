@@ -11,12 +11,13 @@ meeting:
 
 reading:
   extract: [summary, key_ideas, takeaways, quotes, action_items]
-  target: "7-Sources/"
+  target: "7-Sources/{领域文件夹}/"
   book_extra:
     - 阅读日志（日期/章节/进度）、章节笔记、核心概念地图
     - 高亮 `> "文本" — 第X章`；批注 `> [!thought]`
     - 跨书概念冲突标注 `> [!disagreement]`
     - 书架状态：want-to-read / reading / completed / abandoned
+    - 双链 MUST：关键概念段链接概念笔记，概念笔记 source 回链（见 index-rules.md）
 
 journal:
   modes: [daily, weekly, monthly]

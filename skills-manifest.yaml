@@ -195,6 +195,16 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: my-note/index-keeper
+    path: my-note/index-keeper
+    version: 1.0.0
+    status: stable
+    invocation: model
+    layer: my-note
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: my-note/noteall
     path: my-note/noteall
     version: 1.0.0
