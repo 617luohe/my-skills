@@ -1,0 +1,33 @@
+# Curate 内容类型 Profile
+# 只描述类型差异；文件复制、来源记录、链接、索引、Git 收尾由统一流水线承担。
+
+meeting:
+  extract: [decisions, action_items, open_questions, summary]
+  target: "2-Projects/{project}/notes/"
+  rules:
+    - 参会人搜索 6-People/ 建立 [[链接]]，无则建议创建
+    - 行动项格式 `- [ ] 任务 — 负责人：[[人名]] — 截止：YYYY-MM-DD`
+    - 议题→讨论→结论；决策记录含决策者与生效日期
+
+reading:
+  extract: [summary, key_ideas, takeaways, quotes, action_items]
+  target: "7-Sources/"
+  book_extra:
+    - 阅读日志（日期/章节/进度）、章节笔记、核心概念地图
+    - 高亮 `> "文本" — 第X章`；批注 `> [!thought]`
+    - 跨书概念冲突标注 `> [!disagreement]`
+    - 书架状态：want-to-read / reading / completed / abandoned
+
+journal:
+  modes: [daily, weekly, monthly]
+  target: "5-Journal/daily/YYYY/YYYY-MM/YYYY-MM-DD.md"
+  sections: [今天做了什么, 学到什么, 明天改进, 感恩]
+  extras:
+    - 每日拉取昨日未完成待办 + 活跃项目待办
+    - 周期复盘（周/月回顾）可触发 Curate 的索引/MOC 更新
+
+article:
+  min_length: 2000
+  target: "4-Resources/"
+  stages: [research, outline, draft, revise]
+  note: 深度长文写作；区别于默认 compose 的快速笔记

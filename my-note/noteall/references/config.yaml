@@ -1,0 +1,3 @@
+# Noteall 固定知识库配置（唯一配置值）
+# 全流水线只引用此处路径；校验失败即停止，绝不回退到当前工作目录。
+vault_path: C:\Users\Administrator\Documents\Obsidian Vault
