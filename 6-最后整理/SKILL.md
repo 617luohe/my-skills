@@ -6,7 +6,7 @@ disable-model-invocation: false
 
 # 6-最后整理 — 会话收尾与沉淀
 
-会话收尾仪式，四件事：**修改总结**（本次改了什么）、**经验沉淀**（把教训/决策记进 memory）、**项目结构整理**（清临时文件、理目录）、**交接 + 护栏**。
+会话收尾仪式，五件事：**修改总结**（本次改了什么）、**经验沉淀**（把教训记进 agent memory）、**决策写入 basic-memory**（luohe 可见的对话记忆）、**项目结构整理**（清临时文件、理目录）、**交接 + 护栏**。
 
 > **边界**：本 skill 管「本次会话的沉淀 + 物理整理」，动作偏加法。
 > 需要**全局文档↔代码洁癖同步、尺寸体检、记忆毕业、消除矛盾**时 → 交给 [`0--neat-freak`]，那是知识库编辑，动作偏减法/校准。
@@ -20,6 +20,7 @@ disable-model-invocation: false
 2. **经验写进 memory，不写进 CLAUDE.md。** memory=跨会话教训/决策；CLAUDE.md=规则手册。
 3. **相对时间转绝对日期。** 写进 memory 的事实用 `2026-07-13` 这类绝对日期。
 4. **真的改文件。** 用 Edit/Write 落盘，不描述"我会怎么做"。
+5. **双通道分工：** agent memory 记「给 agent 的教训」；basic-memory 记「luohe 可见的决策记录」——步骤 2 和步骤 3 都要做，不互相替代。
 
 ---
 
@@ -57,9 +58,24 @@ disable-model-invocation: false
 **如检测到毕业信号**：
 1. 不在本 skill 中处理
 2. 在步骤 2 完成后提示：`检测到 [X] 个毕业信号，建议会话结束后运行 /0--neat-freak 进行知识库审查`
-3. 继续执行步骤 3-4
+3. 继续执行步骤 3-5
 
-### 3. 项目结构整理
+### 3. 决策写入 basic-memory（对话记忆）
+
+把本次会话的**关键决策**写入 basic-memory 默认项目（`Obsidian Vault\ai-basic-memory\`，luohe 可在 Obsidian 直接查看）。与步骤 2 的 agent memory 分工：memory 记给 agent 的跨会话教训；basic-memory 记 luohe 的知识库决策记录。
+
+**什么该写**：luohe 明确拍板的决策、方案选型及其理由、新建立的约定；强调过要记住的内容。
+**什么不写**：已沉淀进 memory/CLAUDE.md/handoff 的重复内容（写一行指引即可）；无决策价值的日常操作。
+
+**格式**：按主题一条 note（`--folder notes`，title 用主题词），或当日决策汇总（title `决策-YYYY-MM-DD`，同日已存在则 edit-note append 追加）。
+
+**写入方式（按优先级）**：
+1. basic-memory MCP 工具（本会话已加载时）：`write_note` / `edit_note`
+2. CLI 兜底：`uvx basic-memory tool write-note --title "<主题>" --folder "notes" --content "..."`——Windows 下 content 用 `--content` 直传（不走 stdin 管道，避免编码坑）；输出乱码时先 `export PYTHONIOENCODING=utf-8`
+
+无关键决策的会话 → 跳过此步并在摘要中说明，不硬写。
+
+### 4. 项目结构整理
 
 物理层面的收尾——让工作区干净，不动知识库内容。
 
@@ -68,7 +84,7 @@ disable-model-invocation: false
 - 检查目录结构是否还合理（新增模块有没有放对地方）
 - **删除前先确认**：不是你本次产生的、或用途存疑的文件，先问再删
 
-### 4. 会话交接
+### 5. 会话交接
 
 创建交接文档，让下个会话无缝继续。
 
@@ -99,7 +115,7 @@ disable-model-invocation: false
 - 相关文件: [路径]
 ```
 
-### 5. 安全护栏确认
+### 6. 安全护栏确认
 
 检查 Git 安全护栏（见 `5-版本管理` 的 guardrails 段）是否已配置并生效。
 
@@ -123,6 +139,9 @@ disable-model-invocation: false
 ### 经验沉淀
 - memory 新增/更新：xxx（原因）
 - （若有毕业信号，提示转 0--neat-freak）
+
+### 对话记忆
+- basic-memory 写入：xxx（或"无关键决策，跳过"）
 
 ### 项目结构整理
 - 清理临时文件：xxx
@@ -151,9 +170,10 @@ disable-model-invocation: false
 你：今天做完了，帮我收尾
 Claude：1. 修改总结 → 改了 payment 模块 3 个文件，决定用原路退款
         2. 经验沉淀 → memory 新增"退款网关有 5% 超时，需重试"
-        3. 项目结构整理 → 删掉 scratch_test.py 等 2 个临时文件
-        4. 交接 → docs/handoff/handoff-a7k3.md
-        5. 安全护栏 → 已配置
+        3. 对话记忆 → basic-memory 写入"决策-2026-07-13"：原路退款方案
+        4. 项目结构整理 → 删掉 scratch_test.py 等 2 个临时文件
+        5. 交接 → docs/handoff/handoff-a7k3.md
+        6. 安全护栏 → 已配置
 
         注：CLAUDE.md 里 payment 路由表看着有点旧，建议跑一次 0--neat-freak 做全局同步。
 ```

@@ -11,8 +11,8 @@ luohe，我来处理项目的 CLAUDE.md。
 
 核心逻辑：
 - **没有 CLAUDE.md** → 用 template.md 新建完整文件
-- **已有 CLAUDE.md** → 结构化检测四个规则块，缺失则从模板切出对应块注入，已有则跳过
-- **四个块都在** → 告知无需改动，不写文件
+- **已有 CLAUDE.md** → 结构化检测五个规则块，缺失则从模板切出对应块注入，已有则跳过
+- **五个块都在** → 告知无需改动，不写文件
 
 ## MUST 规则
 
@@ -29,6 +29,7 @@ luohe，我来处理项目的 CLAUDE.md。
 | Caveman 简洁规则 | `## Caveman 简洁规则` | template.md 同名 H2 段 |
 | Karpathy 编码准则 | `## Karpathy 编码准则` | template.md 同名 H2 段 |
 | 工作流路由 | `## 工作流路由` | template.md 的 `## 工作流路由` + 紧随的 `## 支撑层` 两段 |
+| 记忆约定 | `## 记忆约定` | template.md 同名 H2 段 |
 
 检测按整行 H2 标题匹配。标题被改写视为"缺失"——用户可手动合并，本 skill 不猜测同义标题。
 
@@ -45,14 +46,14 @@ luohe，我来处理项目的 CLAUDE.md。
 1. 读 `references/template.md`
 2. 把标题行 `# {project-name}` 的占位替换为实际项目名
 3. 写入 `./CLAUDE.md`
-4. 告知：✅ 新建完成（称呼规则 + Caveman + Karpathy + 工作流路由 + 支撑层）
+4. 告知：✅ 新建完成（称呼规则 + Caveman + Karpathy + 工作流路由 + 支撑层 + 记忆约定）
 
 #### 分支 B：已有 CLAUDE.md
 
 1. 读 `./CLAUDE.md` 与 `references/template.md`
 2. 按上表逐块检测 H2 标题是否存在
 3. 对每个缺失块：从 template.md 切出该 H2 段的完整正文（从 H2 行到下一个 H2 前），保持原文
-4. 在第一个 `# Title` 之后按序注入缺失块（跳过 YAML frontmatter），块间空一行，顺序：称呼规则 → Caveman → Karpathy → 工作流路由(+支撑层)
+4. 在第一个 `# Title` 之后按序注入缺失块（跳过 YAML frontmatter），块间空一行，顺序：称呼规则 → Caveman → Karpathy → 工作流路由(+支撑层) → 记忆约定
 5. 其他内容完全不动，写入 `./CLAUDE.md`
 6. 告知：缺了哪些、注入了哪些、哪些已有
 
@@ -79,7 +80,7 @@ Claude：luohe，当前目录 "data-pipeline"。
 ---
 
 你：/0--claude（块都在）
-Claude：luohe，当前 CLAUDE.md 四个规则块齐全，无需修改。
+Claude：luohe，当前 CLAUDE.md 五个规则块齐全，无需修改。
 ```
 
 ## 完成后

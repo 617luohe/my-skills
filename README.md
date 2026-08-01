@@ -134,33 +134,13 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 
 ## 部署方法
 
-将 `my-skills/<skill-name>/` 复制到 `.claude/skills/<skill-name>/` 即可使用。
+**由 skills-manager 统一管理**（2026-08-01 起，`sync-skills.ps1` 已废弃删除）：
 
-**一键同步**（推荐）：在项目根 `skills工程/` 下执行：
+1. 修改 `my-skills/<skill-name>/` 下的技能
+2. commit + push 到 GitHub（`origin: 617luohe/my-skills.git`）
+3. skills-manager 检测到远端新 commit 后更新 `~/.skills-manager/skills/<skill-name>/`（`~/.claude/skills/` 是指向它的 junction，自动生效）
 
-```powershell
-.\my-skills\scripts\sync-skills.ps1
-```
-
-预览不写盘：
-
-```powershell
-.\my-skills\scripts\sync-skills.ps1 -DryRun
-```
-
-同步只管理本仓库拥有的技能，不会清空 `.claude/skills/`、`.cursor/skills/` 或 `.codex/skills/` 根目录。每个目标根会维护 `.my-skills-managed.json`，记录上一次成功同步时由本仓库管理的 skill 名称：
-
-- 上次受管、但已不在当前 manifest 发布集中的名称会显示为 `REMOVE MANAGED` 并被删除；受管的当前名称会显示为 `UPDATE`，新名称显示为 `ADD`。
-- 不在该清单中的现有目录永远不会被删除或覆盖。如果当前发布名称与这种目录同名，脚本会显示 `CONFLICT`、停止且不写入任何目标。
-- 确认要由本仓库接管同名目录时，必须显式授权：
-
-  ```powershell
-  .\my-skills\scripts\sync-skills.ps1 -TakeOwnership
-  ```
-
-`-DryRun` 会准确输出 `ADD`、`UPDATE`、`REMOVE MANAGED` 和 `CONFLICT`，且不改磁盘。正式同步先为**所有**目标完成复制暂存；随后对每个宿主目标把将变更的受管目录和旧状态文件同卷重命名到私有 backup，再移入新内容并发布新状态。状态发布采用旧状态先重命名到 backup、再移动新状态的方式，不存在先删除旧状态的窗口。任一步失败会删除该目标及此前已提交目标的新内容，并恢复其旧目录和旧状态；若恢复本身失败，会汇总报告并保留 backup 现场。此补偿机制尽力恢复跨 `.claude`、`.cursor`、`.codex` 的一致性，但文件系统崩溃或恢复操作失败时不能保证严格全局原子性。目标根不存在时只警告，不创建未知父目录。
-
-发布成员与版本的唯一来源是仓库根 `skills-manifest.yaml`：`schema_version: 1`、`repository_version: 1.0.0`。其中 19 个 `distribution: synchronized` 条目构成正式发布集；5 个 `layer: vocabulary` 条目是可复用核心。`scripts/skill_manifest.py` 使用 Python 标准库和受限 YAML 解析器读取该文件，无 PyYAML 依赖；不再维护第二份手写同步映射。
+本仓库不再维护自己的同步脚本；skills-manifest.yaml 与 `scripts/skill_manifest.py` 仍保留给 `validate_skills.py` 治理校验使用。
 
 ## 治理验证
 
