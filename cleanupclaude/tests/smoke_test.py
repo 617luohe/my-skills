@@ -143,6 +143,17 @@ def main() -> int:
         check(
             "apply wrote restore script", (backup / "restore-claude-fast.py").exists()
         )
+        reports = list(backup.glob("cleanup-report-*.md"))
+        check("apply wrote cleanup report", len(reports) == 1, str(reports))
+        if reports:
+            report_text = reports[0].read_text(encoding="utf-8")
+            check(
+                "report has summary + detail",
+                "处理摘要" in report_text
+                and "归档会话" in report_text
+                and "恢复方法" in report_text,
+                report_text[:200],
+            )
 
         # 4. history keep-last limit
         kept_rows = len((home / "history.jsonl").read_text().splitlines())

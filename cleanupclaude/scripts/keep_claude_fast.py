@@ -462,7 +462,7 @@ def prune_history(
     archived_ids: set[str],
     keep_last: int,
     apply: bool,
-) -> None:
+) -> tuple[int, int] | None:
     path = claude_home / "history.jsonl"
     if not path.exists():
         report("history_prune_skipped_missing")
@@ -494,11 +494,12 @@ def prune_history(
     report(f"history_rows_removed_archived {removed_ids}")
     report(f"history_rows_kept {len(kept)}")
     if not apply:
-        return
+        return None
     tmp = path.with_suffix(".jsonl.tmp")
     tmp.write_text("\n".join(kept) + ("\n" if kept else ""), encoding="utf-8")
     os.replace(str(tmp), str(path))
     report("history_pruned applied")
+    return removed_ids, len(kept)
 
 
 def archive_dir(
@@ -507,15 +508,15 @@ def archive_dir(
     stamp: str,
     apply: bool,
     manifest_path: Path | None = None,
-) -> None:
+) -> int | None:
     src = claude_home / name
     if not src.exists() or not src.is_dir():
         report(f"{name}_archive_skipped_missing")
-        return
+        return None
     size = size_bytes(src)
     report(f"{name}_archive_size_mb {mb(size)}")
     if not apply:
-        return
+        return None
     dest = claude_home / "archived" / f"{name}-{stamp}"
     try:
         shutil.move(str(src), str(dest))
@@ -531,8 +532,10 @@ def archive_dir(
             )
             with manifest_path.open("a", encoding="utf-8") as handle:
                 handle.write(json.dumps(item.__dict__, ensure_ascii=False) + "\n")
+        return size
     except OSError as exc:
         report(f"{name}_archive_skipped_locked {exc}")
+        return None
 
 
 def verify_sizes(claude_home: Path) -> None:
@@ -540,6 +543,78 @@ def verify_sizes(claude_home: Path) -> None:
         path = claude_home / rel
         if path.exists():
             report(f"size_{rel}_mb {mb(size_bytes(path))}")
+
+
+def write_cleanup_report(
+    backup_root: Path,
+    stamp: str,
+    claude_home: Path,
+    *,
+    before_total: int,
+    after_total: int,
+    archived_count: int,
+    by_project: list[tuple[str, int, int]],
+    history_before: int | None,
+    history_removed: int | None,
+    history_kept: int | None,
+    telemetry_size: int | None,
+    cache_size: int | None,
+    active_count: int,
+    manifest_path: Path | None,
+) -> Path:
+    released = max(0, before_total - after_total)
+    lines = [
+        "# cleanupclaude 处理结果报告",
+        "",
+        f"- 生成时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        f"- Claude 数据目录: `{claude_home}`",
+        "",
+        "## 处理摘要",
+        "",
+        f"- **projects 占用**: {mb(before_total)} MB → {mb(after_total)} MB（释放 {mb(released)} MB）",
+        f"- **归档会话**: {archived_count} 个",
+    ]
+    if history_before is not None:
+        lines.append(
+            f"- **history.jsonl**: {history_before} 行 → {history_kept} 行（移除 {history_removed} 行）"
+        )
+    if telemetry_size:
+        lines.append(f"- **telemetry**: {mb(telemetry_size)} MB 已归档")
+    if cache_size:
+        lines.append(f"- **cache**: {mb(cache_size)} MB 已归档")
+    lines += [
+        "",
+        "## 归档明细（按项目）",
+        "",
+        "| 项目 | 会话数 | 大小 |",
+        "|---|---|---|",
+    ]
+    if by_project:
+        for name, count, size in by_project:
+            lines.append(f"| {name} | {count} | {mb(size)} MB |")
+    else:
+        lines.append("| （无归档项） | | |")
+    lines += [
+        "",
+        "## 跳过项",
+        f"- 活动会话: {active_count} 个（apply 时自动保护）",
+        "- 被系统锁定的文件: 自动跳过，见脚本输出",
+        "",
+        "## 恢复方法",
+    ]
+    restore_script = backup_root / "restore-claude-fast.py"
+    if restore_script.exists():
+        lines += [
+            f"- 一键恢复脚本: `{restore_script}`（运行后移回全部归档项）",
+            f"- 移动清单: `{manifest_path}`",
+            "- history.jsonl 原始备份: 备份目录下 `history.jsonl`（如需完全恢复可手动覆盖）",
+        ]
+    else:
+        lines.append("- 本次未产生移动，无需恢复。")
+    path = backup_root / f"cleanup-report-{stamp}.md"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    report(f"cleanup_report {path}")
+    return path
 
 
 def run(args: argparse.Namespace) -> int:
@@ -603,6 +678,13 @@ def run(args: argparse.Namespace) -> int:
     if effective_mode == "apply":
         active = running_session_ids(claude_home)
         projects = collect_projects(claude_home)
+        before_total = sum(p.total_size for p in projects)
+        history_path = claude_home / "history.jsonl"
+        history_before = (
+            len(history_path.read_text(encoding="utf-8", errors="replace").splitlines())
+            if history_path.exists()
+            else None
+        )
         candidates = candidate_sessions(projects, args.archive_older_than_days, active)
         archive_sessions(
             claude_home,
@@ -625,16 +707,52 @@ def run(args: argparse.Namespace) -> int:
                     continue
                 if rec.get("kind") == "session" and rec.get("session_id"):
                     archived_ids.add(rec["session_id"])
-        prune_history(
+        history_result = prune_history(
             claude_home, backup_root, archived_ids, args.history_keep_last, apply=True
         )
-        archive_dir(
+        telemetry_size = archive_dir(
             claude_home, "telemetry", stamp, apply=True, manifest_path=manifest_path
         )
-        archive_dir(
+        cache_size = archive_dir(
             claude_home, "cache", stamp, apply=True, manifest_path=manifest_path
         )
         verify_sizes(claude_home)
+
+        after_total = sum(p.total_size for p in collect_projects(claude_home))
+        archived_count = 0
+        by_project: dict[str, list[int]] = {}
+        if manifest_path.exists():
+            for line in manifest_path.read_text(
+                encoding="utf-8", errors="replace"
+            ).splitlines():
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                if rec.get("kind") == "session":
+                    archived_count += 1
+                    by_project.setdefault(rec.get("project") or "?", []).append(
+                        int(rec.get("bytes") or 0)
+                    )
+        by_project_list = [
+            (name, len(sizes), sum(sizes)) for name, sizes in sorted(by_project.items())
+        ]
+        write_cleanup_report(
+            backup_root,
+            stamp,
+            claude_home,
+            before_total=before_total,
+            after_total=after_total,
+            archived_count=archived_count,
+            by_project=by_project_list,
+            history_before=history_before,
+            history_removed=history_result[0] if history_result else None,
+            history_kept=history_result[1] if history_result else None,
+            telemetry_size=telemetry_size,
+            cache_size=cache_size,
+            active_count=len(active),
+            manifest_path=manifest_path,
+        )
 
     report("done")
     return 0

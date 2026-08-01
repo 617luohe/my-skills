@@ -136,8 +136,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: keep-claude-fast
-    path: keep-claude-fast
+  - name: cleanupclaude
+    path: cleanupclaude
     version: 1.0.0
     status: stable
     invocation: model

@@ -1,5 +1,5 @@
 ---
-name: keep-claude-fast
+name: cleanupclaude
 description: >
   Claude Code 本地状态安全梳理（卡顿/膨胀治理）。在以下场景使用：用户说"Claude Code
   卡顿/变慢/打开多个会话很卡""会话太多/历史太长""~/.claude 太大了""清理 Claude 会话/
@@ -12,7 +12,7 @@ metadata:
   short-description: "Claude Code 会话状态安全梳理（报告/备份/归档）"
 ---
 
-# Keep Claude Fast
+# Cleanup Claude（cleanupclaude）
 
 安全梳理 Claude Code 本地状态，减轻多 session 使用后的膨胀与卡顿，不丢连续性。
 
@@ -42,7 +42,7 @@ python "<本 skill 目录>/scripts/keep_claude_fast.py"
 ```
 
 skill 目录即本 SKILL.md 所在目录。若不确定，用 `where`/`find` 定位
-`keep_claude_fast.py`，或让用户告知安装位置（默认在 `~/.claude/skills/keep-claude-fast/`）。
+`keep_claude_fast.py`，或让用户告知安装位置（默认在 `~/.claude/skills/cleanupclaude/`）。
 
 ## 工作流
 
@@ -83,20 +83,25 @@ python "<skill 目录>/scripts/keep_claude_fast.py" --apply --archive-older-than
 
 默认阈值 10 天 / 500 行；可按用户习惯调整（如 30 天 / 1000 行）。
 
-### Step 6 — 验证与收尾
+### Step 6 — 处理结果报告
 
-```bash
-python "<skill 目录>/scripts/keep_claude_fast.py"
-```
+apply 结束后脚本自动生成**处理结果报告**：`<backup-root>/cleanup-report-<stamp>.md`
+（默认 `<用户文档目录>/Documents/Claude/claude-backups/`），并打印报告路径。
 
-对比前后 `projects_size_mb` / `history_rows`；确认 `archived/` 大小；告知用户
-恢复方法：备份目录下 `restore-claude-fast.py` 一键回滚。
+报告内容（结论先行）：
+- **处理摘要**：释放量（projects 前后对比）、归档会话数与大小、history 裁剪行数、
+  telemetry/cache 归档量
+- **归档明细**：按项目列出归档会话数与 MB
+- **跳过项**：活动会话 / 锁定文件 / 未超期会话
+- **恢复方法**：`restore-claude-fast.py` 与 manifest 路径
+
+在对话里向用户汇报报告要点（一段话结论 + 恢复方法），完整报告路径一并给出。
 可提议 weekly/biweekly 报告型提醒（只读，永不自动 apply）。
 
 ## Apply 做了什么（向用户说明）
 
 1. 检测运行中 Claude Code 与活动会话（`~/.claude/sessions/*.json` 注册表），运行中默认拒绝
-2. 备份 `history.jsonl` 到 `~/Documents/Claude/claude-backups/keep-claude-fast-*`
+2. 备份 `history.jsonl` 到 `~/Documents/Claude/claude-backups/cleanupclaude-*`
 3. 归档超期会话：`<uuid>.jsonl` + 同名会话目录 → `~/.claude/archived/<项目>/<stamp>/`
 4. 写 `moved-items.jsonl` manifest + `restore-claude-fast.py` 恢复脚本
 5. 从 `history.jsonl` 移除已归档会话条目并裁剪到最近 N 行（resume 列表不再有死条目）
@@ -114,13 +119,13 @@ python "<skill 目录>/scripts/keep_claude_fast.py"
 
 ## 可选集成
 
-- **斜杠命令**：将以下内容存为 `~/.claude/commands/keep-claude-fast.md`，即可用
-  `/keep-claude-fast` 触发本 skill 的只读报告流程：
+- **斜杠命令**：将以下内容存为 `~/.claude/commands/cleanupclaude.md`，即可用
+  `/cleanupclaude` 触发本 skill 的只读报告流程：
   ```markdown
   ---
   description: 只读检查 Claude Code 本地状态（会话膨胀/卡顿分析）
   ---
-  使用 keep-claude-fast skill 执行一次只读检查并汇报，不自动 apply。
+  使用 cleanupclaude skill 执行一次只读检查并汇报，不自动 apply。
   ```
 - **hooks（可选）**：`hooks/session-end-report.example.json` 是 SessionEnd 报告型 hook
   模板（合并进 `~/.claude/settings.json` 的 hooks 段启用）。hook 输出会计入会话，
