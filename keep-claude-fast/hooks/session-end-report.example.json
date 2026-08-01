@@ -1,0 +1,16 @@
+{
+  "comment": "keep-claude-fast 可选 hook：每次会话结束后追加一行会话大小摘要（报告型，永不 apply）。默认不启用——需要时把本文件合并进 ~/.claude/settings.json 的 hooks 段。注意：hook 输出会以 assistant 消息进入会话，会增加少量 token 消耗。",
+  "hooks": {
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"C:/path/to/keep-claude-fast/scripts/keep_claude_fast.py\" --claude-home \"$CLAUDE_CONFIG_DIR\" 2>/dev/null | tail -5",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}
