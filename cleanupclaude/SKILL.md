@@ -22,12 +22,15 @@ metadata:
 2. **先备份后变更。** apply 前先备份 `history.jsonl`；备份目录含私有元数据，不外发。
 3. **归档不删除。** 会话/telemetry/cache 一律移动到 `~/.claude/archived/`，写 manifest
    并生成恢复脚本，绝不永久删除。
-4. **运行中禁止变更。** 检测到 Claude Code 进程/活动会话时，apply 默认拒绝；
-   除非用户明确同意 `--force` 或 `--wait-for-claude-exit`。
+4. **当前会话自动豁免。** 从 Claude Code 会话内调用时，脚本自动识别当前会话
+   （父进程链匹配会话注册表，cwd 兜底）并跳过它，apply 可直接执行、无需关闭
+   Claude Code；无法识别当前会话（如终端手动运行）时，运行中仍拒绝，
+   `--force`/`--wait-for-claude-exit` 可覆盖。
 5. **绝不触碰项目上下文。** 项目目录下的 `memory/`、`CLAUDE.md`、`todos/`、`tasks/`、
    `skills/` 不归档、不修改。
-6. **apply 前先 handoff。** 对用户还想继续的重要会话，先产出 handoff 文档
-   （`docs/handoffs/YYYY-MM-DD-topic.md` 或仓库内约定位置），再归档。
+6. **重要会话先 handoff。** 自动清理只归档超期（默认 10 天未动）的旧会话；
+   用户明确想保留的会话，先产出 handoff 文档（`docs/handoffs/YYYY-MM-DD-topic.md`
+   或仓库内约定位置）再归档。
 7. **不杀进程、不删数据、不自动定期执行。** 只报告重进程；定时任务若做，只做报告型提醒。
 
 > 与 cleanup skill 的分工：cleanup 管整机磁盘空间（"磁盘满了/清理空间"）；
@@ -62,20 +65,12 @@ python "<skill 目录>/scripts/keep_claude_fast.py"
 - `history.jsonl` 行数；telemetry/cache/file-history/shell-snapshots 大小
 - 当前运行的 Claude Code 进程数与活动会话数（= 卡顿的运行时成本）
 
-### Step 3 — 判断是否需要 apply
+### Step 3 — 自动清理（默认，无需确认）
 
-- 若没有超期旧会话、没有明显膨胀 → 说明状态健康，给出维持建议（weekly report 提醒），结束。
-- 若有超期旧会话 → 建议 apply，但先处理 handoff（铁律 6）。
-
-### Step 4 — handoff（apply 前）
-
-对用户还想继续的重要会话，产出 handoff 文档并给出 reactivation prompt（让新会话
-读文档即可续上）。模板要点：repo/分支、当前目标、已完成、改动文件、已跑命令、
-已知问题、未决决策、下一步 3-7 条、禁区、reactivation prompt。
-
-### Step 5 — apply（用户明确要求后）
-
-提醒用户：**关闭 Claude Code（或接受等待/`--force`）**，然后执行：
+**从 Claude Code 会话内调用时，脚本自动识别并跳过当前会话，直接执行安全清理**
+（备份 → 归档超期旧会话 → 裁剪 history → 归档 telemetry/cache → 出报告）。
+活动会话（其他正在运行的 session）与被锁定文件同样自动跳过，不会中断用户其他工作。
+本会话不归档、不裁剪，用户对话上下文不受影响。
 
 ```bash
 python "<skill 目录>/scripts/keep_claude_fast.py" --apply --archive-older-than-days 10 --history-keep-last 500
@@ -83,7 +78,18 @@ python "<skill 目录>/scripts/keep_claude_fast.py" --apply --archive-older-than
 
 默认阈值 10 天 / 500 行；可按用户习惯调整（如 30 天 / 1000 行）。
 
-### Step 6 — 处理结果报告
+- 若没有超期旧会话 → 说明状态健康，报告后给出维持建议（weekly report 提醒），结束。
+- 若有超期旧会话 → 自动清理并出报告（Step 6）。
+- 若用户想先人工确认（或脚本无法识别当前会话而拒绝）→ 停在报告，让用户决定。
+
+### Step 4 — handoff（仅当用户想保留的旧会话将被归档时）
+
+对用户还想继续的重要旧会话，先产出 handoff 文档并给出 reactivation prompt
+（让新会话读文档即可续上）。模板要点：repo/分支、当前目标、已完成、改动文件、
+已跑命令、已知问题、未决决策、下一步 3-7 条、禁区、reactivation prompt。
+若用户未提及、或归档对象都是不再需要的旧会话，无需强制 handoff。
+
+### Step 5 — 处理结果报告
 
 apply 结束后脚本自动生成**处理结果报告**：`<backup-root>/cleanup-report-<stamp>.md`
 （默认 `<用户文档目录>/Documents/Claude/claude-backups/`），并打印报告路径。

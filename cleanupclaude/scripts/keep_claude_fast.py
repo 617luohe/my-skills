@@ -234,6 +234,74 @@ def running_session_ids(claude_home: Path) -> set[str]:
     return ids
 
 
+def parent_process_pids(limit: int = 12) -> list[int]:
+    """Pids of this process and its ancestor chain (self first)."""
+    system = platform.system()
+    pids = [os.getpid()]
+    if system == "Windows":
+        rows = run_powershell(
+            "Get-CimInstance Win32_Process | Select-Object ProcessId,ParentProcessId | ConvertTo-Json -Compress"
+        )
+        mapping = {}
+        for row in rows:
+            try:
+                mapping[int(row["ProcessId"])] = int(row["ParentProcessId"])
+            except (KeyError, TypeError, ValueError):
+                continue
+        pid = os.getpid()
+        for _ in range(limit):
+            parent = mapping.get(pid)
+            if not parent:
+                break
+            pids.append(parent)
+            pid = parent
+        return pids
+    pid = os.getpid()
+    for _ in range(limit):
+        try:
+            output = subprocess.check_output(
+                ["ps", "-o", "ppid=", "-p", str(pid)], text=True, errors="replace"
+            )
+            parent = int(output.strip())
+        except Exception:
+            break
+        if parent <= 0:
+            break
+        pids.append(parent)
+        pid = parent
+    return pids
+
+
+def current_session_ids(claude_home: Path) -> set[str]:
+    """Session ids of the Claude Code session this script is invoked from.
+
+    Matches the session registry by ancestor process pids first, then by the
+    current working directory (among live sessions) as a fallback.
+    """
+    registry = active_sessions(claude_home)
+    ids = set()
+    my_pids = set(parent_process_pids())
+    for entry in registry:
+        try:
+            if int(entry["pid"]) in my_pids:
+                ids.add(str(entry["sessionId"]))
+        except (KeyError, TypeError, ValueError):
+            continue
+    if not ids:
+        cwd = os.getcwd()
+        for entry in registry:
+            try:
+                if (
+                    entry.get("cwd")
+                    and os.path.normcase(str(entry["cwd"])) == os.path.normcase(cwd)
+                    and pid_alive(int(entry["pid"]))
+                ):
+                    ids.add(str(entry["sessionId"]))
+            except (KeyError, TypeError, ValueError):
+                continue
+    return ids
+
+
 def collect_projects(claude_home: Path) -> list[ProjectStat]:
     root = claude_home / "projects"
     projects: list[ProjectStat] = []
@@ -633,10 +701,14 @@ def run(args: argparse.Namespace) -> int:
             time.sleep(2)
         running = []
 
+    # When invoked from inside a Claude Code session, the invoking session is
+    # identified and automatically excluded, so apply is allowed while running.
+    current = current_session_ids(claude_home) if args.apply else set()
     requested_mode = (
         "apply" if args.apply else "backup-only" if args.backup_only else "report"
     )
-    effective_apply = bool(args.apply and (not running or args.force))
+    allow_apply_running = bool(current) or args.force
+    effective_apply = bool(args.apply and (not running or allow_apply_running))
     effective_backup = bool(effective_apply or args.backup_only)
     effective_mode = (
         "apply" if effective_apply else "backup-only" if effective_backup else "report"
@@ -677,6 +749,9 @@ def run(args: argparse.Namespace) -> int:
 
     if effective_mode == "apply":
         active = running_session_ids(claude_home)
+        active |= current
+        if current:
+            report(f"auto_excluded_current_session {len(current)}")
         projects = collect_projects(claude_home)
         before_total = sum(p.total_size for p in projects)
         history_path = claude_home / "history.jsonl"

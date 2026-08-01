@@ -18,6 +18,7 @@ SCRIPT = ROOT / "scripts" / "keep_claude_fast.py"
 
 OLD_ID = "11111111-1111-1111-1111-111111111111"
 NEW_ID = "22222222-2222-2222-2222-222222222222"
+CURRENT_ID = "33333333-3333-3333-3333-333333333333"
 
 FAILED = []
 
@@ -42,17 +43,20 @@ def run_cli(home: Path, *args: str) -> subprocess.CompletedProcess:
 def make_home(home: Path) -> None:
     p1 = home / "projects" / "p1"
     p1.mkdir(parents=True)
+    old = time.time() - 30 * 86400
     (p1 / f"{OLD_ID}.jsonl").write_text("x" * 1000)
     sdir = p1 / OLD_ID
     (sdir / "tool-results").mkdir(parents=True)
     (sdir / "tool-results" / "a.txt").write_text("y")
     (p1 / f"{NEW_ID}.jsonl").write_text("z" * 500)
+    # 当前会话：本测试进程即"调用方"（pid + cwd 双匹配），jsonl 设为超期但必须被跳过
+    (p1 / f"{CURRENT_ID}.jsonl").write_text("c" * 300)
+    os.utime(p1 / f"{CURRENT_ID}.jsonl", (old, old))
     (p1 / "memory").mkdir()
     (p1 / "memory" / "MEMORY.md").write_text("keep")
     (p1 / "CLAUDE.md").write_text("keep")
     (p1 / "notes.txt").write_text("keep")
 
-    old = time.time() - 30 * 86400
     os.utime(p1 / f"{OLD_ID}.jsonl", (old, old))
     for f in (p1 / OLD_ID).rglob("*"):
         os.utime(f, (old, old))
@@ -60,6 +64,17 @@ def make_home(home: Path) -> None:
     (home / "sessions").mkdir()
     (home / "sessions" / "99999999.json").write_text(
         json.dumps({"pid": 99999999, "sessionId": OLD_ID, "entrypoint": "cli"})
+    )
+    # 当前调用方会话：pid 为本测试进程，cwd 为测试运行目录
+    (home / "sessions" / f"{os.getpid()}.json").write_text(
+        json.dumps(
+            {
+                "pid": os.getpid(),
+                "sessionId": CURRENT_ID,
+                "cwd": os.getcwd(),
+                "entrypoint": "claude-vscode",
+            }
+        )
     )
     lines = [
         json.dumps(
@@ -86,7 +101,7 @@ def main() -> int:
         check("report lists project", "projects 1" in r.stdout, r.stdout)
         check(
             "report flags old candidates",
-            "old_session_candidates 1" in r.stdout,
+            "old_session_candidates 2" in r.stdout,
             r.stdout,
         )
         check("report created nothing", not (home / "archived").exists())
@@ -98,9 +113,15 @@ def main() -> int:
         check("backup has history copy", (backup / "history.jsonl").exists())
         check("backup-only archived nothing", not (home / "archived").exists())
 
-        # 3. apply (force: the dev machine itself runs Claude Code)
-        r = run_cli(home, "--apply", "--force", "--backup-root", str(backup))
+        # 3. apply from inside a Claude Code session (current session identified
+        #    by pid/cwd in the registry, so apply runs without --force)
+        r = run_cli(home, "--apply", "--backup-root", str(backup))
         check("apply exits 0", r.returncode == 0, r.stdout[-300:])
+        check(
+            "apply auto-excluded current session",
+            "auto_excluded_current_session 1" in r.stdout,
+            r.stdout,
+        )
         archived = (
             sorted((home / "archived" / "p1").glob("*"))
             if (home / "archived" / "p1").exists()
@@ -117,6 +138,10 @@ def main() -> int:
         check(
             "apply kept new session",
             (home / "projects" / "p1" / f"{NEW_ID}.jsonl").exists(),
+        )
+        check(
+            "apply kept current session",
+            (home / "projects" / "p1" / f"{CURRENT_ID}.jsonl").exists(),
         )
         check(
             "apply kept memory",
@@ -196,7 +221,6 @@ def main() -> int:
         r = run_cli(
             home,
             "--apply",
-            "--force",
             "--history-keep-last",
             "3",
             "--backup-root",
