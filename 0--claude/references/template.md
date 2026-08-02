@@ -61,10 +61,11 @@
 
 ## 记忆约定
 
-- luohe 说「记住 X」/「记一下 X」/「这个要记住」→ 立即把 X 写入 basic-memory（默认项目 `Obsidian Vault\ai-basic-memory\`）
-- 强调要记住的文档 → 记录文档路径 + 要点 + 日期，写入 basic-memory
-- 写入方式：优先 basic-memory MCP 工具（write_note/edit_note）；不可用时 CLI 兜底 `uvx basic-memory tool write-note --folder notes --title "<日期> 决策" --content ...`
-- 跨会话检索：需要回忆时优先用 basic-memory 的 search_notes / build_context
+- luohe 说「记住 X」/「记一下 X」/「这个要记住」→ 立即写入 agent memory（`~/.claude/projects/<project>/memory/`，MEMORY.md 索引每次会话自动加载）
+- 强调要记住的文档 → 记录文档路径 + 要点 + 日期
+- 写入方式：Write 创建 memory 文件 + 在 MEMORY.md 加一行索引
+- 跨会话检索：MEMORY.md 常驻上下文；细节用 Read 读对应 memory 文件
+- 教训与决策统一记 agent memory，不另开外部通道
 
 ## 命令速查
 
