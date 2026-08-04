@@ -1,6 +1,10 @@
 ---
 name: 6-最后整理
-description: Wrap up the current work session with a change summary, handoff, cleanup, and captured decisions.
+description: >
+  收尾沉淀本次会话产出：修改总结 + 经验入 memory + 项目结构整理 + 交接文档。
+  只管本次会话（加法），不做全局清理。触发边界：整机磁盘/存储占用→/cleanup；
+  ~/.claude 会话/历史/缓存膨胀→/cleanupclaude；全局知识库洁癖审查（文档↔代码一致、记忆毕业）→/0--neat-freak。
+  触发：用户说"今天做完了、帮我收尾、沉淀一下、会话结束了"。
 disable-model-invocation: false
 ---
 

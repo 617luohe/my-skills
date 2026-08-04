@@ -1,6 +1,6 @@
 ---
 name: leader
-description: 把一句话的想法拆成 AI agent 能独立跑完的目标任务书。用户说「帮我给 agent 写个目标」「帮我详细拆一下这个目标」「写个任务书/brief 给 agent」「写个 goal 提示词」「让 agent 自己跑这个项目」「把活分给几个 agent 并行」时使用。先进代码库实测、必要时联网调研，再一次性提问（≤5 个），产出一份 ≤4000 字符、直接粘进 /goal 就能跑的任务书，含实测数字、白名单地界、防作弊验收和断点续跑。执行型与探索型（调研/选型/找方案）自动分流。
+description: 把一句话想法拆成另一 agent 能独立跑完的任务书（≤4000 字，含实测数字、防作弊验收、断点续跑）。触发：用户说"帮 agent 写目标/任务书/brief/goal 提示词、让 agent 自己跑项目、把活分给几个 agent 并行"。
 disable-model-invocation: false
 ---
 
