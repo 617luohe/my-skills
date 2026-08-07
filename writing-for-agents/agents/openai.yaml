@@ -1,0 +1,5 @@
+interface:
+  display_name: "Writing For Agents"
+  short_description: "Writing methodology for agent-consumed documents"
+policy:
+  allow_implicit_invocation: true

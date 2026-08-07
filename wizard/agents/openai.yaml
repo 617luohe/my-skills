@@ -1,0 +1,5 @@
+interface:
+  display_name: "Wizard"
+  short_description: "Interactive bash wizard for human-only steps"
+policy:
+  allow_implicit_invocation: true
