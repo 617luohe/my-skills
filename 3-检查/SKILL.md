@@ -1,6 +1,6 @@
 ---
 name: 3-检查
-description: Route review, issue-only reporting, or root-cause repair from the supplied input contract. Review code against standards and specification; turn observed problems into actionable tracker reports.
+description: Route review, issue-only reporting, or root-cause repair from the supplied input contract; turn observed problems into actionable tracker reports.
 disable-model-invocation: false
 ---
 

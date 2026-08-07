@@ -61,6 +61,7 @@ python "<skill 目录>/scripts/keep_claude_fast.py"
 ### Step 2 — 汇报（结论先行）
 
 按以下要点给摘要：
+
 - 项目会话占用：哪个项目最大、会话文件数
 - 最大的几个会话、超过保留期（默认 10 天）的旧会话候选数
 - `history.jsonl` 行数；telemetry/cache/file-history/shell-snapshots 大小
@@ -96,6 +97,7 @@ apply 结束后脚本自动生成**处理结果报告**：`<backup-root>/cleanup
 （默认 `<用户文档目录>/Documents/Claude/claude-backups/`），并打印报告路径。
 
 报告内容（结论先行）：
+
 - **处理摘要**：释放量（projects 前后对比）、归档会话数与大小、history 裁剪行数、
   telemetry/cache 归档量
 - **归档明细**：按项目列出归档会话数与 MB
@@ -132,17 +134,12 @@ apply 结束后脚本自动生成**处理结果报告**：`<backup-root>/cleanup
   ---
   description: 只读检查 Claude Code 本地状态（会话膨胀/卡顿分析）
   ---
+
   使用 cleanupclaude skill 执行一次只读检查并汇报，不自动 apply。
   ```
 - **hooks（可选）**：`hooks/session-end-report.example.json` 是 SessionEnd 报告型 hook
   模板（合并进 `~/.claude/settings.json` 的 hooks 段启用）。hook 输出会计入会话，
   默认不启用。
-
-## 测试
-
-```bash
-python "<skill 目录>/tests/smoke_test.py"   # 黑盒全链路断言，约 30 秒
-```
 
 ## Anti-Patterns
 

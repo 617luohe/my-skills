@@ -1,6 +1,6 @@
 ---
 name: 2-开发
-description: Implement Python features and bug fixes with a pytest-driven red-green-refactor loop and coding guardrails. Use when the user asks to develop, implement, code, or test-drive a Python change, especially after a plan exists.
+description: Implement Python features and bug fixes via pytest-driven red-green-refactor with coding guardrails. Use when developing/implementing/coding a Python change, especially after a plan exists.
 disable-model-invocation: false
 ---
 
