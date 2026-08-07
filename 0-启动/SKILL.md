@@ -81,14 +81,14 @@ uv add --dev pytest
 
 这一步顺带创建 `.venv/` 和 `uv.lock`，并把项目自身以可编辑方式装进环境——测试里 `from project_name import ...` 直接可用，不用配 path。
 
-### 5. 验证 + 首次提交
+### 5. 验证并保持未提交
 
 ```bash
 uv run pytest
-git add . && git commit -m "chore: 初始化项目"
+git status --short --branch
 ```
 
-提交完成后保持工作区未提交状态，继续收集初始化后的真实变更，不要为了“干净”自动创建第二个提交。
+不执行 `git add` 或 `git commit`。初始化产物保持未提交，用户查看变更清单后，只有明确要求保存版本时才交给 `/5-版本管理`。
 
 ## 交付回报
 
