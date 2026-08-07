@@ -51,7 +51,7 @@ _Avoid_: 手工同步清单（如已废弃的 sync-map.json）
 依据技能清单，把 my-skills 内容单向分发到同步目标副本的过程。只从权威源到目标，不回写。
 
 **同步目标（Sync Target）**:
-接收镜像同步的外部副本目录；当前唯一目标为 `ai-vibe-coding-config/skills/`。
+接收镜像同步的外部副本目录；当前唯一目标为 `~/.skills-manager/skills/`（skills-manager 从 GitHub 远端拉取），再通过符号链接生效到 `~/.claude/skills/` 及项目 `.claude/.cursor/.codex/skills/`。
 
 **严格镜像（Strict Mirror）**:
 同步目标与权威源精确一致：目标中权威源不存在的旧内容（如已删除的技能目录）会被清除，顶层共享文件（manifest/README/USAGE/CONTEXT/scripts）同步进目标；开发测试设施（tests/、pyproject.toml、缓存）不参与同步——不复制进目标，历史遗留也不会被自动删除。
