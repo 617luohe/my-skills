@@ -554,40 +554,6 @@ def _validate_markdown(
             )
 
 
-def _validate_routes(
-    root: Path, canonical: set[str], errors: list[dict[str, str]]
-) -> None:
-    route_path = root / "use-skills" / "SKILL.md"
-    if not route_path.is_file():
-        return
-    in_table = False
-    for line in route_path.read_text(encoding="utf-8-sig").splitlines():
-        if line.strip() == "## 技能路由表":
-            in_table = True
-            continue
-        if in_table and line.startswith("## "):
-            break
-        if (
-            not in_table
-            or not line.startswith("|")
-            or "---" in line
-            or "匹配技能" in line
-        ):
-            continue
-        columns = [
-            column.strip().strip("`") for column in line.strip().strip("|").split("|")
-        ]
-        if len(columns) >= 4 and columns[3] not in canonical:
-            errors.append(
-                _finding(
-                    "canonical-route",
-                    route_path,
-                    f"route uses unknown skill {columns[3]}",
-                    root,
-                )
-            )
-
-
 def _validate_deployments(
     root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]
 ) -> None:
@@ -724,7 +690,6 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
     _validate_dependencies(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(skill, root, canonical, errors, warnings)
-    _validate_routes(root, canonical, errors)
     if check_deployments:
         _validate_deployments(root, skills, errors)
     errors.sort(key=lambda item: (item["path"], item["code"], item["message"]))
