@@ -57,10 +57,22 @@ disable-model-invocation: false
 
 **注意**：自检不是正式审查。自检通过后，带着**未提交的改动**交给 `/3-检查` 正式验收，并显式传递：
 
-- **审查基点** — 当前分支相对 main 的基点（如 `main`）
+- **审查基点** — 当前分支相对默认分支的基点（先用 `git symbolic-ref refs/remotes/origin/HEAD` 或项目配置探测，不写死 `main`），并说明实际 diff 范围
 - **需求来源** — 任务清单路径（`docs/plans/<feature>/tasks.md`）或 issue 引用
+- **diff 审查意图** — 本次变更希望 Review 重点核对的行为、风险或范围
 
 本阶段**不执行 `git commit`**，也不自动进入 `/5-版本管理`。只有 `/3-检查` 审查通过且用户明确授权后，才可调用 `/5-版本管理` 保存版本。
+
+## 按评审意见修复（复评回环）
+
+收到 `/3-检查` 的 FAIL 意见清单时逐条修复；收到 PASS WITH WARNINGS 时，默认携带 warning 记录进入交接，只有用户明确选择修复的 warning 才进入回环：
+
+1. 对用户明确选择修复的意见做最小修复；按受影响模块批处理相关意见，局部验证后再继续
+2. **重新验证** — 最终复评前跑完整测试套件、类型检查和 linter 一次
+3. **交回复评** — 携带原审查基点、需求来源、diff 范围、diff 审查意图、意见清单和每条意见的“已修复 / 未修复 / 拒绝 + 理由”交回 `/3-检查`
+4. **循环终止** — FAIL 直到阻断项关闭并得到 PASS；PASS WITH WARNINGS 默认停止，用户选择的 warning 修复完成后再复评
+
+未修复或拒绝的意见必须写明理由，不得静默忽略。
 
 ## MUST 规则
 
@@ -81,4 +93,5 @@ disable-model-invocation: false
 - **输入** — `/1-规划` 产出的 `docs/plans/<feature>/tasks.md`、`docs/plans/<feature>/PRD.md`、`CONTEXT.md`
 - **调用** — `/vocabulary/tdd`（核心循环）
 - **输出** — 通过测试的未提交代码 + 自检结果 + 审查基点 + 需求来源 → `/3-检查`（正式验收）
+- **复评回环** — `/3-检查` 裁决 FAIL 时修复全部阻断项；PASS WITH WARNINGS 默认携带 warning 记录交接，只有用户选择修复的 warning 才进入复评
 - **审查通过后** — 仅在用户明确授权时 → `/5-版本管理`（保存版本）

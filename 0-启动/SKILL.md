@@ -57,6 +57,7 @@ project-name/
 ```
 
 要点：
+
 - 目录名不是合法包名时（比如以数字或下划线开头），补 `--name <pkg-name>`。
 - 指定 Python 版本：`uv init --package --vcs git -p 3.12 <project-name>`。
 - 纯脚本、不打包的一次性工具用 `uv init`（不带 `--package`）——扁平布局，根目录一个 `main.py`。
@@ -80,24 +81,35 @@ uv add --dev pytest
 
 这一步顺带创建 `.venv/` 和 `uv.lock`，并把项目自身以可编辑方式装进环境——测试里 `from project_name import ...` 直接可用，不用配 path。
 
-### 5. 验证 + 首次提交
+### 5. 验证并保持未提交
 
 ```bash
 uv run pytest
-git add . && git commit -m "chore: 初始化项目"
+git status --short --branch
 ```
+
+不执行 `git add` 或 `git commit`。初始化产物保持未提交，用户查看变更清单后，只有明确要求保存版本时才交给 `/5-版本管理`。
+
+## 交付回报
+
+收尾必须输出：
+
+- **变更清单**：创建或修改的文件及用途
+- **Git 状态**：`git status --short --branch` 的结果，明确是否保持未提交
+- **验证结果**：`uv run pytest` 的通过/失败摘要
+- **下一阶段推荐**：基于当前结构给出下一步最小开发任务
 
 ## 按需追加
 
 用户主动提了才做，各一行搞定，不主动推销：
 
-| 需求 | 命令 |
-|------|------|
-| 代码检查 / 格式化 | `uv add --dev ruff` |
-| 类型检查 | `uv add --dev mypy` |
-| 提交前门禁 | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
-| 运行时依赖 | `uv add <package>` |
-| 推远程 | 交给 `/5-版本管理` |
+| 需求              | 命令                                                                                   |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| 代码检查 / 格式化 | `uv add --dev ruff`                                                                    |
+| 类型检查          | `uv add --dev mypy`                                                                    |
+| 提交前门禁        | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
+| 运行时依赖        | `uv add <package>`                                                                     |
+| 推远程            | 交给 `/5-版本管理`                                                                     |
 
 工具配置统一写进 `pyproject.toml` 的 `[tool.*]`，不另开配置文件。
 
@@ -106,7 +118,7 @@ git add . && git commit -m "chore: 初始化项目"
 - [ ] `src/<pkg>/` 和 `tests/` 就位
 - [ ] `.venv/` 和 `uv.lock` 已生成
 - [ ] `uv run pytest` 通过
-- [ ] git 已 init 且有首次提交
+- [ ] git 已 init，初始化产物保持未提交并已展示状态
 
 ## 什么时候用
 
@@ -120,7 +132,7 @@ git add . && git commit -m "chore: 初始化项目"
 Claude：在当前目录下新建 data-pipeline/ 子目录，还是就在这个目录初始化？
 你：新建子目录
 Claude：[uv init --package --vcs git data-pipeline → tests/test_smoke.py → uv add --dev pytest]
-        1 passed。git 首次提交完成。
+        1 passed。初始化产物保持未提交，已展示 git status；需要保存版本时交给 /5-版本管理。
         环境就绪：uv run data-pipeline 跑入口，uv run pytest 跑测试。
         要 ruff / mypy / pre-commit 说一声，一行就加。
 ```

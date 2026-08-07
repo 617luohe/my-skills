@@ -6,192 +6,58 @@ disable-model-invocation: false
 
 # 1-规划 — 方案设计与任务拆解
 
-写代码前的完整规划流程。按阶段推进，不跳跃。
+写代码前按阶段推进，不跳跃。需要用户决策或授权的阶段必须等待；综合整理阶段直接执行。
 
 ## 核心原则
 
-1. **按顺序走阶段，不跳跃。** 需要用户决策或授权的阶段必须等待；明确规定不追问的综合整理阶段直接执行。
-2. **事实自行查证，决策交给用户。** 代码、配置、文档和工具中有唯一答案的是事实；目标、偏好、范围、风险和取舍是决策。
-3. **每个决策先给推荐答案和理由，再让用户选择。** 不做开放题。
-4. **阶段 1 必须由用户显式确认退出。** frontier 为空后先输出共享理解摘要；用户确认前不得进入阶段 2 或生成规划产物。
-5. **理解确认不等于开发授权。** 进入原型或开发前，用户还需确认 PRD 和任务清单可执行。
-6. **阶段 4-5 不追问用户。** 只基于阶段 1-3 已达成的共识综合整理。
+1. 事实自行查证，目标、偏好、范围、风险和取舍交用户决定；每个决策先给推荐答案和理由。
+2. 阶段 1 必须由用户显式确认退出；理解确认不等于开发授权。
+3. 阶段 4-5 只基于已达成的共识整理，不追问。
 
 ## 五阶段流程
 
 ### 阶段 1 — 方案追问
 
-使用 `/vocabulary/grilling` 技能进行决策树 grilling：
+使用 `/vocabulary/grilling` 建立决策依赖图并推进 frontier。进入追问前扫描 `CONTEXT-MAP.md`、`CONTEXT.md`、`docs/adr/`；术语冲突立即指出，已读内容在全程复用。默认批量询问互不依赖的决策；用户要求逐步时一次只问一个。用场景压力测试边界，用代码交叉验证现状。算法细节见 [references/planning-rules.md](references/planning-rules.md)。
 
-**文档发现（进入追问前）**
-- 扫描 `CONTEXT-MAP.md`、`CONTEXT.md`、`docs/adr/` 了解已有领域文档
-- 如果用户输入术语与现有文档冲突 → 立即指出
-- 缓存读取的文档内容，整个规划过程复用，不重复读取
+退出前必须确认：
 
-**决策树 grilling（默认批量，可切逐步）**
-- 把未决事项建模为依赖图：节点是决策，边是依赖，**frontier** 是当前可回答的决策集合
-- **事实（Fact）** — 代码、配置、文档中有答案，自行调查
-- **决策（Decision）** — 涉及目标、偏好、范围、风险、取舍，必须由用户决定，先给推荐答案和理由
-- **默认批量模式** — 每轮集中询问 frontier 中主题相近且互不依赖的决策
-- **逐步模式** — 用户说"一步一步"/"逐步完善"/"一个一个问"时，一次只问一个决策
-- **场景压力测试** — 用具体场景探测领域边界
-- **代码交叉验证** — 用实际代码核实用户描述的系统现状
+- 所有需求假设已显式化；技术和产品决策完成，frontier 为空且依赖已理清。
+- 输出共享理解摘要：目标、已验证事实、关键决策、范围外事项、残余风险。
+- 用户确认摘要正确并同意进入阶段 2。
 
-**阶段 1 退出门禁**
-1. [ ] 所有需求假设已显式化并确认
-2. [ ] 所有技术和产品决策已完成，frontier 为空
-3. [ ] 决策依赖关系已理清
-4. [ ] 输出共享理解摘要：目标、已验证事实、关键决策、范围外事项、残余风险
-5. [ ] 用户显式确认摘要正确，并同意进入阶段 2
-
-若用户指出遗漏，重新加入决策树，不进入后续阶段。
-
----
+用户指出遗漏时重新加入决策树，不进入后续阶段。
 
 ### 阶段 2 — 领域术语
 
-使用 `/vocabulary/domain-modeling` 技能维护 `CONTEXT.md`：
-
-**实时规则（贯穿整个阶段）**
-- **术语冲突标记** — 如果用词与已有 CONTEXT.md 冲突，立即指出
-- **模糊语言锐化** — 当使用模糊或过载词汇时，提议精确的规范术语
-- **场景压力测试** — 用具体场景探测边界
-- **内联更新** — 每当一个术语被确认，立即更新 CONTEXT.md
-
-**输出**：`CONTEXT.md` — 项目唯一领域 glossary，只包含规范术语、关系、少量领域场景及已标记歧义；ADR、技术栈/模块地图、任务状态和历史归档不写入其中。
-
-> 如果项目已有 CONTEXT.md，在其基础上更新。如果项目没有 CONTEXT.md，这里按需创建。
-
----
+使用 `/vocabulary/domain-modeling` 维护 `CONTEXT.md`。标记术语冲突，锐化模糊或过载词，按确认结果实时更新。该文件只保存规范术语、关系、少量场景和已标记歧义；不写 ADR、技术栈、模块地图、任务状态或历史归档。
 
 ### 阶段 2.5 — 决策记录（ADR，可选）
 
-在术语体系建立后、接口设计前，回顾整个规划阶段已做出的关键决策。
-
-**仅当以下三个条件全部满足时才提议创建 ADR**：
-1. **难逆转** — 事后改主意的成本很高
-2. **少见** — 未来的读者看到代码会想"为什么这样做？"
-3. **真实取舍** — 有真实的备选方案和取舍理由
-
-使用 `/vocabulary/domain-modeling` 技能拥有的 [ADR 模板](../vocabulary/domain-modeling/references/adr-format.md)，创建在 `docs/adr/NNNN-title.md`。
-
----
+仅当决策同时满足难逆转、少见、存在真实取舍时提议 ADR。使用 `/vocabulary/domain-modeling` 的 [ADR 模板](../vocabulary/domain-modeling/references/adr-format.md)，写入 `docs/adr/NNNN-title.md`。
 
 ### 阶段 3 — 接口设计与原型验证
 
-并行生成 3 个接口方案对比：
-1. **方案 A** — 面向简单场景优化
-2. **方案 B** — 面向扩展性优化
-3. **方案 C** — 面向测试性优化
+只有存在真实备选方案和用户需要比较的取舍时，才生成多个方案；否则直接记录推荐方案及理由。方案比较需覆盖模块划分、接口、关键交互和测试切面。
 
-每个方案包含：模块划分、接口定义、关键交互、测试切面。用户选择最优方案，或指出各方案的可取之处后由 AI 合成最终方案。
-
-**不确定假设门禁**：状态机、算法或 UI 假设无法通过代码、文档或用户决策消除时，在 `docs/prototypes/<topic>/` 建立 throwaway prototype 验证任务。任务须定义待验证假设、最小实验、成功/失败判据和停止条件；原型默认不进入生产代码或任务清单。**形态按问题选型**：
-- **逻辑 / 状态机** — 单文件、无构建、一条命令或双击即可运行；每次动作后自动展示完整状态，不靠断点或日志。UI 形态用单个可双击 HTML 文件（标记状态面板 + 自由操作按钮 + 分步引导场景），非开发人员也能驱动。
-- **UI** — 单路由产出多个差异化变体，URL 参数切换，浮动条对比。
-- **不抛光** — 不加测试、不加错误处理、不持久化（持久化本身是待验证项时除外）。回答完假设即停。
-
-**证据保留与结论回写**（验证完成、结论已定后）：
-1. 结论（verdict + 被验证的问题）与证据摘要写入 `docs/plans/<topic>/`；决策片段（状态机、reducer、schema）内联到 PRD 相关决策。
-2. 原型作为**第一手证据**提交到 throwaway 分支 `prototype/<topic>`（移出 main），结论文档留一行指针：`原型证据：分支 prototype/<topic>`；主分支不保留原型文件——只留验证过的决策。再继续 PRD 与任务拆解。
-
----
+状态机、算法或 UI 假设无法由代码、文档或用户决策消除时，在 `docs/prototypes/<topic>/` 建立 throwaway prototype，定义待验证假设、最小实验、成功/失败判据和停止条件。逻辑/状态机用可直接运行的单文件；UI 用单路由差异化变体；不抛光、不加无关测试、错误处理或持久化。结论完成后，把 verdict 与证据摘要写入 `docs/plans/<topic>/`，必要的状态机、reducer 或 schema 片段内联到 PRD；原型提交到 `prototype/<topic>`，主分支只留决策。
 
 ### 阶段 4 — 输出 PRD
 
-基于阶段 1-3 已达成的共识综合整理，**不追问用户**。
-
-**输出路径**：`docs/plans/<feature>/PRD.md`
-
-**PRD 结构**：
-```markdown
-## Problem Statement
-{用户视角的问题}
-
-## Solution
-{用户视角的解决方案}
-
-## User Stories
-1. As a <actor>, I want a <feature>, so that <benefit>
-{详尽的用户故事列表}
-
-## Implementation Decisions
-- 要修改的模块
-- 要修改的接口
-- 技术澄清
-- 架构决策
-- Schema 变更
-- API 契约
-
-不包含具体文件路径或代码片段（易过期）。
-例外：如果原型产出了决策片段（状态机、reducer、schema），内联到相关决策中。
-
-## Testing Decisions
-- 什么是好测试（只测外部行为，不测实现细节）
-- 要测试哪些模块
-- 现有类似测试作为参考
-
-## Out of Scope
-{范围外事项}
-
-## Further Notes
-{补充说明}
-```
-
----
+基于阶段 1-3 的共识写 `docs/plans/<feature>/PRD.md`，包含 Problem Statement、Solution、User Stories、Implementation Decisions、Testing Decisions、Out of Scope、Further Notes。Implementation Decisions 写模块、接口、技术澄清、架构、Schema 和 API 契约；不写易过期的具体路径或代码，原型决策片段除外。
 
 ### 阶段 5 — 拆解任务
 
-将 PRD 拆解为可独立执行的垂直切片（task list）。
-
-**输出路径**：`docs/plans/<feature>/tasks.md`
-
-每个任务包含：
-- **Task ID** — T001, T002, ...
-- **Title** — 简短标题
-- **Description** — 要实现的功能切片
-- **Acceptance Criteria** — 验收标准
-- **AFK/HITL** — 标记是否需要人工介入
-- **Depends On** — 前置任务 ID（如果有）
-
-**输出格式**：
-```markdown
-## Task List
-
-### T001: {Title}
-**Description:** {切片描述}
-**Acceptance Criteria:**
-- [ ] {标准1}
-- [ ] {标准2}
-**AFK/HITL:** AFK
-**Depends On:** None
-
-### T002: {Title}
-...
-```
-
----
+将 PRD 拆成可独立执行的垂直切片，写 `docs/plans/<feature>/tasks.md`。每项包含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL 和 Depends On。
 
 ## 最终确认
 
-阶段 5 完成后，输出：
-1. PRD 文档路径
-2. 任务清单路径
-3. CONTEXT.md 更新情况
-4. ADR 创建情况（如果有）
-
-然后询问用户：**是否授权进入原型或开发？**
-
-- 用户确认 → 可以进入 `/2-开发`
-- 用户指出问题 → 回到对应阶段修正
-
----
+阶段 5 完成后输出 PRD、任务清单、CONTEXT.md 更新情况和 ADR 情况，然后询问：**是否授权进入原型或开发？** 用户确认后才进入 `/2-开发`；指出问题则回到对应阶段。
 
 ## 详细规则参考
 
-完整的决策树算法、frontier 计算规则、CONTEXT.md 格式详见：
-- `vocabulary/grilling/SKILL.md` — 询问循环的核心逻辑
-- `vocabulary/domain-modeling/SKILL.md` — 领域建模的详细规则
-- `references/planning-rules.md` — frontier 算法和文档权威边界
-- `references/context-format.md` — CONTEXT.md glossary 格式规范
-- `../vocabulary/domain-modeling/references/adr-format.md` — ADR 编写指南
+- `/vocabulary/grilling`：询问循环
+- `/vocabulary/domain-modeling`：领域建模
+- `references/planning-rules.md`：frontier、方案分支和文档权威边界
+- `references/context-format.md`：CONTEXT.md 格式
+- `../vocabulary/domain-modeling/references/adr-format.md`：ADR 格式

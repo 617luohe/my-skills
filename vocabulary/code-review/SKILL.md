@@ -1,184 +1,48 @@
 ---
 name: code-review
 layer: vocabulary
-description: Two-axis review of code changes - Standards (coding standards) and Spec (specification compliance). Use before merging or after feature completion.
+description: Risk-based review of code changes for project standards and specification compliance.
 disable-model-invocation: false
 ---
 
 # Code Review — 代码审查
 
-对代码变更进行双轴审查：**Standards**（编码规范）和 **Spec**（需求符合度）。
+按变更风险选择审查深度，审查基点、需求来源和规范来源必须先确认。
 
-两个评估用并行子代理独立执行，避免互相污染上下文。
+## 风险路由
+
+- **单 reviewer**：机械性改动、纯文档改动或极小且低风险的 diff。按适用范围检查 Standards 与 Spec，并说明未启用的独立轴。
+- **双轴并行**：高风险改动、行为变化，或需求/spec 复杂、存在明显取舍时，独立运行 Standards 与 Spec reviewer。
+- **双轴串行**：仅在 diff 很大、上下文可能超限时使用；先 Standards，再 Spec，并在报告中说明原因。
+
+高风险信号包括数据迁移、权限/安全、公共 API、并发、持久化、跨模块行为和性能/可靠性门禁。不能仅按行数决定并行方式。
 
 ## 审查准备
 
-### 1. 确定审查基点
-从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
-- 统一记录基点：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）；如存在未提交改动，再附加 `git diff` 和 `git diff --cached`
-- 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`；无提交时明确标注“无新增提交，审查未提交改动”
-- **如果上游已显式提供 fixed-point**（如 `/2-开发` 传递），直接使用，跳过追问
-- 如果没有给 fixed-point，先问清楚再继续
+1. 记录 `git diff <fixed-point>...HEAD`，未提交改动再附加 `git diff` 和 `git diff --cached`；同时记录 `git log <fixed-point>..HEAD --oneline`。上游已传 fixed-point 时直接使用，否则先确认。
+2. 按优先级定位需求：上游传递的任务/issue 或 PRD/spec；commit 引用和路径参数仅作后备。没有 spec 时标记“无可用 spec”。
+3. 从 `CLAUDE.md`、`CONTRIBUTING.md`、`CONTEXT.md`、`CONTEXT-MAP.md`、ADR 及项目 linter/formatter/类型配置派生 Standards。规范随项目技术栈确定；只有识别到项目默认使用 Python 时，才检查 Python 惯用法，不把 Python 规则当作通用标准。
+4. 从上游 skill 提取功能门禁。性能、可靠性、资源和覆盖率等指标必须自动验证，或在裁决中标注“需手动验证”并降级为警告。
 
-### 2. 定位需求来源
-按顺序查找：
-- **上游显式传递的需求来源**（如 `/2-开发` 传递的任务清单或 issue 路径）→ 优先使用
-- commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 仅作为上游未提供来源时的后备线索
-- 传入的路径参数
-- 项目中的 PRD/spec 文件
-- 如果都没找到，询问需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"
+## Reviewer 任务
 
-### 3. 定位规范来源
-收集：
-- CLAUDE.md
-- CONTRIBUTING.md
-- CONTEXT.md / CONTEXT-MAP.md
-- ADR
-- linter/formatter/tsconfig 等工具配置
+Standards reviewer 只按已定位的项目规范和技术栈审查命名、类型、异常、imports、公共 API 文档及其他明确门禁。
 
-### 4. 识别门禁关注点
-从上游 skill 提取门禁维度：
+Spec reviewer 只按需求来源核对缺失或部分实现、范围蔓延、意图不符和功能目标门禁。
 
-**代码质量门禁**（默认，始终检查）：
-- 命名规范、类型注解、异常处理、import 组织、公共 API 文档字符串
+汇总时保留 `## Standards` 与 `## Spec` 两个轴，不合并、不重排优先级。单 reviewer 可在同一报告中分别列出适用轴；所有报告必须给出 PASS、PASS WITH WARNINGS 或 FAIL 裁决。
 
-**功能目标门禁**（按需，上游有明确目标时增加）：
-- **性能指标**（如 PRD 要求"API 响应<100ms"）→ 运行性能测试或检查 benchmark 结果
-- **可靠性指标**（如"复现率<1%"）→ 检查压力测试报告或重复运行测试
-- **资源消耗**（如"内存<500MB"）→ 检查资源监控数据或 profiler 输出
-- **覆盖率**（如"测试覆盖率>80%"）→ 检查覆盖率报告
+## 裁决
 
-如无法自动验证功能目标门禁 → 在审查报告中标注 `⚠️ 需手动验证：XXX 指标`
+- **FAIL**：至少一个阻断问题，包括核心功能缺失、严重需求不符或严重违反项目规范。
+- **PASS WITH WARNINGS**：无阻断但有警告，或存在未自动验证且需手动验证的功能门禁。
+- **PASS**：无阻断和警告。
 
-## 并行审查
-
-**上下文管理**：
-- **diff 较小**（<500 行变更）→ 并行运行两个子代理
-- **diff 较大**（≥500 行变更）→ 串行运行，避免上下文超限：
-  - 先运行 Standards 子代理（轻量，主要看规范）
-  - Standards 完成后，再运行 Spec 子代理（重量，需理解需求）
-  - 在最终汇总时标注："diff 较大，串行审查"
-
-### Standards 子代理
-读规范文件 + 读 diff，逐文件报告违反规范的地方（跳过已被工具自动强约束的事项）：
-- 命名规范：snake_case 函数/变量、PascalCase 类
-- 类型注解是否完整
-- 异常处理是否捕获过于宽泛的 Exception
-- import 组织：标准库 → 三方库 → 本地模块
-- 公共 API 是否缺少文档字符串
-- 是否使用 Python 惯用写法（上下文管理器、列表推导）
-
-### Spec 子代理
-读需求文档 + 读 diff，报告：
-- 需求中要求但缺失或部分实现的功能
-- 代码中出现但需求没要求的（范围蔓延）
-- 实现方式有问题的地方
-
-## 汇总报告
-
-两个结果并排展示（`## Standards` + `## Spec` 标题），**不合并、不排序、不重排优先级**；只允许轻量清理表述。
-
-末尾一行总结：每个轴各多少发现，最严重的问题是什么。
-
-## 验收裁决
-
-审查完成后，基于发现的问题严重程度输出 **PASS**、**PASS WITH WARNINGS** 或 **FAIL** 正式验收裁决。
-
-### 阻断级别定义
-
-- **❌ 阻断（Blocker）** — 必须修复才能合并：
-  - Spec 轴：缺失核心功能、实现与需求严重不符、功能目标门禁未达标
-  - Standards 轴：严重违反规范（如缺少类型注解、公共 API 无文档、裸露的宽泛异常捕获）
-  
-- **⚠️ 警告（Warning）** — 建议修复，但不阻断合并：
-  - Spec 轴：部分实现、边缘场景未覆盖、范围蔓延（非核心）
-  - Standards 轴：命名不规范、import 顺序混乱、缺少惯用写法
-  
-- **ℹ️ 建议（Suggestion）** — 可选优化：
-  - 性能优化建议、代码简化建议、更好的抽象方式
-
-### 裁决规则
-
-1. **FAIL** — 存在至少 1 个 ❌ 阻断级别问题
-   - 输出：`🚫 FAIL — 存在 {N} 个阻断问题，必须修复后才能合并`
-   - 列出所有阻断问题清单
-
-2. **PASS WITH WARNINGS** — 无阻断问题，但有 ⚠️ 警告
-   - 输出：`⚠️ PASS WITH WARNINGS — {N} 个警告建议修复`
-   - 列出所有警告问题清单
-
-3. **PASS** — 无阻断、无警告（可以有建议）
-   - 输出：`✅ PASS — 可以合并`
-
-### 功能目标门禁处理
-
-如果审查准备阶段识别出功能目标门禁（性能、可靠性、资源消耗、覆盖率等），必须在裁决前验证：
-
-- **可自动验证** — 运行测试/benchmark，根据结果判定
-- **需手动验证** — 在裁决中标注 `⚠️ 需手动验证：XXX 指标`，裁决降级为 PASS WITH WARNINGS
-
-## 输出格式
-
-```markdown
-# Code Review Report
-
-**审查基点**: <fixed-point>...HEAD
-**提交列表**: 
-- <commit1>
-- <commit2>
-
-**需求来源**: <PRD/issue 路径>
-**规范来源**: CLAUDE.md, CONTRIBUTING.md, ...
-
----
-
-## Standards
-
-### 文件: path/to/file.py
-- ❌ Line 42: 函数 `getUserName` 应改为 `get_user_name`（命名规范）
-- ⚠️ Line 58: 捕获了过于宽泛的 `Exception`，建议捕获具体异常
-
-### 文件: path/to/another.py
-- ✅ 符合规范
-
----
-
-## Spec
-
-### 需求: "用户登录后显示欢迎消息"
-- ❌ 缺失：登录成功后未返回欢迎消息
-- ✅ 已实现：token 生成和返回
-
-### 需求: "登录失败3次后锁定账户"
-- ⚠️ 部分实现：计数器已加，但未实现锁定逻辑
-
----
-
-## 总结
-
-- **Standards**: 发现 3 个问题（1 个错误，2 个警告）
-- **Spec**: 发现 2 个问题（1 个缺失功能，1 个部分实现）
-- **最严重**: 缺失登录成功后的欢迎消息（Spec 要求）
-
----
-
-## 验收裁决
-
-🚫 **FAIL** — 存在 1 个阻断问题，必须修复后才能合并
-
-**阻断问题清单**:
-1. [Spec] 缺失登录成功后的欢迎消息（核心功能缺失）
-
-**警告问题清单**:
-1. [Standards] Line 42: 函数命名不规范
-2. [Standards] Line 58: 捕获过于宽泛的异常
-3. [Spec] 登录失败锁定功能部分实现
-```
+输出必须包含审查基点、提交列表、需求来源、规范来源、各轴发现和裁决。详细输出模板与 reviewer 角色见 `agents/standards.md`、`agents/spec.md`。
 
 ## MUST 规则
 
-1. **审查基点和需求来源必须先确认再开始。** 不问清楚不审查。
-2. **两个子代理必须并行运行（小 diff）或串行运行（大 diff）。** Standards 和 Spec 独立，不互相污染上下文。
-3. **标准审查结果和需求审查结果不合并、不排序、不重排优先级。**
-4. **必须输出验收裁决（PASS、PASS WITH WARNINGS 或 FAIL）。** 根据阻断级别问题判定，明确标注是否可合并。
-5. **功能目标门禁必须验证。** 自动验证或标注需手动验证，未验证的门禁降级为警告。
+1. 基点、需求来源和规范来源先确认再审查。
+2. 按风险路由单 reviewer、双轴并行或必要时串行；独立 reviewer 不互相污染上下文。
+3. 保留 Standards/Spec 轴边界并明确裁决。
+4. 功能门禁必须验证，未验证项降级为警告。

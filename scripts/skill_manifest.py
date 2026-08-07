@@ -26,7 +26,7 @@ REQUIRED_FIELDS = {
     "sync",
     "dependencies",
 }
-OPTIONAL_FIELDS = {"layer"}
+OPTIONAL_FIELDS = {"layer", "deprecated_note"}
 
 
 def _scalar(text: str, line_number: int) -> Any:
@@ -114,6 +114,11 @@ def safe_skill_path(value: Any) -> bool:
     return all(part and part not in {".", ".."} for part in parts)
 
 
+def deployment_name(name: str) -> str:
+    """Map a canonical nested name to its deterministic flat deployment name."""
+    return name.rsplit("/", 1)[-1]
+
+
 def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
     if manifest.get("schema_version") != 1:
         raise ValueError("schema_version must be 1")
@@ -124,6 +129,7 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
         raise ValueError("repository_version must be a semantic version")
 
     seen_names: set[str] = set()
+    seen_deployment_names: dict[str, str] = {}
     published: list[dict[str, str]] = []
     host_provided = 0
     for index, skill in enumerate(manifest["skills"], 1):
@@ -141,8 +147,16 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
             raise ValueError(f"skill {name}: path must equal a safe name")
         if skill["version"] != repository_version:
             raise ValueError(f"skill {name}: version must equal repository_version")
-        if skill["status"] != "stable":
-            raise ValueError(f"skill {name}: status must be stable")
+        if skill["status"] not in ("stable", "deprecated"):
+            raise ValueError(f"skill {name}: status must be stable or deprecated")
+        if skill["status"] == "deprecated":
+            if (
+                not isinstance(skill.get("deprecated_note"), str)
+                or not skill["deprecated_note"]
+            ):
+                raise ValueError(f"skill {name}: deprecated requires deprecated_note")
+            if skill["invocation"] != "user":
+                raise ValueError(f"skill {name}: deprecated invocation must be user")
         if skill["invocation"] not in ("user", "model"):
             raise ValueError(f"skill {name}: invocation must be user or model")
         if skill["hosts"] != ["claude", "cursor", "codex"]:
@@ -159,7 +173,28 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
                 raise ValueError(
                     f"skill {name}: synchronized skills must set sync true"
                 )
-            published.append({"name": name, "path": skill["path"]})
+            flat_name = deployment_name(name)
+            previous = seen_deployment_names.get(flat_name)
+            if previous is not None:
+                raise ValueError(
+                    f"deployment name collision: {name} and {previous} both map to {flat_name}"
+                )
+            seen_deployment_names[flat_name] = name
+            published.append(
+                {
+                    "name": name,
+                    "path": skill["path"],
+                    "deployment_name": flat_name,
+                    **(
+                        {
+                            "status": "deprecated",
+                            "deprecated_note": skill["deprecated_note"],
+                        }
+                        if skill["status"] == "deprecated"
+                        else {}
+                    ),
+                }
+            )
         elif skill["distribution"] == "host-provided":
             host_provided += 1
             if skill["sync"] is not False or skill["invocation"] != "model":

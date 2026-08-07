@@ -115,6 +115,27 @@ def _frontmatter(path: Path) -> dict[str, Any]:
     return values
 
 
+def _full_description(lines: list[str]) -> str:
+    """Extract description value including block-scalar continuation lines."""
+    in_desc = False
+    parts: list[str] = []
+    for line in lines:
+        stripped = line.rstrip()
+        if not stripped or stripped[0] in " \t":
+            if in_desc:
+                parts.append(stripped.strip())
+            continue
+        key, separator, value = stripped.partition(":")
+        if separator and key.strip() == "description":
+            if value.strip() == ">":
+                in_desc = True
+            else:
+                return value.strip().strip("\"'")
+        else:
+            in_desc = False
+    return " ".join(part for part in parts if part).strip()
+
+
 def _implicit_invocation(path: Path) -> bool:
     lines = path.read_text(encoding="utf-8-sig").splitlines()
     in_policy = False
@@ -270,15 +291,43 @@ def _validate_manifest(
                     root,
                 )
             )
-        if skill["version"] != version or skill["status"] != "stable":
+        if skill["version"] != version:
             errors.append(
                 _finding(
                     "manifest",
                     root / "skills-manifest.yaml",
-                    f"{name}: invalid version or status",
+                    f"{name}: invalid version",
                     root,
                 )
             )
+        if skill["status"] not in ("stable", "deprecated"):
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid status {skill['status']}",
+                    root,
+                )
+            )
+        elif skill["status"] == "deprecated":
+            if not skill.get("deprecated_note"):
+                errors.append(
+                    _finding(
+                        "manifest",
+                        root / "skills-manifest.yaml",
+                        f"{name}: deprecated status requires deprecated_note",
+                        root,
+                    )
+                )
+            if skill.get("invocation") != "user":
+                errors.append(
+                    _finding(
+                        "manifest",
+                        root / "skills-manifest.yaml",
+                        f"{name}: deprecated status requires invocation user",
+                        root,
+                    )
+                )
         if skill["invocation"] not in ("user", "model"):
             errors.append(
                 _finding(
@@ -385,6 +434,37 @@ def _validate_dependencies(
                 )
 
 
+def _validate_dependency_references(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    """A declared dependency should be referenced by the skill's own docs."""
+    for skill in skills:
+        name = skill.get("name")
+        deps = skill.get("dependencies")
+        if not isinstance(name, str) or not isinstance(deps, list):
+            continue
+        skill_dir = root / name
+        if not skill_dir.is_dir():
+            continue
+        texts = [
+            path.read_text(encoding="utf-8-sig")
+            for path in sorted(skill_dir.rglob("*.md"))
+        ]
+        blob = "\n".join(texts)
+        for dep in deps:
+            if not isinstance(dep, str) or not dep:
+                continue
+            if dep not in blob:
+                errors.append(
+                    _finding(
+                        "dependency-reference",
+                        skill_dir / "SKILL.md",
+                        f"{name}: declared dependency {dep!r} is not referenced in its docs",
+                        root,
+                    )
+                )
+
+
 def _validate_skill(
     skill: dict[str, Any],
     root: Path,
@@ -406,6 +486,26 @@ def _validate_skill(
     except ValueError as exc:
         errors.append(_finding("frontmatter", document, str(exc), root))
         return
+    lines = document.read_text(encoding="utf-8-sig").splitlines()
+    description = _full_description(lines)
+    if not description:
+        errors.append(
+            _finding(
+                "description",
+                document,
+                f"{name}: description is missing or empty",
+                root,
+            )
+        )
+    elif len(description) < 12:
+        warnings.append(
+            _finding(
+                "description-short",
+                document,
+                f"{name}: description only {len(description)} chars; add trigger terms for reliable routing",
+                root,
+            )
+        )
     # For nested skills (e.g., vocabulary/cat/skill), frontmatter name should match
     # only the final component (e.g., "skill"), not the full path
     expected_frontmatter_name = name.split("/")[-1] if "/" in name else name
@@ -558,12 +658,15 @@ def _validate_deployments(
     root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]
 ) -> None:
     published = sorted(
-        skill["name"]
+        (
+            skill["name"],
+            skill_manifest.deployment_name(skill["name"]),
+        )
         for skill in skills
         if skill.get("distribution") == "synchronized"
         and isinstance(skill.get("name"), str)
     )
-    expected_names = set(published)
+    expected_names = {deployment_name for _, deployment_name in published}
     for host in HOSTS:
         deployment = root.parent / host / "skills"
         if not deployment.is_dir():
@@ -589,7 +692,10 @@ def _validate_deployments(
                     root,
                 )
             )
-            continue
+            # Continue with the deterministic directory checks. A missing state
+            # file is itself an error, but must not hide nested-name path drift.
+            managed_names = set()
+            state = None
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(
                 _finding(
@@ -610,31 +716,33 @@ def _validate_deployments(
             and len(managed) == len(set(managed))
         )
         if not state_valid:
-            errors.append(
-                _finding(
-                    "deployment-state",
-                    state_path,
-                    "managed state must contain schema_version 1 and a unique list of non-empty skill names",
-                    root,
+            if state is not None:
+                errors.append(
+                    _finding(
+                        "deployment-state",
+                        state_path,
+                        "managed state must contain schema_version 1 and a unique list of non-empty skill names",
+                        root,
+                    )
                 )
-            )
-            continue
+            managed_names = set()
 
-        managed_names = set(managed)
-        if managed_names != expected_names:
-            errors.append(
-                _finding(
-                    "deployment-state-drift",
-                    state_path,
-                    f"expected managed skills {published}; found {sorted(managed_names)}",
-                    root,
+        if state_valid:
+            managed_names = set(managed)
+            if managed_names != expected_names:
+                errors.append(
+                    _finding(
+                        "deployment-state-drift",
+                        state_path,
+                        f"expected managed skills {sorted(expected_names)}; found {sorted(managed_names)}",
+                        root,
+                    )
                 )
-            )
 
         # Only names in the source publication are managed by this validation.
         # Other deployment entries are explicitly left untouched by synchronization.
-        for name in published:
-            deployed_skill = deployment / name
+        for name, deployment_name in published:
+            deployed_skill = deployment / deployment_name
             if not deployed_skill.is_dir():
                 errors.append(
                     _finding(
@@ -688,6 +796,7 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
             )
         )
     _validate_dependencies(skills, root, errors)
+    _validate_dependency_references(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(skill, root, canonical, errors, warnings)
     if check_deployments:
