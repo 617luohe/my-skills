@@ -19,6 +19,7 @@ my-skills/
 │   └── diagnosing-bugs/         — Bug 诊断
 ├── my-note/                      — 知识管理技能体系（类比 vocabulary 层）
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
+│   ├── index-keeper/            — 内部 Worker（索引维护）
 │   └── vault-publisher/         — 内部 Worker（固定 Vault 发布）
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
@@ -65,7 +66,7 @@ my-skills/
 | **grilling**        | 询问循环（批量/逐步模式、事实自查、决策推荐）             | `/1-规划`                  |
 | **domain-modeling** | 领域建模（维护仅含术语的 CONTEXT.md、独立 ADR、术语锐化） | `/1-规划`                  |
 | **tdd**             | TDD 循环（红-绿-重构、按行为风险确定测试、编码准则）      | `/2-开发`、`/multi-worker` |
-| **code-review**     | 代码审查（Standards + Spec 双轴、并行子代理）             | `/3-检查`、`/multi-worker` |
+| **code-review**     | 代码审查（Standards + Spec 双轴、并行子代理）             | `/3-检查`                  |
 | **diagnosing-bugs** | Bug 诊断（六阶段：可比较观测→复现→假设→验证→修复→清理）   | `/4-调试`                  |
 
 **收益**：
@@ -112,10 +113,10 @@ my-skills/
 
 ## 独立方法论 Skills
 
+> `0--dialectic`、`0--laoyoutiao` 为 0-- 扩展能力（见调用分类），此处不重复。
+
 | 技能                                          | 职责                                                                 |
 | --------------------------------------------- | -------------------------------------------------------------------- |
-| **辩证矛盾分析法** (`0--dialectic`)           | 六步法分析复杂问题、制定战略决策                                     |
-| **老油条** (`0--laoyoutiao`)                  | Python 交付节奏管理（个人定制）                                      |
 | **leader** (`leader`)                         | 一句话想法 → agent 可独立执行的任务书                                |
 | **multi-worker** (`multi-worker`)             | 并行开发编排器（实验性）                                             |
 | **writing-for-agents** (`writing-for-agents`) | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning） |
@@ -134,6 +135,7 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 | 技能                                            | 职责                                                    | 阶段    |
 | ----------------------------------------------- | ------------------------------------------------------- | ------- |
 | **noteall** (`my-note/noteall`)                 | 唯一入口：输入识别 + 处理倾向 + 三阶段编排 / 维护模式   | 入口    |
+| **index-keeper** (`my-note/index-keeper`)       | 索引维护 Worker：增量更新 / 补全 / 健康检查 `_INDEX.md` | 维护    |
 | **vault-publisher** (`my-note/vault-publisher`) | 固定 Vault 受控发布：校验、同步、受控暂存、commit、push | Publish |
 
 - 内容类型差异（会议/阅读/日记/文章）由 noteall `references/profiles.yaml` 承担，不再各自为独立技能。
@@ -142,27 +144,27 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 
 ## 部署方法
 
-技能单一事实源 + 单条同步链路：
+技能单一事实源 + 管理器同步分发：
 
 1. **权威源（唯一编辑处）**：`E:\workplace\skills工程\my-skills`（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
-2. **运行时生效**：`~/.claude/skills/` 与项目 `.claude/skills/` 的 junction **直接指向权威源**（2026-08-07 起，取代 skills-manager 快照层），改技能立即生效；跨机器时重建 junction 即可
-3. **仓库镜像（版本快照，非部署源）**：`python scripts/sync-skills.py`（manifest 驱动）把权威源镜像到 `skills/`，`skills-manifest.yaml` 为清单事实源（`sync: true` 的技能 + 固定共享文件，target 为严格镜像）
+2. **运行时生效**：`~/.claude/skills/` 与项目 `.claude/.cursor/.codex/skills/` 下的符号链接指向 `~/.skills-manager/skills/`（skills-manager 同步代理），由 skills-manager 从权威源仓库（GitHub 远端）拉取更新。发布流程：改权威源 → commit + push → skills-manager 触发 update 后运行时生效（存在延迟窗口，非"立即生效"）
+3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/skill_manifest.py` + `scripts/validate_skills.py` 做结构校验（manifest ↔ 目录 ↔ frontmatter ↔ openai.yaml 四方一致）
 
-> 旧机制：skills-manager 曾作为中间快照层（`~/.skills-manager/skills`）。其 Python 包已损坏且不再需要，junction 已改为直连权威源。
+> 历史说明：曾计划 junction 直连权威源（README 2026-08-07 声称已取代 skills-manager），但实际部署仍经 skills-manager 同步代理；`sync-skills.py` 已删除，无独立镜像脚本。
 
 ## 治理验证
 
-治理脚本随镜像位于 `skills/scripts/`（`skill_manifest.py` / `validate_skills.py`），需在 `skills/` 目录下执行：
+治理脚本位于 `scripts/`（`skill_manifest.py` / `validate_skills.py`），在仓库根目录执行：
 
 ```bash
-cd skills && python scripts/validate_skills.py
-cd skills && python scripts/validate_skills.py --json
+python scripts/validate_skills.py
+python scripts/validate_skills.py --json
 ```
 
 验证源码治理规则（默认不检查部署目录）；`--check-deployments` 验证父目录下 `.claude/.cursor/.codex` 的受管清单和受管内容与源码一致，忽略未受管的额外技能：
 
 ```bash
-cd skills && python scripts/validate_skills.py --check-deployments
+python scripts/validate_skills.py --check-deployments
 ```
 
-警告不影响退出码；治理错误返回非零退出码。CI 只运行 `python scripts/validate_skills.py` 静态治理验证，不依赖宿主部署目录。
+> 注意：`--check-deployments` 目前会报错——各宿主部署根缺 `.my-skills-managed.json` 受管状态文件（部署状态未随分发机制迁移维护），属已知待办。警告不影响退出码；治理错误返回非零退出码。CI 只运行 `python scripts/validate_skills.py` 静态治理验证，不依赖宿主部署目录。
