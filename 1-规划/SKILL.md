@@ -34,7 +34,7 @@ disable-model-invocation: false
 
 ### 阶段 2.5 — 决策记录（ADR，可选）
 
-仅当决策同时满足难逆转、少见、存在真实取舍时提议 ADR。使用 `/vocabulary/domain-modeling` 的 [ADR 模板](../vocabulary/domain-modeling/references/adr-format.md)，写入 `docs/adr/NNNN-title.md`。
+仅当决策同时满足难逆转、少见、存在真实取舍时提议 ADR。使用 `/vocabulary/domain-modeling` 的 ADR 模板，写入 `docs/adr/NNNN-title.md`。
 
 ### 阶段 3 — 接口设计与原型验证
 
@@ -60,4 +60,4 @@ disable-model-invocation: false
 - `/vocabulary/domain-modeling`：领域建模
 - `references/planning-rules.md`：frontier、方案分支和文档权威边界
 - `references/context-format.md`：CONTEXT.md 格式
-- `../vocabulary/domain-modeling/references/adr-format.md`：ADR 格式
+- `references/adr-format.md`：ADR 格式（通过 domain-modeling 调用）
