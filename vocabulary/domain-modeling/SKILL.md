@@ -90,3 +90,15 @@ _Previously ambiguous_: "account" referred to both
 Use this skill's published [ADR template](references/adr-format.md).
 
 ADRs are created only in `docs/adr/NNNN-title.md` with sequential numbering (0001, 0002, ...). Task status belongs in `docs/plans/`, task lists, issues, or `docs/handoff/` — never in `CONTEXT.md`.
+
+## 完成标准
+
+**必须满足**：
+
+- `CONTEXT.md` 中无未标记的歧义术语（所有关键术语已定义或标注 _Avoid_ / _Previously ambiguous_）
+- 如果创建了 ADR，必须同时满足三条件：hard to reverse + surprising without context + real trade-off
+
+**交接**：
+
+- 术语澄清完成后，共享理解已建立，可继续上游 skill（如 `/1-规划` 的后续阶段）
+- ADR 创建后，决策已记录，可作为实施依据
