@@ -2,4 +2,4 @@ interface:
   display_name: "Knowledge Reconciliation"
   short_description: "Reconcile project docs, memory, and code"
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

@@ -14,7 +14,7 @@ skills:
     path: 0--dialectic
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -32,7 +32,7 @@ skills:
     path: 0--neat-freak
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -50,7 +50,7 @@ skills:
     path: 0-启动
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -59,7 +59,7 @@ skills:
     path: 1-规划
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -95,7 +95,7 @@ skills:
     path: 5-版本管理
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -104,7 +104,7 @@ skills:
     path: 6-最后整理
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -113,7 +113,7 @@ skills:
     path: multi-worker
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -122,7 +122,7 @@ skills:
     path: leader
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -167,7 +167,7 @@ skills:
     path: 0-询问luohe
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
@@ -236,7 +236,7 @@ skills:
     path: my-note/noteall
     version: 1.0.0
     status: stable
-    invocation: user
+    invocation: model
     layer: my-note
     hosts: [claude, cursor, codex]
     distribution: synchronized

@@ -2,4 +2,4 @@ interface:
   display_name: "Leader - Task Brief Generator"
   short_description: "Turn one-sentence ideas into agent-executable mission briefs"
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

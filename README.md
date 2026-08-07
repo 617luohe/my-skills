@@ -47,10 +47,13 @@ my-skills/
 
 ## 调用分类
 
-- **仅用户调用**：`0-询问luohe`、`0-启动`、`1-规划`、`5-版本管理`、`6-最后整理`、`multi-worker`、`leader`、`0--neat-freak`、`0--dialectic`。只能由用户显式输入调用（frontmatter `disable-model-invocation: true`，`agents/openai.yaml` `allow_implicit_invocation: false`）。
-- **允许模型调用**：`2-开发`、`3-检查`、`4-调试`、`0--claude`、`0--laoyoutiao`、`0--tokenless`、`cleanup`、`cleanupclaude`、`writing-for-agents`、`wizard`。模型可按描述自动调用，用户也可显式调用。
+所有技能均允许模型按描述自动调用，也允许用户显式输入调用（统一 `disable-model-invocation: false`、`allow_implicit_invocation: true`）。按层级分组：
+
+- **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
+- **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--tokenless`
+- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`、`cleanup`、`cleanupclaude`
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。被其他技能调用，不直接暴露给用户。
-- **my-note 层**：`noteall` 为唯一用户入口（仅用户调用，三阶段流水线）；`vault-publisher`、`index-keeper` 为内部 Worker（model-invoked，由 noteall 调度），不直接暴露给用户。
+- **my-note 层**：`noteall` 唯一入口（三阶段流水线）；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度），不直接暴露给用户。
 
 ## 核心优化（2026-07-26）
 

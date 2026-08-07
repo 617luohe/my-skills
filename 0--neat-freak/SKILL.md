@@ -4,7 +4,7 @@ description: >
   全局知识库洁癖审查：CLAUDE.md/docs/agent 记忆的一致性校准、尺寸体检、记忆毕业、消除矛盾。
   管整个知识库（减法/校准），非本次会话沉淀（→/6-最后整理）、非磁盘清理（→/cleanup）。
   触发：用户说"同步一下、整理文档、梳理一下、文档和代码不一致、记忆膨胀、知识库乱了"。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 0--neat-freak — 知识库洁癖审查

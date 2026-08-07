@@ -2,4 +2,4 @@ interface:
   display_name: "Dialectic Analysis"
   short_description: "Analyze complex problems dialectically"
 policy:
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true

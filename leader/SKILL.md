@@ -1,7 +1,7 @@
 ---
 name: leader
 description: 把一句话想法拆成另一 agent 能独立跑完的任务书（≤4000 字，含实测数字、防作弊验收、断点续跑）。触发：用户说"帮 agent 写目标/任务书/brief/goal 提示词、让 agent 自己跑项目、把活分给几个 agent 并行"。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 领导 · 你出想法，我出任务书
