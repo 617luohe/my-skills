@@ -76,7 +76,7 @@ _Previously ambiguous_: 用户口语 "source 文件夹" 指 7-Sources/ 本身
 收录时复制到 raw/ 的原始文件，整理完成后移入 7-Sources/ 领域文件夹，作为来源笔记对应的原始载体。
 
 **目录索引（Folder INDEX）**:
-每个一级文件夹的 `_INDEX.md`，回答"这个文件夹里有什么"的结构性导航；索引维护只更新 INDEX-KEEPER-MANAGED 区域。
+每个一级文件夹的 `_INDEX.md`，回答"这个文件夹里有什么"的结构性导航；索引维护只更新 `INDEX-KEEPER-MANAGED` 标记区域，`<!-- MANUAL -->...<!-- /MANUAL -->` 区域完全不碰。
 _Avoid_: 索引文件、导航文件
 
 **领域 MOC（Domain MOC）**:
