@@ -136,27 +136,25 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 
 ## 部署方法
 
-**由 skills-manager 统一管理**（2026-08-01 起，`sync-skills.ps1` 已废弃删除）：
+技能分三层同步：
 
-1. 修改 `my-skills/<skill-name>/` 下的技能
-2. commit + push 到 GitHub（`origin: 617luohe/my-skills.git`）
-3. skills-manager 检测到远端新 commit 后更新 `~/.skills-manager/skills/<skill-name>/`（`~/.claude/skills/` 是指向它的 junction，自动生效）
-
-本仓库不再维护自己的同步脚本；skills-manifest.yaml 与 `scripts/skill_manifest.py` 仍保留给 `validate_skills.py` 治理校验使用。
+1. **权威源**：`E:\workplace\skills工程\my-skills`（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
+2. **本仓库镜像**：`python scripts/sync-skills.py`（manifest 驱动）把权威源镜像到 `skills/`，`skills/skills-manifest.yaml` 为唯一事实源（`sync: true` 的技能 + 固定共享文件，target 为严格镜像）。旧 `sync-skills.ps1` / `sync-map.json` 机制已由此取代（2026-07-31 d189057）
+3. **全局部署**：skills-manager 检测 my-skills 远端新 commit 后更新 `~/.skills-manager/skills/<skill-name>/`；`.claude/skills` 是指向它的 junction，自动生效
 
 ## 治理验证
 
-验证源码治理规则（默认不检查部署目录）：
+治理脚本随镜像位于 `skills/scripts/`（`skill_manifest.py` / `validate_skills.py`），需在 `skills/` 目录下执行：
 
 ```bash
-python scripts/validate_skills.py
-python scripts/validate_skills.py --json
+cd skills && python scripts/validate_skills.py
+cd skills && python scripts/validate_skills.py --json
 ```
 
-验证父目录下 `.claude/.cursor/.codex` 的受管清单和受管内容与源码一致，忽略未受管的额外技能：
+验证源码治理规则（默认不检查部署目录）；`--check-deployments` 验证父目录下 `.claude/.cursor/.codex` 的受管清单和受管内容与源码一致，忽略未受管的额外技能：
 
 ```bash
-python scripts/validate_skills.py --check-deployments
+cd skills && python scripts/validate_skills.py --check-deployments
 ```
 
 警告不影响退出码；治理错误返回非零退出码。CI 只运行 `python scripts/validate_skills.py` 静态治理验证，不依赖宿主部署目录。
