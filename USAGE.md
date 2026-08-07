@@ -32,19 +32,19 @@
 
 ## 开发流程 Skills（按阶段 0~6 组织）
 
-| 技能            | 职责                                                                | 触发                   | 文档                               |
-| --------------- | ------------------------------------------------------------------- | ---------------------- | ---------------------------------- |
-| `0--claude`     | 初始化/修复 CLAUDE.md（称呼规则 + Caveman + Karpathy + 工作流路由） | `/0--claude`           | [SKILL.md](0--claude/SKILL.md)     |
-| `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业                 | `/0--neat-freak`       | [SKILL.md](0--neat-freak/SKILL.md) |
-| `0--tokenless`  | 超压缩沟通模式（caveman / less tokens / be brief）                  | `/0--tokenless`        | [SKILL.md](0--tokenless/SKILL.md)  |
-| `0-启动`        | Python 项目最小初始化：项目结构 + 本地 git + uv 环境                | `/0-启动`              | [SKILL.md](0-启动/SKILL.md)        |
-| `0-询问luohe`   | **技能路由器**（唯一事实源：主流程 / 上游 / 支撑层 / 快速判断）     | 强制网关，每请求先加载 | [SKILL.md](0-询问luohe/SKILL.md)   |
-| `1-规划`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                     | `/1-规划`              | [SKILL.md](1-规划/SKILL.md)        |
-| `2-开发`        | TDD 红-绿-重构实现，pytest 驱动                                     | `/2-开发`              | [SKILL.md](2-开发/SKILL.md)        |
-| `3-检查`        | 代码审查与验收（Review / 只建单 / 架构评估自动路由）                | `/3-检查`              | [SKILL.md](3-检查/SKILL.md)        |
-| `4-调试`        | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                      | `/4-调试`              | [SKILL.md](4-调试/SKILL.md)        |
-| `5-版本管理`    | Git 版本控制（init/save/log/rollback/branch/remote/push）           | `/5-版本管理`          | [SKILL.md](5-版本管理/SKILL.md)    |
-| `6-最后整理`    | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接            | `/6-最后整理`          | [SKILL.md](6-最后整理/SKILL.md)    |
+| 技能            | 职责                                                                | 触发                         | 文档                               |
+| --------------- | ------------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
+| `0--claude`     | 初始化/修复 CLAUDE.md（称呼规则 + Caveman + Karpathy + 工作流路由） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
+| `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业                 | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
+| `0--tokenless`  | 超压缩沟通模式（caveman / less tokens / be brief）                  | `/0--tokenless`              | [SKILL.md](0--tokenless/SKILL.md)  |
+| `0-启动`        | Python 项目最小初始化：项目结构 + 本地 git + uv 环境                | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |
+| `0-询问luohe`   | **技能路由网关**（唯一事实源：主流程 / 上游 / 支撑层 / 快速判断）   | 每次会话首个复杂需求强制加载 | [SKILL.md](0-询问luohe/SKILL.md)   |
+| `1-规划`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                     | `/1-规划`                    | [SKILL.md](1-规划/SKILL.md)        |
+| `2-开发`        | TDD 红-绿-重构实现，pytest 驱动                                     | `/2-开发`                    | [SKILL.md](2-开发/SKILL.md)        |
+| `3-检查`        | 代码审查与验收（Review / 只建单 / 架构评估自动路由）                | `/3-检查`                    | [SKILL.md](3-检查/SKILL.md)        |
+| `4-调试`        | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                      | `/4-调试`                    | [SKILL.md](4-调试/SKILL.md)        |
+| `5-版本管理`    | Git 版本控制（init/save/log/rollback/branch/remote/push）           | `/5-版本管理`                | [SKILL.md](5-版本管理/SKILL.md)    |
+| `6-最后整理`    | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接            | `/6-最后整理`                | [SKILL.md](6-最后整理/SKILL.md)    |
 
 ---
 
