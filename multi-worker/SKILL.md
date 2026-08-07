@@ -2,7 +2,6 @@
 name: multi-worker
 description: User-invoked orchestration for already confirmed independent tasks in tasks.md.
 disable-model-invocation: false
-experimental: true
 ---
 
 # multi-worker — 并行开发编排器
@@ -29,13 +28,13 @@ experimental: true
 
 状态定义：
 
-| 状态 | 条件 | 必须动作 |
-|---|---|---|
-| `worker_succeeded` | worker 完成且任务验收、审查通过 | 可候选合并 |
-| `worker_failed` | worker 超时、出错、未通过验收或未返回可验证结果 | 停止流程，保留全部 worktree，不得报告完成 |
-| `merge_failed` | 任一候选分支冲突或合并命令失败 | 停止流程，保留全部 worktree 和集成分支，不得报告完成 |
-| `integration_failed` | 合并后集成验证或最终 review 失败 | 停止流程，保留全部 worktree 和集成分支，不得报告完成 |
-| `completed` | 所有任务已合并，且集成验证和最终 review 均通过 | 可报告完成并清理 |
+| 状态                 | 条件                                            | 必须动作                                             |
+| -------------------- | ----------------------------------------------- | ---------------------------------------------------- |
+| `worker_succeeded`   | worker 完成且任务验收、审查通过                 | 可候选合并                                           |
+| `worker_failed`      | worker 超时、出错、未通过验收或未返回可验证结果 | 停止流程，保留全部 worktree，不得报告完成            |
+| `merge_failed`       | 任一候选分支冲突或合并命令失败                  | 停止流程，保留全部 worktree 和集成分支，不得报告完成 |
+| `integration_failed` | 合并后集成验证或最终 review 失败                | 停止流程，保留全部 worktree 和集成分支，不得报告完成 |
+| `completed`          | 所有任务已合并，且集成验证和最终 review 均通过  | 可报告完成并清理                                     |
 
 任何失败都报告失败任务、命令输出、保留的 worktree 路径和下一步修复建议；不清理、不隐藏失败，也不得把部分成功说成整体完成。
 
