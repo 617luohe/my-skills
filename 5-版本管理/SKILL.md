@@ -106,6 +106,7 @@ git push -u origin $(git branch --show-current)
 为高风险仓库可选安装 PreToolUse 钩子，拦截危险命令（如 `git push`、`git reset --hard`、`git clean -fd`、`git branch -D`）。
 
 执行前先问作用域：
+
 - 仅当前项目（推荐）→ `.claude/settings.json`
 - 全局所有项目 → `~/.claude/settings.json`
 
@@ -148,27 +149,20 @@ Claude：git remote add origin https://github.com/user/project.git
        git push -u origin $(git branch --show-current)
 ```
 
-## 完成后 — 自动推进
+## 完成标准
 
-提交/推送完成后，根据上下文判断是收尾还是继续：
+**必须满足**：
 
-**判断"功能阶段收尾" vs "中途存盘"**：
+- Git 操作成功执行（commit/push/branch/merge 等），无错误退出码
+- 如果执行了 push，远程仓库已收到提交
+- 工作区状态清晰：`git status` 显示预期状态（clean 或明确的未暂存文件）
 
-**收尾信号**（满足任一条 → 转 6-最后整理）：
-- ✅ 用户明确说"完成了"、"收尾"、"下班"、"交接"
-- ✅ commit message 含 "完成"、"收尾"、"ready for review"
-- ✅ 上游来自 3-检查（审查通过后提交 → 说明功能完整）
-- ✅ 当前会话已持续 >30 个交互轮次（长会话，建议整理）
+**可选验收**：
 
-**中途存盘信号**（满足任一条 → 回到当前 skill）：
-- ✅ 用户说"先提交一下"、"保存进度"、"存个盘"
-- ✅ commit message 含 "WIP"、"checkpoint"、"临时提交"
-- ✅ 上游来自 2-开发、4-调试（开发过程中提交 → 继续当前任务）
+- commit message 符合项目约定（如果有 commitlint 配置）
+- 分支保护规则已遵守（不直接 push 到 main/master，除非用户明确授权）
 
-**如果信号不明确**：
-- 询问用户："这是阶段收尾还是中途存盘？"
-- 提供推荐：根据 commit message 和上游 skill 推断
+**交接**：
 
-**执行推进**：
-- 收尾 → 一句话提示 `→ 建议进入 /6-最后整理`，等待用户确认
-- 中途存盘 → 回到当前 skill（如 2-开发），继续执行
+- 功能阶段收尾时，建议用户调用 `/6-最后整理` 沉淀产出
+- 中途存盘时，回到上游 skill（如 `/2-开发`）继续执行
