@@ -48,9 +48,9 @@ python "<本 skill 目录>/scripts/keep_claude_fast.py"
 skill 目录即本 SKILL.md 所在目录。若不确定，用 `where`/`find` 定位
 `keep_claude_fast.py`，或让用户告知安装位置（默认在 `~/.claude/skills/cleanupclaude/`）。
 
-## 工作流
+### 工作流契约：inspect → backup → explicit approval → apply → verify
 
-### Step 1 — 只读报告（必须第一步）
+术语固定为 `inspect`（只读检查）、`backup`（备份）、`explicit approval`（用户明确授权）、`apply`（执行）、`verify`（验证）。运行中未获得 `explicit approval` 时立即停止，不启动或继续 `apply`。
 
 ```bash
 python "<skill 目录>/scripts/keep_claude_fast.py"
@@ -58,31 +58,28 @@ python "<skill 目录>/scripts/keep_claude_fast.py"
 
 如用户要求细节（UUID/路径/进程详情），加 `--details`。若用户只想要摘要，不加。
 
-### Step 2 — 汇报（结论先行）
+### Step 2 — 汇报并请求 explicit approval
 
 按以下要点给摘要：
 
 - 项目会话占用：哪个项目最大、会话文件数
 - 最大的几个会话、超过保留期（默认 10 天）的旧会话候选数
 - `history.jsonl` 行数；telemetry/cache/file-history/shell-snapshots 大小
-- 当前运行的 Claude Code 进程数与活动会话数（= 卡顿的运行时成本）
+- 当前运行的 Claude Code 进程数与活动会话数
 
-### Step 3 — 自动清理（默认，无需确认）
+输出待处理清单、风险、备份位置和归档/恢复方式。用户必须明确授权具体范围后，才进入 backup/apply；没有授权就停止在 inspect 报告。
 
-**从 Claude Code 会话内调用时，脚本自动识别并跳过当前会话，直接执行安全清理**
-（备份 → 归档超期旧会话 → 裁剪 history → 归档 telemetry/cache → 出报告）。
-活动会话（其他正在运行的 session）与被锁定文件同样自动跳过，不会中断用户其他工作。
-本会话不归档、不裁剪，用户对话上下文不受影响。
+### Step 3 — backup：授权后的备份
 
-```bash
-python "<skill 目录>/scripts/keep_claude_fast.py" --apply --archive-older-than-days 10 --history-keep-last 500
-```
+获得 explicit approval 后，先备份 `history.jsonl` 和待归档对象，再准备 manifest。备份完成后核对备份存在且可读；失败立即停止，不进入 apply。
 
-默认阈值 10 天 / 500 行；可按用户习惯调整（如 30 天 / 1000 行）。
+### Step 4 — apply：仅执行已授权范围
 
-- 若没有超期旧会话 → 说明状态健康，报告后给出维持建议（weekly report 提醒），结束。
-- 若有超期旧会话 → 自动清理并出报告（Step 6）。
-- 若用户想先人工确认（或脚本无法识别当前会话而拒绝）→ 停在报告，让用户决定。
+apply 期间若授权不存在、范围不明确、运行中状态无法确认或用户撤回授权，立即停止。只归档到 `~/.claude/archived/`，归档不删除且可恢复；不触碰项目级 `memory/`、`CLAUDE.md`、`todos/`、`tasks/`、`skills/`。
+
+### Step 5 — verify：验证和结果报告
+
+apply 结束后核对 manifest、归档对象、恢复脚本和结果报告；确认原路径未被永久删除，必要时执行恢复演练。结果写入统一的 `docs/handoff/`（重要会话归档前先写 handoff），并报告变更、跳过项、Git 状态和恢复方法。
 
 ### Step 4 — handoff（仅当用户想保留的旧会话将被归档时）
 

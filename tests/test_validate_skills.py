@@ -231,3 +231,85 @@ skills:
     short = [e for e in report["warnings"] if e["code"] == "description-short"]
     assert len(short) == 1, report["warnings"]
     assert short[0]["path"].endswith("terse/SKILL.md")
+
+
+def test_deprecated_publication_is_user_only_with_note(tmp_path: Path):
+    from skill_manifest import load_manifest, publication
+
+    manifest = MANIFEST.replace("hosts: [claude]", "hosts: [claude, cursor, codex]")
+    manifest = manifest.replace(
+        "    status: stable\n    invocation: model",
+        "    status: deprecated\n    deprecated_note: use /good\n    invocation: model",
+        1,
+    )
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    (tmp_path / "good").mkdir()
+    (tmp_path / "good" / "SKILL.md").write_text("content", encoding="utf-8")
+    (tmp_path / "bad").mkdir()
+    (tmp_path / "bad" / "SKILL.md").write_text("content", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="deprecated.*invocation.*user"):
+        publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+
+    manifest = manifest.replace("    invocation: model", "    invocation: user", 1)
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    published = publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+    assert published["skills"][0]["status"] == "deprecated"
+    assert published["skills"][0]["deprecated_note"] == "use /good"
+
+
+def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path):
+    from skill_manifest import load_manifest, publication
+
+    def write_manifest(names: str) -> None:
+        (tmp_path / "skills-manifest.yaml").write_text(
+            "schema_version: 1\nrepository_version: 1.0.0\nskills:\n" + names,
+            encoding="utf-8",
+        )
+
+    def entry(name: str) -> str:
+        path = tmp_path / name
+        path.mkdir(parents=True, exist_ok=True)
+        (path / "SKILL.md").write_text("content", encoding="utf-8")
+        return f"  - name: {name}\n    path: {name}\n    version: 1.0.0\n    status: stable\n    invocation: model\n    hosts: [claude, cursor, codex]\n    distribution: synchronized\n    sync: true\n    dependencies: []\n"
+
+    write_manifest(entry("vocabulary/code-review") + entry("my-note/noteall"))
+    result = publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+    assert [skill["deployment_name"] for skill in result["skills"]] == [
+        "code-review",
+        "noteall",
+    ]
+
+    write_manifest(entry("vocabulary/code-review") + entry("other/code-review"))
+    with pytest.raises(ValueError, match="deployment name collision"):
+        publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+
+
+def test_missing_deployment_state_still_checks_nested_deployment_path(tmp_path: Path):
+    from validate_skills import validate_repository
+
+    nested = """schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: vocabulary/code-review
+    path: vocabulary/code-review
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+"""
+    (tmp_path / "skills-manifest.yaml").write_text(nested, encoding="utf-8")
+    source = tmp_path / "vocabulary" / "code-review"
+    source.mkdir(parents=True)
+    (source / "SKILL.md").write_text("content", encoding="utf-8")
+    host = tmp_path.parent / ".claude" / "skills"
+    (host / "code-review").mkdir(parents=True)
+    (host / "code-review" / "SKILL.md").write_text("different", encoding="utf-8")
+
+    report = validate_repository(tmp_path, check_deployments=True)
+    assert any(e["code"] == "deployment-state" for e in report["errors"])
+    hash_errors = [e for e in report["errors"] if e["code"] == "deployment-hash"]
+    assert hash_errors and hash_errors[0]["path"].endswith(".claude/skills/code-review")

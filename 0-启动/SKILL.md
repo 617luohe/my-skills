@@ -57,6 +57,7 @@ project-name/
 ```
 
 要点：
+
 - 目录名不是合法包名时（比如以数字或下划线开头），补 `--name <pkg-name>`。
 - 指定 Python 版本：`uv init --package --vcs git -p 3.12 <project-name>`。
 - 纯脚本、不打包的一次性工具用 `uv init`（不带 `--package`）——扁平布局，根目录一个 `main.py`。
@@ -87,17 +88,28 @@ uv run pytest
 git add . && git commit -m "chore: 初始化项目"
 ```
 
+提交完成后保持工作区未提交状态，继续收集初始化后的真实变更，不要为了“干净”自动创建第二个提交。
+
+## 交付回报
+
+收尾必须输出：
+
+- **变更清单**：创建或修改的文件及用途
+- **Git 状态**：`git status --short --branch` 的结果，明确是否保持未提交
+- **验证结果**：`uv run pytest` 的通过/失败摘要
+- **下一阶段推荐**：基于当前结构给出下一步最小开发任务
+
 ## 按需追加
 
 用户主动提了才做，各一行搞定，不主动推销：
 
-| 需求 | 命令 |
-|------|------|
-| 代码检查 / 格式化 | `uv add --dev ruff` |
-| 类型检查 | `uv add --dev mypy` |
-| 提交前门禁 | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
-| 运行时依赖 | `uv add <package>` |
-| 推远程 | 交给 `/5-版本管理` |
+| 需求              | 命令                                                                                   |
+| ----------------- | -------------------------------------------------------------------------------------- |
+| 代码检查 / 格式化 | `uv add --dev ruff`                                                                    |
+| 类型检查          | `uv add --dev mypy`                                                                    |
+| 提交前门禁        | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
+| 运行时依赖        | `uv add <package>`                                                                     |
+| 推远程            | 交给 `/5-版本管理`                                                                     |
 
 工具配置统一写进 `pyproject.toml` 的 `[tool.*]`，不另开配置文件。
 

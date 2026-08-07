@@ -4,8 +4,7 @@ description: >
   macOS / Windows 存储空间清理助手（自动识别操作系统）。首先识别当前系统，
   然后按系统选不同的扫描和清理方案，扫描整机磁盘占用，找出占空间大户，
   把每一项分成 🟢可自动清理 / 🟡需人工判断 / 🔴谨慎清理 三级并给出可执行处置方案，
-  生成排版精美、可折叠、命令可一键复制的交互式 HTML 报告，并可起本地服务在网页上
-  一键删除（移废纸篓/直接删）。扫描全程只读。务必在以下场景使用：用户说"存储分析"
+  生成排版精美、可折叠、命令可一键复制的静态 HTML 报告。默认只读扫描+静态报告；只有用户在查看报告后明确二次授权，才可启动 apply 服务执行已确认的清理项。务必在以下场景使用：用户说"存储分析"
   "磁盘满了""C盘/硬盘满了""空间不够""清理空间""清理磁盘""占空间""哪些东西占地方"
   "帮我看看存储""看一下电脑存储/空间""存储空间""电脑空间不够""内存满了/不够/不足"
   "看下内存/存储"（中文口语里"内存"常指存储空间）"storage analysis""disk cleanup"
@@ -21,9 +20,12 @@ disable-model-invocation: false
 
 ## 铁律
 
-- **全程只读。** 只能跑扫描/统计/列目录/读元信息（df、du、diskutil、stat、ls、os.scandir）。绝对禁止 rm、mv、rmdir、清空回收站、改权限等任何写操作。
-- **删除命令只展示，不执行。** 报告里给出的清理命令是供用户自己在终端确认后运行的。即使用户在对话里说"帮我删"，也要先停下确认（命中全局红线：删除文件必须先问），不要直接代跑。
-- **估算标注清楚。** 涉及"可释放空间"一律说明是估算值。
+- **扫描阶段只读。** 默认只做扫描、分析和静态报告，不启动删除或 apply 服务。
+- **二次授权后执行。** 用户查看静态报告并明确二次授权后，才启动 apply 服务；执行阶段只处理已确认项。
+- **术语一致。** 使用“扫描阶段”“静态报告”“二次授权”“执行阶段”“apply 服务”，不要把扫描阶段称为清理或把报告生成称为执行。
+- **全程只读扫描。** 只能跑扫描/统计/列目录/读元信息（df、du、diskutil、stat、ls、os.scandir）。扫描阶段绝对禁止 rm、mv、rmdir、清空回收站、改权限等任何写操作。
+- **删除命令只展示，不执行。** 静态报告中的清理命令供用户在二次授权后，通过 apply 服务执行；未获授权时不要启动服务或代跑命令。
+- **估算标注清楚。** 涉及“可释放空间”一律说明是估算值。
 - **路径、命令保留原文不翻译。**
 
 ---
@@ -40,15 +42,16 @@ python3 -c "import sys; print(sys.platform)"
 
 判断逻辑：
 
-| `sys.platform` 返回值 | 操作系统 | 操作方案文件 |
-|---|---|---|
-| `darwin` | **macOS** | [references/macos.md](references/macos.md) |
-| `win32`（或以 `win` 开头） | **Windows** | [references/windows.md](references/windows.md) |
-| 其他 | 不支持 | 告知用户当前仅支持 macOS 和 Windows，停止后续操作 |
+| `sys.platform` 返回值      | 操作系统    | 操作方案文件                                      |
+| -------------------------- | ----------- | ------------------------------------------------- |
+| `darwin`                   | **macOS**   | [references/macos.md](references/macos.md)        |
+| `win32`（或以 `win` 开头） | **Windows** | [references/windows.md](references/windows.md)    |
+| 其他                       | 不支持      | 告知用户当前仅支持 macOS 和 Windows，停止后续操作 |
 
 ### 读取对应操作方案
 
 确认系统后，立即读取对应的 `references/<系统>.md` 文件。该文件包含：
+
 - 该系统的数据布局（关键目录、文件存放位置）
 - 扫描策略（哪些目录需要扫、用什么工具）
 - 分级判定标准（哪些归 🟢 / 🟡 / 🔴，哪些归蓝色"系统及其他"）
@@ -95,27 +98,25 @@ python3 scripts/scan.py > /tmp/storage_scan.json
 
 ---
 
-## Step 3 — 生成交互报告
+## Step 3 — 生成静态报告（扫描阶段结束）
 
-把分析结果写成 analysis JSON（schema 见 `scripts/build_report.py` 顶部注释）。
-
-**🟢 项必须带 `trash_paths`**（具体可删的绝对路径数组，区别于人类可读的 `path` 展示字段）——这是网页删除按钮的前提，漏了按钮就不出现。
-
-**默认用一键删除模式（`server.py`）打开报告**，因为核心价值就是网页上能直接清理：
+把分析结果写成 analysis JSON（schema 见 `scripts/build_report.py` 顶部注释），再生成静态 HTML 报告。此阶段不启动服务、不删除、不移动任何文件：
 
 ```bash
-python3 scripts/server.py /tmp/storage_analysis.json   # 自动开浏览器，Ctrl+C 停
+python3 scripts/build_report.py /tmp/storage_analysis.json ~/Desktop/storage-report.html
 ```
 
-`server.py` 起在 127.0.0.1 + 随机端口 + 随机 token。🟢 项给「移到废纸篓」(可逆) +「直接删除」(立即释放、不可逆)；🟡 项给「在文件管理器打开」+（有安全子路径时）「移到废纸篓」。**安全模型——三套白名单，权限从严到宽**：`rm` 只允许绿灯 `trash_paths`；`trash` 允许绿灯+橙灯 `trash_paths`（橙灯永远不能 rm）；`open`（在文件管理器打开，非破坏性）允许上述全部 + 橙灯真实 `path`。所有请求 realpath 校验 + 必须在 $HOME 内 + token + Host 校验，每次点击浏览器先 confirm。macOS 用 osascript 入废纸篓，Windows 用 SHFileOperationW 入回收站。macOS 首次弹访达自动化授权点允许即可。
-
-仅当用户明确只想要一份可分享/留存的只读文件时，才用静态模式（无删除按钮）：
+静态报告只用于查看和确认，必须向用户列出待处理项及其风险。只有用户明确二次授权后，才进入执行阶段并启动 apply 服务：
 
 ```bash
-python3 scripts/build_report.py /tmp/storage_analysis.json ~/Desktop/storage-report.html && open ~/Desktop/storage-report.html
+python3 scripts/server.py /tmp/storage_analysis.json   # 仅在二次授权后启动，Ctrl+C 停
 ```
 
-**排障：网页上没有删除/移废纸篓按钮** = 要么开的是静态报告（改用 `server.py`），要么 🟢 项漏了 `trash_paths`（补上重启服务）。
+apply 服务启动后也必须再次确认具体清理项；未获二次授权时停止，不得启动服务。服务模式仍由脚本白名单、realpath、$HOME、token、Host 校验保护，移到废纸篓优先于不可逆删除。
+
+**🟢 项必须带 `trash_paths`**（具体可处理的绝对路径数组，区别于人类可读的 `path` 展示字段）。
+
+**排障：报告没有执行按钮** = 当前仍是静态报告；确认二次授权和具体项目后再启动 apply 服务。
 
 ### 报告阅读流（固定顺序）
 
@@ -151,7 +152,7 @@ python3 scripts/build_report.py /tmp/storage_analysis.json ~/Desktop/storage-rep
 
 本 skill 的 `references/` 目录存放各操作系统的操作方案文件。Step 0 识别系统后必须读取对应文件，其内容在 Step 2 分析分级时作为判定依据：
 
-| 文件 | 对应系统 | 内容 |
-|---|---|---|
-| [references/macos.md](references/macos.md) | macOS | 数据布局、扫描策略、分级判定、清理方案、特殊处理 |
-| [references/windows.md](references/windows.md) | Windows | 数据布局、多盘符策略、分级判定、清理方案、系统工具 |
+| 文件                                           | 对应系统 | 内容                                               |
+| ---------------------------------------------- | -------- | -------------------------------------------------- |
+| [references/macos.md](references/macos.md)     | macOS    | 数据布局、扫描策略、分级判定、清理方案、特殊处理   |
+| [references/windows.md](references/windows.md) | Windows  | 数据布局、多盘符策略、分级判定、清理方案、系统工具 |

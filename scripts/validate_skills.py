@@ -648,12 +648,15 @@ def _validate_deployments(
     root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]
 ) -> None:
     published = sorted(
-        skill["name"]
+        (
+            skill["name"],
+            skill_manifest.deployment_name(skill["name"]),
+        )
         for skill in skills
         if skill.get("distribution") == "synchronized"
         and isinstance(skill.get("name"), str)
     )
-    expected_names = set(published)
+    expected_names = {deployment_name for _, deployment_name in published}
     for host in HOSTS:
         deployment = root.parent / host / "skills"
         if not deployment.is_dir():
@@ -679,7 +682,10 @@ def _validate_deployments(
                     root,
                 )
             )
-            continue
+            # Continue with the deterministic directory checks. A missing state
+            # file is itself an error, but must not hide nested-name path drift.
+            managed_names = set()
+            state = None
         except (OSError, json.JSONDecodeError) as exc:
             errors.append(
                 _finding(
@@ -700,31 +706,33 @@ def _validate_deployments(
             and len(managed) == len(set(managed))
         )
         if not state_valid:
-            errors.append(
-                _finding(
-                    "deployment-state",
-                    state_path,
-                    "managed state must contain schema_version 1 and a unique list of non-empty skill names",
-                    root,
+            if state is not None:
+                errors.append(
+                    _finding(
+                        "deployment-state",
+                        state_path,
+                        "managed state must contain schema_version 1 and a unique list of non-empty skill names",
+                        root,
+                    )
                 )
-            )
-            continue
+            managed_names = set()
 
-        managed_names = set(managed)
-        if managed_names != expected_names:
-            errors.append(
-                _finding(
-                    "deployment-state-drift",
-                    state_path,
-                    f"expected managed skills {published}; found {sorted(managed_names)}",
-                    root,
+        if state_valid:
+            managed_names = set(managed)
+            if managed_names != expected_names:
+                errors.append(
+                    _finding(
+                        "deployment-state-drift",
+                        state_path,
+                        f"expected managed skills {sorted(expected_names)}; found {sorted(managed_names)}",
+                        root,
+                    )
                 )
-            )
 
         # Only names in the source publication are managed by this validation.
         # Other deployment entries are explicitly left untouched by synchronization.
-        for name in published:
-            deployed_skill = deployment / name
+        for name, deployment_name in published:
+            deployed_skill = deployment / deployment_name
             if not deployed_skill.is_dir():
                 errors.append(
                     _finding(
