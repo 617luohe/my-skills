@@ -118,7 +118,7 @@ git status --short --branch
 - [ ] `src/<pkg>/` 和 `tests/` 就位
 - [ ] `.venv/` 和 `uv.lock` 已生成
 - [ ] `uv run pytest` 通过
-- [ ] git 已 init 且有首次提交
+- [ ] git 已 init，初始化产物保持未提交并已展示状态
 
 ## 什么时候用
 
@@ -132,7 +132,7 @@ git status --short --branch
 Claude：在当前目录下新建 data-pipeline/ 子目录，还是就在这个目录初始化？
 你：新建子目录
 Claude：[uv init --package --vcs git data-pipeline → tests/test_smoke.py → uv add --dev pytest]
-        1 passed。git 首次提交完成。
+        1 passed。初始化产物保持未提交，已展示 git status；需要保存版本时交给 /5-版本管理。
         环境就绪：uv run data-pipeline 跑入口，uv run pytest 跑测试。
         要 ruff / mypy / pre-commit 说一声，一行就加。
 ```

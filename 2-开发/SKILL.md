@@ -93,5 +93,5 @@ disable-model-invocation: false
 - **输入** — `/1-规划` 产出的 `docs/plans/<feature>/tasks.md`、`docs/plans/<feature>/PRD.md`、`CONTEXT.md`
 - **调用** — `/vocabulary/tdd`（核心循环）
 - **输出** — 通过测试的未提交代码 + 自检结果 + 审查基点 + 需求来源 → `/3-检查`（正式验收）
-- **复评回环** — `/3-检查` 裁决 FAIL/PASS WITH WARNINGS 时，按意见清单逐条修复后交回复评，直到 PASS 或用户接受
+- **复评回环** — `/3-检查` 裁决 FAIL 时修复全部阻断项；PASS WITH WARNINGS 默认携带 warning 记录交接，只有用户选择修复的 warning 才进入复评
 - **审查通过后** — 仅在用户明确授权时 → `/5-版本管理`（保存版本）

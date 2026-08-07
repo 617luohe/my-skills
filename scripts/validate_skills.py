@@ -309,15 +309,25 @@ def _validate_manifest(
                     root,
                 )
             )
-        elif skill["status"] == "deprecated" and not skill.get("deprecated_note"):
-            errors.append(
-                _finding(
-                    "manifest",
-                    root / "skills-manifest.yaml",
-                    f"{name}: deprecated status requires deprecated_note",
-                    root,
+        elif skill["status"] == "deprecated":
+            if not skill.get("deprecated_note"):
+                errors.append(
+                    _finding(
+                        "manifest",
+                        root / "skills-manifest.yaml",
+                        f"{name}: deprecated status requires deprecated_note",
+                        root,
+                    )
                 )
-            )
+            if skill.get("invocation") != "user":
+                errors.append(
+                    _finding(
+                        "manifest",
+                        root / "skills-manifest.yaml",
+                        f"{name}: deprecated status requires invocation user",
+                        root,
+                    )
+                )
         if skill["invocation"] not in ("user", "model"):
             errors.append(
                 _finding(

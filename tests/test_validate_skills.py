@@ -140,7 +140,7 @@ def test_deprecated_without_note_reports_manifest_error(repo: Path):
     assert len(missing_note) == 1, report["errors"]
 
 
-def test_deprecated_with_note_passes(repo: Path):
+def test_deprecated_with_note_requires_user_invocation(repo: Path):
     manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
     manifest = manifest.replace(
         """    path: good
@@ -152,6 +152,27 @@ def test_deprecated_with_note_passes(repo: Path):
     status: deprecated
     deprecated_note: 迁移至 noteall 三阶段流水线
     invocation: model""",
+    )
+    (repo / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    report = validate_repository(repo)
+    assert any(
+        e["code"] == "manifest" and "invocation user" in e["message"]
+        for e in report["errors"]
+    ), report["errors"]
+
+
+def test_deprecated_with_note_passes(repo: Path):
+    manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
+    manifest = manifest.replace(
+        """    path: good
+    version: 1.0.0
+    status: stable
+    invocation: model""",
+        """    path: good
+    version: 1.0.0
+    status: deprecated
+    deprecated_note: 迁移至 noteall 三阶段流水线
+    invocation: user""",
     )
     (repo / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
     report = validate_repository(repo)
