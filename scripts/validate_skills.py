@@ -403,6 +403,37 @@ def _validate_dependencies(
                 )
 
 
+def _validate_dependency_references(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    """A declared dependency should be referenced by the skill's own docs."""
+    for skill in skills:
+        name = skill.get("name")
+        deps = skill.get("dependencies")
+        if not isinstance(name, str) or not isinstance(deps, list):
+            continue
+        skill_dir = root / name
+        if not skill_dir.is_dir():
+            continue
+        texts = [
+            path.read_text(encoding="utf-8-sig")
+            for path in sorted(skill_dir.rglob("*.md"))
+        ]
+        blob = "\n".join(texts)
+        for dep in deps:
+            if not isinstance(dep, str) or not dep:
+                continue
+            if dep not in blob:
+                errors.append(
+                    _finding(
+                        "dependency-reference",
+                        skill_dir / "SKILL.md",
+                        f"{name}: declared dependency {dep!r} is not referenced in its docs",
+                        root,
+                    )
+                )
+
+
 def _validate_skill(
     skill: dict[str, Any],
     root: Path,
@@ -706,6 +737,7 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
             )
         )
     _validate_dependencies(skills, root, errors)
+    _validate_dependency_references(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(skill, root, canonical, errors, warnings)
     if check_deployments:

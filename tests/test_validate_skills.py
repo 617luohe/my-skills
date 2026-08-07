@@ -157,3 +157,44 @@ def test_deprecated_with_note_passes(repo: Path):
     report = validate_repository(repo)
     good_errors = [e for e in report["errors"] if e["path"].endswith("good")]
     assert good_errors == [], good_errors
+
+
+def test_declared_dependency_must_be_referenced(tmp_path: Path):
+    manifest = """schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: main
+    path: main
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: [vocabulary/dep]
+  - name: vocabulary/dep
+    path: vocabulary/dep
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+"""
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    (tmp_path / "main").mkdir()
+    (tmp_path / "main" / "SKILL.md").write_text(
+        "---\nname: main\ndisable-model-invocation: false\n---\n\n# main\n\n正文。\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "vocabulary").mkdir()
+    (tmp_path / "vocabulary" / "dep").mkdir()
+    (tmp_path / "vocabulary" / "dep" / "SKILL.md").write_text(
+        "---\nname: dep\ndisable-model-invocation: false\n---\n\n# dep\n\n正文。\n",
+        encoding="utf-8",
+    )
+    report = validate_repository(tmp_path)
+    ref_errors = [e for e in report["errors"] if e["code"] == "dependency-reference"]
+    assert len(ref_errors) == 1, report["errors"]
+    assert "vocabulary/dep" in ref_errors[0]["message"]

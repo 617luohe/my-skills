@@ -7,7 +7,7 @@ disable-model-invocation: false
 
 # Domain Modeling — 领域建模
 
-Actively build and sharpen the project's domain model as you design. This is the *active* discipline — challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise.
+Actively build and sharpen the project's domain model as you design. This is the _active_ discipline — challenging terms, inventing edge-case scenarios, and writing the glossary and decisions down the moment they crystallise.
 
 ## File structure
 
@@ -28,6 +28,8 @@ If a `CONTEXT-MAP.md` exists at the root, the repo has multiple contexts. The ma
 Create files lazily — only when you have something to write. If no `CONTEXT.md` exists, create one when the first term is resolved. If no `docs/adr/` exists, create it when the first ADR is needed.
 
 ## During the session
+
+> 本技能处理**领域术语/边界**的澄清；计划与方案决策的询问循环由 `/vocabulary/grilling` 承担。
 
 ### Challenge against the glossary
 
