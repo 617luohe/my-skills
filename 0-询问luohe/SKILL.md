@@ -1,7 +1,7 @@
 ---
 name: 0-询问luohe
 description: 技能路由指南——按需求规模/场景判断走哪条技能路径（主流程/上游/支撑层/快速判断，唯一事实源）。触发：不知道用哪个技能、怎么选路径、该走哪条路、路由、拿不准用哪个。
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # 0-询问luohe — 技能路由器
@@ -16,7 +16,7 @@ disable-model-invocation: false
    - 用户说"逐步"/"一步一步"时切换为一次一问
 
 2. **分支 — 状态机、算法或 UI 假设不确定？**
-   - **是** → `/1-规划` 建立 `docs/prototypes/<topic>/` 的 throwaway prototype 验证任务；结论回写 `docs/plans/<topic>/`，原型默认不进入生产
+   - **是** → `/1-规划` 建立 `docs/prototypes/<topic>/` 的 throwaway prototype（单文件、可运行）验证任务；结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留作证据，主分支只留决策
    - **否** → 继续任务拆解
 
 3. **分支 — 多会话构建？**
@@ -49,6 +49,9 @@ disable-model-invocation: false
 | 全局文档↔代码洁癖同步、防记忆膨胀 | **`/0--neat-freak`** 尺寸体检 + 记忆毕业 + 三层知识同步 |
 | 复杂问题拿不准方向 | **`/0--dialectic`** 辩证矛盾分析法（六步法：调查研究→定性→矛盾分析→阶段划分→策略制定→持续复盘） |
 | 想把活委托给另一个 agent 独立跑 | **`/leader`** 调研代码库 → 提问（≤5 个） → 产出任务书 → 跑完回来验收 |
+| 新建/修改技能、优化触发词 | **`/writing-for-agents`** 写作规范：description 触发分支 + 完成标准 + leading words + pruning |
+| 配 CI secrets / 一次性迁移 / 仅人能做的步骤 | **`/wizard`** 生成交互式 bash 向导（自动开 URL、隐藏输入、写 `.env`/gh secret） |
+| 笔记收录 / 知识库整理（Obsidian） | **`/noteall`** 知识管理入口（Intake → Curate → Publish 流水线） |
 
 ## 个人定制（特定场景）
 
@@ -62,7 +65,7 @@ disable-model-invocation: false
 | 新功能，方案明确，代码简单 | 直接 `/2-开发` |
 | 新功能，方案明确，代码复杂 | `/1-规划`（生成任务清单）→ `/2-开发` |
 | 看不懂代码 / 接手陌生项目 | 一次性只读调查 → `docs/analysis/<topic>.md` 项目地图与停止条件 → 按结果进入 `/1-规划`、`/3-检查` 或 `/4-调试` |
-| 方案拿不准（状态机、算法、UI） | `/1-规划` → `docs/prototypes/<topic>/` throwaway prototype → 结论回写 `docs/plans/<topic>/` |
+| 方案拿不准（状态机、算法、UI） | `/1-规划` → `docs/prototypes/<topic>/` throwaway prototype（单文件、可运行）→ 结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留证 |
 | Bug 难复现、性能突然下降、要找根因或立即修复 | `/4-调试` |
 | 独立 Review：已有 base/fixed point、spec/需求来源和 diff | `/3-检查`（强制 Review，不问模式） |
 | 只建单：有问题现象且明确要记录/建 issue | `/3-检查`（Bug 报告，只建单） |
@@ -79,6 +82,9 @@ disable-model-invocation: false
 | 复杂战略问题 | `/0--dialectic` |
 | 不知道用啥 | 你现在这里 😊 |
 | 想把活交给另一个 agent 独立跑，不想亲自盯 | `/leader` |
+| 想写/改个技能、触发词不准 | `/writing-for-agents` |
+| 配 CI secrets、走第三方认证、一次性迁移 | `/wizard`（仅人能做的步骤） |
+| 想把笔记/文章收录进 Obsidian 知识库 | `/noteall` |
 
 ## 上下文管理原则
 

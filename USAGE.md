@@ -25,6 +25,8 @@
 | `0--laoyoutiao` | Python 交付节奏管理（复用现有开关、逐步展示优化成果、面向甲方交付） | `/0--laoyoutiao` | [SKILL.md](0--laoyoutiao/SKILL.md) |
 | `leader` | 一句话想法 → 给另一 agent 独立跑的自包含任务书（≤4000 字，五步流程） | `/leader` | [SKILL.md](leader/SKILL.md) |
 | `multi-worker` | 内置多 Agent 并行开发（消费已确认 tasks.md，管理配置检查、worktree 隔离、验收） | `/multi-worker` | [SKILL.md](multi-worker/SKILL.md) |
+| `writing-for-agents` | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning），写/改技能时由模型自动调起 | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
+| `wizard` | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移） | `/wizard` | [SKILL.md](wizard/SKILL.md) |
 
 ---
 
