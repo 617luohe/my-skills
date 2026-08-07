@@ -45,8 +45,6 @@
 | `4-调试`        | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                      | `/4-调试`              | [SKILL.md](4-调试/SKILL.md)        |
 | `5-版本管理`    | Git 版本控制（init/save/log/rollback/branch/remote/push）           | `/5-版本管理`          | [SKILL.md](5-版本管理/SKILL.md)    |
 | `6-最后整理`    | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接            | `/6-最后整理`          | [SKILL.md](6-最后整理/SKILL.md)    |
-| `cleanup`       | 磁盘/存储空间清理（自动识别 OS，生成 HTML 报告）                    | `/cleanup`             | [SKILL.md](cleanup/SKILL.md)       |
-| `cleanupclaude` | `~/.claude` 本地状态梳理（会话/历史/缓存膨胀治理，可回滚）          | `/cleanupclaude`       | [SKILL.md](cleanupclaude/SKILL.md) |
 
 ---
 

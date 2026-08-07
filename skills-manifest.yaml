@@ -127,24 +127,6 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: cleanup
-    path: cleanup
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-  - name: cleanupclaude
-    path: cleanupclaude
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
   - name: writing-for-agents
     path: writing-for-agents
     version: 1.0.0
