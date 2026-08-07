@@ -171,12 +171,12 @@ python scripts/validate_skills.py --check-deployments
 
 ## 技能生命周期
 
-| 阶段     | 动作                                                                               | 校验                                                |
-| -------- | ---------------------------------------------------------------------------------- | --------------------------------------------------- |
-| **新建** | 写 `SKILL.md` → manifest 登记（`status: stable`）→ 跑 validator                    | 命名规范 + frontmatter 三处一致 + 引用完整          |
-| **维护** | 直接改权威源，跑 validator 过闸                                                    | 每次提交前 `python scripts/validate_skills.py`      |
-| **退役** | manifest `status` 改 `deprecated` + 写 `deprecated_note`（迁移指引）→ 分发层删链接 | deprecated 必须带 `deprecated_note`                 |
-| **清理** | 从 manifest 删除条目 + 删除目录，同步清理分发层遗留链接                            | validator 报 manifest 与目录的 missing/extra 不一致 |
+| 阶段     | 动作                                                                                   | 校验                                                                     |
+| -------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| **新建** | 写 `SKILL.md`（description 含触发词）→ manifest 登记（`status: stable`）→ 跑 validator | 命名规范 + frontmatter 三处一致 + 引用完整 + description 非空且 ≥12 字符 |
+| **维护** | 直接改权威源，跑 validator 过闸                                                        | 每次提交前 `python scripts/validate_skills.py`                           |
+| **退役** | manifest `status` 改 `deprecated` + 写 `deprecated_note`（迁移指引）→ 分发层删链接     | deprecated 必须带 `deprecated_note`                                      |
+| **清理** | 从 manifest 删除条目 + 删除目录，同步清理分发层遗留链接                                | validator 报 manifest 与目录的 missing/extra 不一致                      |
 
 - `status: deprecated` 表示技能已弃用但保留一版供迁移，validator 要求必须带 `deprecated_note`。
 - 退役后分发层（`~/.claude/skills`）遗留链接必须删除，防止旧名被模型触发。

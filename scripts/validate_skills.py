@@ -115,6 +115,27 @@ def _frontmatter(path: Path) -> dict[str, Any]:
     return values
 
 
+def _full_description(lines: list[str]) -> str:
+    """Extract description value including block-scalar continuation lines."""
+    in_desc = False
+    parts: list[str] = []
+    for line in lines:
+        stripped = line.rstrip()
+        if not stripped or stripped[0] in " \t":
+            if in_desc:
+                parts.append(stripped.strip())
+            continue
+        key, separator, value = stripped.partition(":")
+        if separator and key.strip() == "description":
+            if value.strip() == ">":
+                in_desc = True
+            else:
+                return value.strip().strip("\"'")
+        else:
+            in_desc = False
+    return " ".join(part for part in parts if part).strip()
+
+
 def _implicit_invocation(path: Path) -> bool:
     lines = path.read_text(encoding="utf-8-sig").splitlines()
     in_policy = False
@@ -455,6 +476,26 @@ def _validate_skill(
     except ValueError as exc:
         errors.append(_finding("frontmatter", document, str(exc), root))
         return
+    lines = document.read_text(encoding="utf-8-sig").splitlines()
+    description = _full_description(lines)
+    if not description:
+        errors.append(
+            _finding(
+                "description",
+                document,
+                f"{name}: description is missing or empty",
+                root,
+            )
+        )
+    elif len(description) < 12:
+        warnings.append(
+            _finding(
+                "description-short",
+                document,
+                f"{name}: description only {len(description)} chars; add trigger terms for reliable routing",
+                root,
+            )
+        )
     # For nested skills (e.g., vocabulary/cat/skill), frontmatter name should match
     # only the final component (e.g., "skill"), not the full path
     expected_frontmatter_name = name.split("/")[-1] if "/" in name else name

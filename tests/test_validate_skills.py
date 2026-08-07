@@ -198,3 +198,36 @@ skills:
     ref_errors = [e for e in report["errors"] if e["code"] == "dependency-reference"]
     assert len(ref_errors) == 1, report["errors"]
     assert "vocabulary/dep" in ref_errors[0]["message"]
+
+
+def test_missing_description_reports_error(repo: Path):
+    report = validate_repository(repo)
+    desc_errors = [e for e in report["errors"] if e["code"] == "description"]
+    assert len(desc_errors) == 1, report["errors"]
+    assert desc_errors[0]["path"].endswith("bad/SKILL.md")
+
+
+def test_short_description_reports_warning(tmp_path: Path):
+    manifest = """schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: terse
+    path: terse
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+"""
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    (tmp_path / "terse").mkdir()
+    (tmp_path / "terse" / "SKILL.md").write_text(
+        "---\nname: terse\ndescription: 极简\ndisable-model-invocation: false\n---\n\n# terse\n\n正文。\n",
+        encoding="utf-8",
+    )
+    report = validate_repository(tmp_path)
+    short = [e for e in report["warnings"] if e["code"] == "description-short"]
+    assert len(short) == 1, report["warnings"]
+    assert short[0]["path"].endswith("terse/SKILL.md")
