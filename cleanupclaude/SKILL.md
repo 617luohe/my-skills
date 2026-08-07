@@ -10,6 +10,7 @@ description: >
   注意：整机磁盘满/空间不足请走 cleanup skill；本 skill 只管 ~/.claude。
 metadata:
   short-description: "Claude Code 会话状态安全梳理（报告/备份/归档）"
+disable-model-invocation: false
 ---
 
 # Cleanup Claude（cleanupclaude）

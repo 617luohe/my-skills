@@ -2,4 +2,4 @@ interface:
   display_name: "Project Bootstrap"
   short_description: "Minimal Python project init: structure, local git, uv env"
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

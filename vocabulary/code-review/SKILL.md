@@ -2,6 +2,7 @@
 name: code-review
 layer: vocabulary
 description: Two-axis review of code changes - Standards (coding standards) and Spec (specification compliance). Use before merging or after feature completion.
+disable-model-invocation: false
 ---
 
 # Code Review — 代码审查

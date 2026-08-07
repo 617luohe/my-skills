@@ -12,6 +12,7 @@ description: >
   "清缓存""磁盘清理"；或用户抱怨电脑没空间、想知道什么东西吃硬盘、想要清理建议时。
   注意：若用户明确指运行内存/RAM（如"哪个进程吃内存""内存占用高"想看活动监视器），
   那是 RAM 不是存储，不属于本 skill。
+disable-model-invocation: false
 ---
 
 # Cleanup — 存储空间清理

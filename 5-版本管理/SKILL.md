@@ -1,7 +1,7 @@
 ---
 name: 5-版本管理
 description: Manage Git repositories, history, branches, remotes, rollback, and synchronization.
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # 5-版本管理 — Git 版本控制全流程

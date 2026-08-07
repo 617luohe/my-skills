@@ -1,3 +1,6 @@
 interface:
   display_name: "CLAUDE.md Initializer"
   short_description: "Initialize project collaboration rules"
+
+policy:
+  allow_implicit_invocation: true

@@ -41,6 +41,9 @@ SKILL_REF_EXCLUSIONS = frozenset(
         "Desktop",
         "Data",
         "Music",
+        "Documents",
+        "scripts",
+        "tests",
         "Cleanup-Image",
     }
 )
@@ -417,6 +420,16 @@ def _validate_skill(
         )
 
     disabled = frontmatter.get("disable-model-invocation") is True
+    manifest_invocation = skill.get("invocation")
+    if (manifest_invocation == "user") != disabled:
+        errors.append(
+            _finding(
+                "invocation-parity",
+                document,
+                f"manifest says {manifest_invocation!r} but frontmatter disable-model-invocation is {str(disabled).lower()}",
+                root,
+            )
+        )
     openai = skill_path / "agents" / "openai.yaml"
     try:
         implicit = _implicit_invocation(openai) if openai.is_file() else None
@@ -528,6 +541,8 @@ def _validate_markdown(
     for reference in SLASH_SKILL_RE.findall(text):
         if reference.split("/", 1)[0] in SKILL_REF_EXCLUSIONS:
             continue
+        if reference.endswith("-"):
+            continue  # incomplete template token (e.g. <root>/cleanup-report-<stamp>.md)
         if reference not in canonical:
             errors.append(
                 _finding(

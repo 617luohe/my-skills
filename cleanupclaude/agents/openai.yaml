@@ -1,0 +1,5 @@
+interface:
+  display_name: "Claude Code Cleanup"
+  short_description: "Safe cleanup of Claude Code local state"
+policy:
+  allow_implicit_invocation: true

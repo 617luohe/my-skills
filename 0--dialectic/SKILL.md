@@ -4,7 +4,7 @@ description: >
   战略问题的六步矛盾分析框架（调查研究→定性→矛盾分析→阶段划分→策略→复盘）。
   复杂问题拿不准方向、战略规划、根因分析、决策复盘、逆境突破、团队动员时使用。
   触发：用户说"拿不准方向、从战略上看、分析下矛盾、复盘一下"。
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # 辩证矛盾分析法

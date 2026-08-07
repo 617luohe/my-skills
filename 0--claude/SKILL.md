@@ -1,6 +1,7 @@
 ---
 name: 0--claude
 description: 初始化或修复 CLAUDE.md，从模板注入缺失规则块
+disable-model-invocation: false
 ---
 
 # 0--claude — CLAUDE.md 初始化器

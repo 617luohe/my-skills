@@ -2,6 +2,7 @@
 name: tdd
 layer: vocabulary
 description: Test-driven development with red-green-refactor loop using pytest. Use when building Python features or fixing bugs one vertical slice at a time.
+disable-model-invocation: false
 ---
 
 # TDD — 测试驱动开发

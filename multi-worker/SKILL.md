@@ -1,7 +1,7 @@
 ---
 name: multi-worker
 description: User-invoked orchestration for already confirmed independent tasks in tasks.md.
-disable-model-invocation: false
+disable-model-invocation: true
 experimental: true
 ---
 

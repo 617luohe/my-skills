@@ -5,7 +5,7 @@ description: >
   知识库唯一入口。接收本机路径、URL、自由文本或处理要求，整理进固定 Obsidian Vault 并自动提交推送，
   编排 Intake→Curate→Publish 三阶段。触发（知识库强信号词）：note、笔记、知识库、Obsidian、Vault、
   收录、归档、索引、MOC、会议纪要、日记、阅读、路径/URL 收录、批量整理、写文章。
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # noteall — 固定知识库唯一入口

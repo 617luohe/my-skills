@@ -1,6 +1,7 @@
 ---
 name: 0--laoyoutiao
 description: Python项目交付节奏管理
+disable-model-invocation: false
 ---
 
 # 老油条 — Python 交付节奏管理

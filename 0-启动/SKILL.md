@@ -1,7 +1,7 @@
 ---
 name: 0-启动
 description: Python 项目最小初始化：项目结构 + 本地 git + uv 环境
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # 0-启动 — 新项目最小初始化

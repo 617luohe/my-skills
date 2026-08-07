@@ -2,6 +2,7 @@
 name: grilling
 layer: vocabulary
 description: Grill the user relentlessly about a plan or decision. Use when the user wants to stress-test their thinking.
+disable-model-invocation: false
 ---
 
 # Grilling — 询问循环

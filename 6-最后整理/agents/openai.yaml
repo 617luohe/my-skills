@@ -2,4 +2,4 @@ interface:
   display_name: "Session Wrap-up"
   short_description: "Wrap up changes, cleanup, and handoff"
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

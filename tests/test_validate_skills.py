@@ -100,3 +100,21 @@ def test_implicit_false_against_disable_false_reports_parity(repo: Path):
     parity = [e for e in report["errors"] if e["code"] == "invocation-parity"]
     assert len(parity) == 1, report["errors"]
     assert parity[0]["path"].endswith("bad/SKILL.md")
+
+
+def test_manifest_user_against_disable_false_reports_parity(repo: Path):
+    manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
+    manifest = manifest.replace(
+        """    path: good
+    version: 1.0.0
+    status: stable
+    invocation: model""",
+        """    path: good
+    version: 1.0.0
+    status: stable
+    invocation: user""",
+    )
+    (repo / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    report = validate_repository(repo)
+    parity = [e for e in report["errors"] if e["code"] == "invocation-parity"]
+    assert any(e["path"].endswith("good/SKILL.md") for e in parity), report["errors"]

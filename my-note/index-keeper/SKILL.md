@@ -2,6 +2,7 @@
 name: index-keeper
 layer: my-note
 description: [内部] 索引维护 Worker。自主维护一级文件夹与领域文件夹的 _INDEX.md：增量更新、缺失补全、健康检查。由 noteall 路由器调度。
+disable-model-invocation: false
 ---
 
 # index-keeper — 索引维护
@@ -37,7 +38,7 @@ description: [内部] 索引维护 Worker。自主维护一级文件夹与领域
 | 缺失补全         | noteall Maintain / 手动                   | 仅为无 `_INDEX.md` 的一级/领域文件夹创建初始 INDEX           |
 | 健康检查（轻量） | noteall Publish 收尾前                    | 断链、孤岛、INDEX 缺失条目、统计过期；报告不阻塞             |
 | 健康检查（完整） | noteall Maintain / 手动                   | 全库扫描：缺失 INDEX、失效链接、缺失条目、过期描述、统计过期 |
-| 全量更新         | `/index-keeper` / noteall Maintain        | 扫描所有一级与领域文件夹，生成/更新所有 _INDEX.md            |
+| 全量更新         | `/my-note/index-keeper` / noteall Maintain    | 扫描所有一级与领域文件夹，生成/更新所有 _INDEX.md            |
 
 ### 增量更新自动触发时机
 
