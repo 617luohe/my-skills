@@ -50,4 +50,10 @@ disable-model-invocation: false
 
 ## 最终报告
 
-仅在 `completed` 时报告完成，列出集成分支、每个任务状态、完整测试、lint/type check 和最终 review 结果。失败时只报告对应失败状态，绝不使用“完成”。
+仅在 `completed` 时报告完成，列出集成分支、每个任务状态、完整测试、lint/type check 和最终 review 结果。失败时只报告对应失败状态，绝不使用”完成”。
+
+**交接**：
+
+- `completed` 状态后，集成分支已 commit 但未 push
+- 提示用户：`集成完成，建议用户授权后调用 /5-版本管理 推送集成分支`
+- 如需收尾沉淀，建议进入 `/6-最后整理`
