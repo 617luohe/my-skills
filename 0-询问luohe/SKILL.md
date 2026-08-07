@@ -86,7 +86,9 @@ disable-model-invocation: false
 | 独立 Review：已有 base/fixed point、spec/需求来源和 diff | `/3-检查`（强制 Review，不问模式）                                                                                                                  |
 | 只建单：有问题现象且明确要记录/建 issue                  | `/3-检查`（Bug 报告，只建单）                                                                                                                       |
 | 根因修复：要求排查原因或立即修复                         | `/4-调试`（传递已有现象/issue）                                                                                                                     |
-| 代码越来越乱、模块太臃肿                                 | `/3-检查`（明确“架构评估”意图）→ `docs/analysis/<topic>.md` seam 评估 + `docs/plans/<topic>/` 改造任务 → 用户决定是否 `/1-规划`                     |
+| 代码越来越乱、模块太臃肿                                 | `/3-检查`（明确”架构评估”意图）→ `docs/analysis/<topic>.md` seam 评估 + `docs/plans/<topic>/` 改造任务 → 用户决定是否 `/1-规划`                     |
+| 想委托给 agent 独立跑单个任务（≤4000 字任务书）          | `/leader`（调研 → 提问 → 产出任务书 → 跑完验收）                                                                                                    |
+| 已有 tasks.md 且 ≥2 独立任务需并行开发                   | `/multi-worker`（需完整设计文档 + Agent 配置验证）                                                                                                  |
 | 想清理：本次会话产出                                     | `/6-最后整理`                                                                                                                                       |
 | 想清理：全局知识库洁癖（文档↔代码不一致/记忆膨胀）       | `/0--neat-freak`                                                                                                                                    |
 | 不知道用啥                                               | 你现在这里 😊                                                                                                                                       |
