@@ -2,11 +2,18 @@
 name: diagnosing-bugs
 layer: vocabulary
 description: Disciplined diagnosis loop for hard bugs and performance regressions: observe, reproduce, hypothesize, verify, fix, and clean up.
+disable-model-invocation: false
 ---
 
 # Diagnosing Bugs — Bug 诊断循环
 
 用于难复现的 bug、回归和性能下降。每一步都保留可检查的完成条件；不能稳定复现不妨碍调查，但修复必须用同一信号验收。
+
+## 脱敏（Redact）
+
+本技能会让你展示命令、输出和捕获物。**先脱敏再展示**——密钥一律写 `<REDACTED>`。循环脚本对着环境变量构建，让凭据留在环境变量里，而不是出现在你展示的内容中。捕获的请求样本带鉴权头：只引用携带信号的几行。
+
+脱敏后的输出不足以诊断时，明说并请用户提供进一步信息。
 
 ## 六阶段核心流程
 
@@ -59,6 +66,7 @@ description: Disciplined diagnosis loop for hard bugs and performance regression
 3. 一次只改一个变量，并使用同一信号比较。
 4. 修复必须有回归测试或明确记录无法自动化的原因与风险。
 5. 验收后必须清理所有临时调试产物。
+6. 展示的命令、输出与捕获物先脱敏；密钥写 `<REDACTED>`，凭据留在环境变量。
 
 ## 何时使用
 
