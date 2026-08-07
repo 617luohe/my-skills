@@ -270,12 +270,30 @@ def _validate_manifest(
                     root,
                 )
             )
-        if skill["version"] != version or skill["status"] != "stable":
+        if skill["version"] != version:
             errors.append(
                 _finding(
                     "manifest",
                     root / "skills-manifest.yaml",
-                    f"{name}: invalid version or status",
+                    f"{name}: invalid version",
+                    root,
+                )
+            )
+        if skill["status"] not in ("stable", "deprecated"):
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: invalid status {skill['status']}",
+                    root,
+                )
+            )
+        elif skill["status"] == "deprecated" and not skill.get("deprecated_note"):
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: deprecated status requires deprecated_note",
                     root,
                 )
             )

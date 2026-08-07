@@ -56,7 +56,7 @@ disable-model-invocation: false
 
 ## 个人定制（特定场景）
 
-- **`/0--laoyoutiao`** — Python 交付节奏管理（面向甲方交付：复用现有开关、逐步展示优化成果）
+- **`/0--laoyoutiao`** — Python 交付节奏管理（面向甲方交付：复用现有开关、逐步展示优化成果）。触发："交付 / 优化成果展示 / 老油条"
 
 ## 按规模分级（对应 CLAUDE.md 路由表）
 

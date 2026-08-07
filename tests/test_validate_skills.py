@@ -118,3 +118,42 @@ def test_manifest_user_against_disable_false_reports_parity(repo: Path):
     report = validate_repository(repo)
     parity = [e for e in report["errors"] if e["code"] == "invocation-parity"]
     assert any(e["path"].endswith("good/SKILL.md") for e in parity), report["errors"]
+
+
+def test_deprecated_without_note_reports_manifest_error(repo: Path):
+    manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
+    manifest = manifest.replace(
+        """    path: good
+    version: 1.0.0
+    status: stable""",
+        """    path: good
+    version: 1.0.0
+    status: deprecated""",
+    )
+    (repo / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    report = validate_repository(repo)
+    missing_note = [
+        e
+        for e in report["errors"]
+        if e["code"] == "manifest" and "deprecated_note" in e["message"]
+    ]
+    assert len(missing_note) == 1, report["errors"]
+
+
+def test_deprecated_with_note_passes(repo: Path):
+    manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
+    manifest = manifest.replace(
+        """    path: good
+    version: 1.0.0
+    status: stable
+    invocation: model""",
+        """    path: good
+    version: 1.0.0
+    status: deprecated
+    deprecated_note: 迁移至 noteall 三阶段流水线
+    invocation: model""",
+    )
+    (repo / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    report = validate_repository(repo)
+    good_errors = [e for e in report["errors"] if e["path"].endswith("good")]
+    assert good_errors == [], good_errors

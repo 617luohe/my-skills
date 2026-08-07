@@ -26,7 +26,7 @@ REQUIRED_FIELDS = {
     "sync",
     "dependencies",
 }
-OPTIONAL_FIELDS = {"layer"}
+OPTIONAL_FIELDS = {"layer", "deprecated_note"}
 
 
 def _scalar(text: str, line_number: int) -> Any:

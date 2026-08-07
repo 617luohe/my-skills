@@ -14,14 +14,18 @@ disable-model-invocation: false
 ## 审查准备
 
 ### 1. 确定审查基点
+
 从哪个点开始审查？main 分支、某个 commit、tag、还是当前改动？
+
 - 统一记录基点：`git diff <fixed-point>...HEAD`（三点语法，基于 merge-base）；如存在未提交改动，再附加 `git diff` 和 `git diff --cached`
 - 同时记录提交列表：`git log <fixed-point>..HEAD --oneline`；无提交时明确标注“无新增提交，审查未提交改动”
 - **如果上游已显式提供 fixed-point**（如 `/2-开发` 传递），直接使用，跳过追问
 - 如果没有给 fixed-point，先问清楚再继续
 
 ### 2. 定位需求来源
+
 按顺序查找：
+
 - **上游显式传递的需求来源**（如 `/2-开发` 传递的任务清单或 issue 路径）→ 优先使用
 - commit 消息中的 issue 引用（`#123`、`Closes #45`）→ 仅作为上游未提供来源时的后备线索
 - 传入的路径参数
@@ -29,7 +33,9 @@ disable-model-invocation: false
 - 如果都没找到，询问需求在哪；若确认无 spec，Spec 轴标记为"无可用 spec"
 
 ### 3. 定位规范来源
+
 收集：
+
 - CLAUDE.md
 - CONTRIBUTING.md
 - CONTEXT.md / CONTEXT-MAP.md
@@ -37,12 +43,15 @@ disable-model-invocation: false
 - linter/formatter/tsconfig 等工具配置
 
 ### 4. 识别门禁关注点
+
 从上游 skill 提取门禁维度：
 
 **代码质量门禁**（默认，始终检查）：
+
 - 命名规范、类型注解、异常处理、import 组织、公共 API 文档字符串
 
 **功能目标门禁**（按需，上游有明确目标时增加）：
+
 - **性能指标**（如 PRD 要求"API 响应<100ms"）→ 运行性能测试或检查 benchmark 结果
 - **可靠性指标**（如"复现率<1%"）→ 检查压力测试报告或重复运行测试
 - **资源消耗**（如"内存<500MB"）→ 检查资源监控数据或 profiler 输出
@@ -53,6 +62,7 @@ disable-model-invocation: false
 ## 并行审查
 
 **上下文管理**：
+
 - **diff 较小**（<500 行变更）→ 并行运行两个子代理
 - **diff 较大**（≥500 行变更）→ 串行运行，避免上下文超限：
   - 先运行 Standards 子代理（轻量，主要看规范）
@@ -60,7 +70,11 @@ disable-model-invocation: false
   - 在最终汇总时标注："diff 较大，串行审查"
 
 ### Standards 子代理
+
+> 完整子代理定义：[agents/standards.md](agents/standards.md)；spawn 时以其为 prompt。
+
 读规范文件 + 读 diff，逐文件报告违反规范的地方（跳过已被工具自动强约束的事项）：
+
 - 命名规范：snake_case 函数/变量、PascalCase 类
 - 类型注解是否完整
 - 异常处理是否捕获过于宽泛的 Exception
@@ -69,7 +83,11 @@ disable-model-invocation: false
 - 是否使用 Python 惯用写法（上下文管理器、列表推导）
 
 ### Spec 子代理
+
+> 完整子代理定义：[agents/spec.md](agents/spec.md)；spawn 时以其为 prompt。
+
 读需求文档 + 读 diff，报告：
+
 - 需求中要求但缺失或部分实现的功能
 - 代码中出现但需求没要求的（范围蔓延）
 - 实现方式有问题的地方
@@ -89,11 +107,11 @@ disable-model-invocation: false
 - **❌ 阻断（Blocker）** — 必须修复才能合并：
   - Spec 轴：缺失核心功能、实现与需求严重不符、功能目标门禁未达标
   - Standards 轴：严重违反规范（如缺少类型注解、公共 API 无文档、裸露的宽泛异常捕获）
-  
+
 - **⚠️ 警告（Warning）** — 建议修复，但不阻断合并：
   - Spec 轴：部分实现、边缘场景未覆盖、范围蔓延（非核心）
   - Standards 轴：命名不规范、import 顺序混乱、缺少惯用写法
-  
+
 - **ℹ️ 建议（Suggestion）** — 可选优化：
   - 性能优化建议、代码简化建议、更好的抽象方式
 
@@ -123,7 +141,8 @@ disable-model-invocation: false
 # Code Review Report
 
 **审查基点**: <fixed-point>...HEAD
-**提交列表**: 
+**提交列表**:
+
 - <commit1>
 - <commit2>
 
@@ -135,10 +154,12 @@ disable-model-invocation: false
 ## Standards
 
 ### 文件: path/to/file.py
+
 - ❌ Line 42: 函数 `getUserName` 应改为 `get_user_name`（命名规范）
 - ⚠️ Line 58: 捕获了过于宽泛的 `Exception`，建议捕获具体异常
 
 ### 文件: path/to/another.py
+
 - ✅ 符合规范
 
 ---
@@ -146,10 +167,12 @@ disable-model-invocation: false
 ## Spec
 
 ### 需求: "用户登录后显示欢迎消息"
+
 - ❌ 缺失：登录成功后未返回欢迎消息
 - ✅ 已实现：token 生成和返回
 
 ### 需求: "登录失败3次后锁定账户"
+
 - ⚠️ 部分实现：计数器已加，但未实现锁定逻辑
 
 ---
@@ -167,9 +190,11 @@ disable-model-invocation: false
 🚫 **FAIL** — 存在 1 个阻断问题，必须修复后才能合并
 
 **阻断问题清单**:
+
 1. [Spec] 缺失登录成功后的欢迎消息（核心功能缺失）
 
 **警告问题清单**:
+
 1. [Standards] Line 42: 函数命名不规范
 2. [Standards] Line 58: 捕获过于宽泛的异常
 3. [Spec] 登录失败锁定功能部分实现

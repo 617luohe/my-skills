@@ -24,11 +24,13 @@ disable-model-invocation: false
 使用 `/vocabulary/grilling` 技能进行决策树 grilling：
 
 **文档发现（进入追问前）**
+
 - 扫描 `CONTEXT-MAP.md`、`CONTEXT.md`、`docs/adr/` 了解已有领域文档
 - 如果用户输入术语与现有文档冲突 → 立即指出
 - 缓存读取的文档内容，整个规划过程复用，不重复读取
 
 **决策树 grilling（默认批量，可切逐步）**
+
 - 把未决事项建模为依赖图：节点是决策，边是依赖，**frontier** 是当前可回答的决策集合
 - **事实（Fact）** — 代码、配置、文档中有答案，自行调查
 - **决策（Decision）** — 涉及目标、偏好、范围、风险、取舍，必须由用户决定，先给推荐答案和理由
@@ -38,6 +40,7 @@ disable-model-invocation: false
 - **代码交叉验证** — 用实际代码核实用户描述的系统现状
 
 **阶段 1 退出门禁**
+
 1. [ ] 所有需求假设已显式化并确认
 2. [ ] 所有技术和产品决策已完成，frontier 为空
 3. [ ] 决策依赖关系已理清
@@ -53,6 +56,7 @@ disable-model-invocation: false
 使用 `/vocabulary/domain-modeling` 技能维护 `CONTEXT.md`：
 
 **实时规则（贯穿整个阶段）**
+
 - **术语冲突标记** — 如果用词与已有 CONTEXT.md 冲突，立即指出
 - **模糊语言锐化** — 当使用模糊或过载词汇时，提议精确的规范术语
 - **场景压力测试** — 用具体场景探测边界
@@ -69,6 +73,7 @@ disable-model-invocation: false
 在术语体系建立后、接口设计前，回顾整个规划阶段已做出的关键决策。
 
 **仅当以下三个条件全部满足时才提议创建 ADR**：
+
 1. **难逆转** — 事后改主意的成本很高
 2. **少见** — 未来的读者看到代码会想"为什么这样做？"
 3. **真实取舍** — 有真实的备选方案和取舍理由
@@ -80,6 +85,7 @@ disable-model-invocation: false
 ### 阶段 3 — 接口设计与原型验证
 
 并行生成 3 个接口方案对比：
+
 1. **方案 A** — 面向简单场景优化
 2. **方案 B** — 面向扩展性优化
 3. **方案 C** — 面向测试性优化
@@ -87,11 +93,13 @@ disable-model-invocation: false
 每个方案包含：模块划分、接口定义、关键交互、测试切面。用户选择最优方案，或指出各方案的可取之处后由 AI 合成最终方案。
 
 **不确定假设门禁**：状态机、算法或 UI 假设无法通过代码、文档或用户决策消除时，在 `docs/prototypes/<topic>/` 建立 throwaway prototype 验证任务。任务须定义待验证假设、最小实验、成功/失败判据和停止条件；原型默认不进入生产代码或任务清单。**形态按问题选型**：
+
 - **逻辑 / 状态机** — 单文件、无构建、一条命令或双击即可运行；每次动作后自动展示完整状态，不靠断点或日志。UI 形态用单个可双击 HTML 文件（标记状态面板 + 自由操作按钮 + 分步引导场景），非开发人员也能驱动。
 - **UI** — 单路由产出多个差异化变体，URL 参数切换，浮动条对比。
 - **不抛光** — 不加测试、不加错误处理、不持久化（持久化本身是待验证项时除外）。回答完假设即停。
 
 **证据保留与结论回写**（验证完成、结论已定后）：
+
 1. 结论（verdict + 被验证的问题）与证据摘要写入 `docs/plans/<topic>/`；决策片段（状态机、reducer、schema）内联到 PRD 相关决策。
 2. 原型作为**第一手证据**提交到 throwaway 分支 `prototype/<topic>`（移出 main），结论文档留一行指针：`原型证据：分支 prototype/<topic>`；主分支不保留原型文件——只留验证过的决策。再继续 PRD 与任务拆解。
 
@@ -104,18 +112,23 @@ disable-model-invocation: false
 **输出路径**：`docs/plans/<feature>/PRD.md`
 
 **PRD 结构**：
+
 ```markdown
 ## Problem Statement
+
 {用户视角的问题}
 
 ## Solution
+
 {用户视角的解决方案}
 
 ## User Stories
+
 1. As a <actor>, I want a <feature>, so that <benefit>
-{详尽的用户故事列表}
+   {详尽的用户故事列表}
 
 ## Implementation Decisions
+
 - 要修改的模块
 - 要修改的接口
 - 技术澄清
@@ -127,14 +140,17 @@ disable-model-invocation: false
 例外：如果原型产出了决策片段（状态机、reducer、schema），内联到相关决策中。
 
 ## Testing Decisions
+
 - 什么是好测试（只测外部行为，不测实现细节）
 - 要测试哪些模块
 - 现有类似测试作为参考
 
 ## Out of Scope
+
 {范围外事项}
 
 ## Further Notes
+
 {补充说明}
 ```
 
@@ -147,6 +163,7 @@ disable-model-invocation: false
 **输出路径**：`docs/plans/<feature>/tasks.md`
 
 每个任务包含：
+
 - **Task ID** — T001, T002, ...
 - **Title** — 简短标题
 - **Description** — 要实现的功能切片
@@ -155,18 +172,22 @@ disable-model-invocation: false
 - **Depends On** — 前置任务 ID（如果有）
 
 **输出格式**：
+
 ```markdown
 ## Task List
 
 ### T001: {Title}
+
 **Description:** {切片描述}
 **Acceptance Criteria:**
+
 - [ ] {标准1}
 - [ ] {标准2}
-**AFK/HITL:** AFK
-**Depends On:** None
+      **AFK/HITL:** AFK
+      **Depends On:** None
 
 ### T002: {Title}
+
 ...
 ```
 
@@ -175,6 +196,7 @@ disable-model-invocation: false
 ## 最终确认
 
 阶段 5 完成后，输出：
+
 1. PRD 文档路径
 2. 任务清单路径
 3. CONTEXT.md 更新情况
@@ -190,8 +212,9 @@ disable-model-invocation: false
 ## 详细规则参考
 
 完整的决策树算法、frontier 计算规则、CONTEXT.md 格式详见：
-- `vocabulary/grilling/SKILL.md` — 询问循环的核心逻辑
-- `vocabulary/domain-modeling/SKILL.md` — 领域建模的详细规则
+
+- `/vocabulary/grilling` — 询问循环的核心逻辑
+- `/vocabulary/domain-modeling` — 领域建模的详细规则
 - `references/planning-rules.md` — frontier 算法和文档权威边界
 - `references/context-format.md` — CONTEXT.md glossary 格式规范
 - `../vocabulary/domain-modeling/references/adr-format.md` — ADR 编写指南
