@@ -642,7 +642,7 @@ def _validate_markdown(
         if reference.split("/", 1)[0] in SKILL_REF_EXCLUSIONS:
             continue
         if reference.endswith("-"):
-            continue  # incomplete template token (e.g. <root>/cleanup-report-<stamp>.md)
+            continue  # incomplete template token (e.g. <root>/report-<stamp>.md)
         if reference not in canonical:
             errors.append(
                 _finding(

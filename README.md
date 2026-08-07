@@ -53,7 +53,7 @@ my-skills/
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
 - **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--tokenless`
-- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`、`cleanup`、`cleanupclaude`
+- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。被其他技能调用，不直接暴露给用户。
 - **my-note 层**：`noteall` 唯一入口（三阶段流水线）；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度），不直接暴露给用户。
 
