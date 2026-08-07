@@ -300,7 +300,7 @@ def _validate_manifest(
                     root,
                 )
             )
-        if skill["status"] not in ("stable", "deprecated"):
+        if skill["status"] not in ("stable", "deprecated", "experimental"):
             errors.append(
                 _finding(
                     "manifest",
