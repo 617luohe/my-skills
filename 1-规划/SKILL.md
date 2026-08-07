@@ -1,7 +1,7 @@
 ---
 name: 1-规划
 description: Plan non-trivial features through requirements, domain terms, interfaces, PRD, and task breakdown.
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # 1-规划 — 方案设计与任务拆解
@@ -84,11 +84,16 @@ disable-model-invocation: false
 2. **方案 B** — 面向扩展性优化
 3. **方案 C** — 面向测试性优化
 
-每个方案包含：模块划分、接口定义、关键交互、测试切面。
+每个方案包含：模块划分、接口定义、关键交互、测试切面。用户选择最优方案，或指出各方案的可取之处后由 AI 合成最终方案。
 
-用户选择最优方案，或指出各方案的可取之处后由 AI 合成最终方案。
+**不确定假设门禁**：状态机、算法或 UI 假设无法通过代码、文档或用户决策消除时，在 `docs/prototypes/<topic>/` 建立 throwaway prototype 验证任务。任务须定义待验证假设、最小实验、成功/失败判据和停止条件；原型默认不进入生产代码或任务清单。**形态按问题选型**：
+- **逻辑 / 状态机** — 单文件、无构建、一条命令或双击即可运行；每次动作后自动展示完整状态，不靠断点或日志。UI 形态用单个可双击 HTML 文件（标记状态面板 + 自由操作按钮 + 分步引导场景），非开发人员也能驱动。
+- **UI** — 单路由产出多个差异化变体，URL 参数切换，浮动条对比。
+- **不抛光** — 不加测试、不加错误处理、不持久化（持久化本身是待验证项时除外）。回答完假设即停。
 
-**不确定假设门禁**：状态机、算法或 UI 假设无法通过代码、文档或用户决策消除时，在 `docs/prototypes/<topic>/` 建立 throwaway prototype 验证任务。任务须定义待验证假设、最小实验、成功/失败判据和停止条件；原型默认不进入生产代码或任务清单。把结论、证据和后续决定回写 `docs/plans/<topic>/`，再继续 PRD 与任务拆解。
+**证据保留与结论回写**（验证完成、结论已定后）：
+1. 结论（verdict + 被验证的问题）与证据摘要写入 `docs/plans/<topic>/`；决策片段（状态机、reducer、schema）内联到 PRD 相关决策。
+2. 原型作为**第一手证据**提交到 throwaway 分支 `prototype/<topic>`（移出 main），结论文档留一行指针：`原型证据：分支 prototype/<topic>`；主分支不保留原型文件——只留验证过的决策。再继续 PRD 与任务拆解。
 
 ---
 
