@@ -46,7 +46,7 @@ INDEX = "文件夹里有什么"（结构性导航），与 MOC 分工。
    - 标签格式违规：缺 `type/`/`domain/` 前缀、值不在合法枚举内、顶层 `type:` 键未并入 `tags`。
    - 命名违规：按 `9-System/命名规范.md`（空格分隔、≤50 字符、无特殊字符）。
    - `status`/`confidence` 非法值（status: draft|published|archived；confidence: seed|sapling|evergreen）。
-3. 输出违规报告（按类型分组，含文件路径）→ 生成修复计划（缺省值按规则推断：`type` 按目录映射、`domain` 按领域映射表、缺省 `status: draft`、`confidence: seed`）。
+3. 输出违规报告（按类型分组，含文件路径）→ 生成修复计划（缺省值按规则推断：`type` 按目录映射、`domain` 按领域映射表、缺省 `status: draft`、`confidence: seed`；非法值按修复映射执行：confidence `sprout→sapling`、`budding→seed`；status `active→draft`、`completed→archived`、`deprecated→archived`、`evergreen→draft`）。
 4. 一次性确认后批量执行；执行后复扫确认清零。
 
 ### 断链与孤岛修复
