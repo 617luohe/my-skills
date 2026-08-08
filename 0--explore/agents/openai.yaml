@@ -1,0 +1,6 @@
+interface:
+  display_name: "Deep-Dive Exploration Engine"
+  short_description: "Autonomous budget-limited exploration to a structured report"
+
+policy:
+  allow_implicit_invocation: true
