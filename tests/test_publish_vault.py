@@ -28,6 +28,7 @@ EXIT_OK = 0
 EXIT_PRECONDITION = 2
 EXIT_CONFLICT = 3
 EXIT_PUSH_FAILED = 4
+EXIT_QUALITY = 5
 
 
 def git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
@@ -37,8 +38,10 @@ def git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
 
 
 def run_script(
-    vault: Path, paths: list[str], message: str
+    vault: Path, paths: list[str], message: str, *extra: str
 ) -> subprocess.CompletedProcess[str]:
+    # Script forces UTF-8 on its own streams in main(); decode with UTF-8 even
+    # when the parent process locale is GBK.
     return subprocess.run(
         [
             sys.executable,
@@ -49,9 +52,11 @@ def run_script(
             *paths,
             "--message",
             message,
+            *extra,
         ],
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
 
 
@@ -199,3 +204,98 @@ def test_merge_without_owned_changes_still_pushes(vault_pair):
     assert res.returncode == EXIT_OK, res.stdout + res.stderr
     assert origin_has(origin, "remote.md")
     assert origin_has(origin, "local.md")
+
+
+# ---------------------------------------------------------------------------
+# T006: quality gate
+# ---------------------------------------------------------------------------
+
+# 7-Sources note with an illegal confidence enum value.
+_BAD_7S = (
+    "---\ntitle: 坏笔记\ntags:\n  - type/source\nstatus: draft\nconfidence: sprout\n---\n"
+    "\n# 坏笔记\n"
+)
+# Fully compliant 7-Sources note (self-linked so it is not an orphan).
+_GOOD_7S = (
+    "---\ntitle: 好笔记\ntags:\n  - type/source\nstatus: draft\nconfidence: seed\n---\n"
+    "\n# 好笔记\n\n[[好笔记]]\n"
+)
+# Valid frontmatter but a link to a non-existent note.
+_BROKEN_7S = (
+    "---\ntitle: 断链\ntags:\n  - type/source\nstatus: draft\nconfidence: seed\n---\n"
+    "\n# 断链\n\n[[不存在的概念]]\n"
+)
+
+
+def test_gate_blocks_frontmatter_violation(vault_pair):
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "坏笔记.md").write_text(_BAD_7S, encoding="utf-8")
+    res = run_script(vault, ["7-Sources/坏笔记.md"], "notes(source): ingest bad")
+    assert res.returncode == EXIT_QUALITY, res.stdout + res.stderr
+    assert "confidence illegal value 'sprout'" in res.stderr
+    assert not origin_has(origin, "7-Sources/坏笔记.md")
+
+
+def test_gate_blocks_broken_link(vault_pair):
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "断链.md").write_text(_BROKEN_7S, encoding="utf-8")
+    res = run_script(vault, ["7-Sources/断链.md"], "notes(source): ingest bad")
+    assert res.returncode == EXIT_QUALITY, res.stdout + res.stderr
+    assert "broken link [[不存在的概念]]" in res.stderr
+    assert not origin_has(origin, "7-Sources/断链.md")
+
+
+def test_gate_allow_issues_passes(vault_pair):
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "坏笔记.md").write_text(_BAD_7S, encoding="utf-8")
+    res = run_script(
+        vault,
+        ["7-Sources/坏笔记.md"],
+        "notes(source): ingest bad (override)",
+        "--allow-issues",
+    )
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+    assert "bypassed quality gate" in res.stderr
+    assert origin_has(origin, "7-Sources/坏笔记.md")
+
+
+def test_gate_only_checks_owned_paths(vault_pair):
+    # Historical violations (committed, not owned) must not block the publish.
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "旧坏笔记.md").write_text(_BAD_7S, encoding="utf-8")
+    git(vault, "add", ".")
+    assert git(vault, "commit", "-m", "historical bad note").returncode == 0
+    (vault / "7-Sources" / "好笔记.md").write_text(_GOOD_7S, encoding="utf-8")
+    res = run_script(vault, ["7-Sources/好笔记.md"], "notes(source): ingest good")
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+    assert origin_has(origin, "7-Sources/好笔记.md")
+
+
+def test_gate_skipped_when_no_owned_paths(vault_pair):
+    # No owned paths -> gate is skipped, even if the vault carries bad notes.
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "坏笔记.md").write_text(_BAD_7S, encoding="utf-8")
+    git(vault, "add", ".")
+    assert git(vault, "commit", "-m", "bad note").returncode == 0
+    res = run_script(vault, [], "notes(source): ingest nothing")
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+
+
+def test_gate_blocks_missing_required_field(vault_pair):
+    # A new 7-Sources note missing the required `confidence` field is a
+    # structural violation (missing required fields block the gate).
+    vault, origin = vault_pair
+    (vault / "7-Sources").mkdir(exist_ok=True)
+    (vault / "7-Sources" / "缺字段.md").write_text(
+        "---\ntitle: 缺字段\ntags:\n  - type/source\nstatus: draft\n---\n\n# 缺字段\n",
+        encoding="utf-8",
+    )
+    res = run_script(vault, ["7-Sources/缺字段.md"], "notes(source): ingest missing")
+    assert res.returncode == EXIT_QUALITY, res.stdout + res.stderr
+    assert "missing field(s) confidence" in res.stderr
+    assert not origin_has(origin, "7-Sources/缺字段.md")

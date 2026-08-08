@@ -5,11 +5,17 @@ Only stages the paths this pipeline owns; never runs `git add .`, never
 creates empty commits, never auto-resolves conflicts, and never rolls back a
 successful local commit when push fails.
 
+A structural quality gate runs before remote sync: frontmatter/broken-link
+violations in the owned paths block the publish (exit 5) unless
+``--allow-issues`` explicitly overrides it. Orphan/duplicate/index findings are
+reported but never block.
+
 Exit codes:
     0  published (or nothing to commit)
     2  precondition failed (invalid vault / unowned changes present)
     3  merge conflict (stopped)
     4  push failed (local commit kept)
+    5  quality gate failed (structural violations in owned paths)
 """
 
 from __future__ import annotations
@@ -20,10 +26,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+import vault_check  # same-directory module (stdlib-only, zero subprocess cost)
+
 EXIT_OK = 0
 EXIT_PRECONDITION = 2
 EXIT_CONFLICT = 3
 EXIT_PUSH_FAILED = 4
+EXIT_QUALITY = 5
 
 
 def die(msg: str, code: int) -> None:
@@ -88,6 +97,54 @@ def require_clean_worktree(vault: Path, owned_paths: list[str]) -> None:
             die(f"unowned changes present, stopping: {line.strip()}", EXIT_PRECONDITION)
 
 
+def _vault_rel(vault: Path, p: str) -> str:
+    """Normalize an owned path to a vault-relative forward-slash path."""
+    full = Path(p) if Path(p).is_absolute() else Path(vault) / p
+    return os.path.relpath(str(full.resolve()), str(vault.resolve())).replace("\\", "/")
+
+
+def _structural_findings(vault: Path, owned_paths: list[str]) -> list[str]:
+    """Run vault_check on the owned paths and return structural violations.
+
+    Structural = frontmatter enum/format violations + missing required fields
+    + broken links. A file with no frontmatter block at all is reported but
+    never blocks the gate (it carries no owned-structure to violate).
+    """
+    if not owned_paths:
+        return []
+    paths_filter = {_vault_rel(vault, p) for p in owned_paths}
+    findings = vault_check.run_checks(vault, paths_filter=paths_filter)
+    structural = [
+        f for f in findings.frontmatter if vault_check.is_structural_finding(f)
+    ]
+    return structural + findings.broken_links
+
+
+def quality_gate(vault: Path, owned_paths: list[str]) -> None:
+    """Block publish when owned paths carry frontmatter/broken-link violations."""
+    structural = _structural_findings(vault, owned_paths)
+    if not structural:
+        return
+    sys.stderr.write("publish_vault: quality gate failed (structural violations):\n")
+    for item in structural:
+        sys.stderr.write(f"  {item}\n")
+    die(
+        "owned paths have frontmatter/broken-link violations; "
+        "use --allow-issues to override",
+        EXIT_QUALITY,
+    )
+
+
+def warn_quality_issues(vault: Path, owned_paths: list[str]) -> None:
+    """--allow-issues escape hatch: report what the gate would have blocked."""
+    structural = _structural_findings(vault, owned_paths)
+    if structural:
+        sys.stderr.write(
+            f"publish_vault: warning: --allow-issues bypassed quality gate "
+            f"({len(structural)} structural finding(s) in owned paths)\n"
+        )
+
+
 def sync_remote(vault: Path) -> None:
     fetch = run_git(vault, "fetch", "origin")
     if fetch.returncode != 0:
@@ -142,6 +199,13 @@ def publish(vault: Path, owned_paths: list[str], message: str) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows GBK console cannot encode Chinese/emoji in gate diagnostics; force
+    # UTF-8 for this process's own streams (not on import, see vault_check).
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError):
+            pass
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--vault", required=True, help="fixed vault path (from noteall config.yaml)"
@@ -150,12 +214,22 @@ def main(argv: list[str] | None = None) -> int:
         "--paths", nargs="*", default=[], help="owned paths relative to the vault"
     )
     parser.add_argument("--message", required=True, help="commit message")
+    parser.add_argument(
+        "--allow-issues",
+        action="store_true",
+        help="bypass the structural quality gate (warn and continue)",
+    )
     args = parser.parse_args(argv)
 
-    validate_vault(Path(args.vault))
-    require_clean_worktree(Path(args.vault), args.paths)
-    sync_remote(Path(args.vault))
-    return publish(Path(args.vault), args.paths, args.message)
+    vault = Path(args.vault)
+    validate_vault(vault)
+    require_clean_worktree(vault, args.paths)
+    if args.allow_issues:
+        warn_quality_issues(vault, args.paths)
+    else:
+        quality_gate(vault, args.paths)
+    sync_remote(vault)
+    return publish(vault, args.paths, args.message)
 
 
 if __name__ == "__main__":
