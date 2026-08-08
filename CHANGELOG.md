@@ -13,6 +13,8 @@ All notable changes to this skills repository will be documented in this file.
 - **noteall**: profiles.yaml journal 新增 `extract` 提炼管道（日记→概念笔记，双链成对 + 级联更新）
 - **noteall**: curate.md 新增 Confidence 晋升规则（seed→sapling→evergreen，更新时提示确认）
 - **noteall**: SKILL.md 维护模式触发词扩充（合规审计/断链与孤岛修复）
+- **noteall**: SKILL.md 新增「极轻量捕获」窄例外（§一·五：工作区脏时仅提交捕获文件，跳过流水线）
+- **vault-publisher**: 新增 `scripts/vault_check.py` 确定性健康检查（frontmatter/断链/孤儿/重复/INDEX 统计，支持 --json），附 `tests/test_vault_check.py`（8 用例）
 
 ### 2026-08-08 - 体系审视与优化批次执行
 
