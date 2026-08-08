@@ -4,6 +4,16 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 2026-08-08 - 知识库技能覆盖优化批次（noteall 场景补强）
+
+#### Added
+
+- **noteall**: maintain.md 新增「合规审计」模式（frontmatter 全库检视与批量补齐：缺块/缺字段/标签格式/命名/非法值）
+- **noteall**: maintain.md 新增「断链与孤岛修复」模式（健康检查报告升级为可执行修复：改链接/移除/占位；归 MOC/合并/排除）
+- **noteall**: profiles.yaml journal 新增 `extract` 提炼管道（日记→概念笔记，双链成对 + 级联更新）
+- **noteall**: curate.md 新增 Confidence 晋升规则（seed→sapling→evergreen，更新时提示确认）
+- **noteall**: SKILL.md 维护模式触发词扩充（合规审计/断链与孤岛修复）
+
 ### 2026-08-08 - 体系审视与优化批次执行
 
 #### Added
