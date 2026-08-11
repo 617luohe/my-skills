@@ -154,6 +154,15 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: vision-skill
+    path: vision-skill
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: 0-询问luohe
     path: 0-询问luohe
     version: 1.0.0

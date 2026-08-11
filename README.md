@@ -53,7 +53,7 @@ my-skills/
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
 - **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--tokenless`
-- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`
+- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`、`vision-skill`
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。被其他技能调用，不直接暴露给用户。
 - **my-note 层**：`noteall` 唯一入口（三阶段流水线）；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度），不直接暴露给用户。
 
@@ -121,6 +121,7 @@ my-skills/
 | **multi-worker** (`multi-worker`)             | 并行开发编排器（实验性）                                             |
 | **writing-for-agents** (`writing-for-agents`) | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning） |
 | **wizard** (`wizard`)                         | 交互式 bash 向导：带人走完只有人能做的步骤（配 secrets/一次性迁移）  |
+| **vision-skill** (`vision-skill`)             | 图片描述：为纯文本模型（DeepSeek 等）经 OpenCode Go 视觉 API 看图    |
 
 ## 知识管理 Skills（my-note 体系）
 

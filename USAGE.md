@@ -27,6 +27,7 @@
 | `multi-worker`       | 内置多 Agent 并行开发（消费已确认 tasks.md，管理配置检查、worktree 隔离、验收）                 | `/multi-worker`       | [SKILL.md](multi-worker/SKILL.md)       |
 | `writing-for-agents` | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning），写/改技能时由模型自动调起 | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
+| `vision-skill`       | 图片描述：为纯文本模型（DeepSeek 等）经 OpenCode Go 视觉 API 描述图片/截图/URL                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |
 
 ---
 

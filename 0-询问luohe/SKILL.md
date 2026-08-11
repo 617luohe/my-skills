@@ -54,6 +54,7 @@ disable-model-invocation: false
 | 新建/修改技能、优化触发词                   | **`/writing-for-agents`** 写作规范：description 触发分支 + 完成标准 + leading words + pruning   |
 | 配 CI secrets / 一次性迁移 / 仅人能做的步骤 | **`/wizard`** 生成交互式 bash 向导（自动开 URL、隐藏输入、写 `.env`/gh secret）                 |
 | 笔记收录 / 知识库整理（Obsidian）           | **`/my-note/noteall`** 知识管理入口（Intake → Curate → Publish 流水线）                         |
+| 用户附图 / 要求描述图片、截图、照片         | **`/vision-skill`** 经 OpenCode Go 视觉 API 为纯文本模型描述图片（默认 minimax-m3）             |
 
 ## 个人定制（特定场景）
 
@@ -103,6 +104,7 @@ disable-model-invocation: false
 | 新建/修改技能、优化触发词                                | `/writing-for-agents`（写作规范）。触发词：**写个技能、改技能、触发不准改描述、优化触发词、写/更新 CLAUDE.md、更新路由表**                          |
 | 配 CI secrets / 一次性迁移 / 仅人能做的步骤              | `/wizard`（生成交互式 bash 向导）。触发词：**配置基础设施、设置凭据、CI secrets、一次性迁移、cutover、交互式向导**                                  |
 | 笔记收录 / 知识库整理（Obsidian）                        | `/my-note/noteall`（知识管理入口）。触发词：**note、笔记、知识库、Obsidian、收录、归档、索引、MOC、会议纪要、日记**                                 |
+| 用户附图 / 要求描述图片、截图、照片                      | `/vision-skill`（经 OpenCode Go 视觉 API 为 DeepSeek 等纯文本模型描述图片，默认 minimax-m3）。触发词：**图片、截图、照片、看图、描述图片、附图**    |
 | Python 交付节奏管理（面向甲方交付）                      | `/0--laoyoutiao`（复用现有开关、逐步展示优化成果）。触发词：**交付、优化成果展示、交付节奏、老油条、面向甲方**                                      |
 | **兜底**                                                 |                                                                                                                                                     |
 | 不知道用啥                                               | 你现在这里 😊                                                                                                                                       |
