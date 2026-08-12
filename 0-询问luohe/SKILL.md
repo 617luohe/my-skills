@@ -10,7 +10,7 @@ disable-model-invocation: false
 
 ## 主流程：想法 → 交付
 
-`/1-规划` → **授权** → `/2-开发` → `/3-检查` → **授权** → `/5-版本管理` →（大功能）`/6-最后整理`。具体路径见下方规模表；并行加速见 `/multi-worker`（仅用户显式调用）。
+`/1-规划` → **授权** → `/2-开发` → `/3-检查` → **授权** → `/5-版本管理` →（大功能）`/6-最后整理`。具体路径见下方规模表。
 
 ## 按规模分级（对应 CLAUDE.md 路由表）
 
@@ -36,24 +36,19 @@ disable-model-invocation: false
 | 方案拿不准（状态机、算法、UI）                           | `/1-规划` → `docs/prototypes/<topic>/` throwaway prototype（单文件、可运行）→ 结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留证 |
 | **上游汇入主流程**                                       |                                                                                                                                                     |
 | 看不懂代码 / 接手陌生项目                                | 一次性只读调查 → `docs/analysis/<topic>.md` 项目地图与停止条件 → 按结果进入 `/1-规划`、`/3-检查` 或 `/4-调试`                                       |
-| > 探索类分流：代码库不熟→只读调查(analysis)；战略决策→`/0--dialectic`；有预算深潜→`/0--explore` |                                                                                                                                                     |
+| > 探索类分流：代码库不熟或需深度调研→只读调查 `docs/analysis/`；战略决策→`/0--dialectic` |                                                                                                                                                     |
 | Bug 难复现、性能突然下降、要找根因或立即修复             | `/4-调试`                                                                                                                                           |
 | 代码越来越乱、模块太臃肿                                 | `/3-检查`（明确”架构评估”意图）→ `docs/analysis/<topic>.md` seam 评估 + `docs/plans/<topic>/` 改造任务 → 用户决定是否 `/1-规划`                     |
 | **审查与质量**                                           |                                                                                                                                                     |
 | 独立 Review：已有 base/fixed point、spec/需求来源和 diff | `/3-检查`（强制 Review，不问模式）                                                                                                                  |
 | 只建单：有问题现象且明确要记录/建 issue                  | `/3-检查`（Bug 报告，只建单）                                                                                                                       |
 | 根因修复：要求排查原因或立即修复                         | `/4-调试`（传递已有现象/issue）                                                                                                                     |
-| **并行与委托**                                           |                                                                                                                                                     |
-| 委托 agent 跑单任务（≤4000 字任务书）                    | `/leader`                                                                                                                                           |
-| 已有 tasks.md 且 ≥2 独立任务需并行开发                   | `/multi-worker`                                                                                                                                    |
 | **支撑层（信号触发）**                                   |                                                                                                                                                     |
 | 新项目开张                                               | `/0-启动`                                                                                                                                           |
 | 初始化 AI 协作规则                                       | `/0--claude`                                                                                                                                        |
-| 工具输出太大 / token 紧张                                | `/0--tokenless`                                                                                                                                     |
 | 收尾、沉淀本次会话产出                                   | `/6-最后整理`                                                                                                                                       |
 | 全局文档↔代码洁癖 / 记忆膨胀                             | `/0--neat-freak`                                                                                                                                    |
 | 复杂问题拿不准方向（战略）                               | `/0--dialectic`                                                                                                                                     |
-| 大规模多轮探索（模糊种子+预算+时长）                     | `/0--explore`                                                                                                                                       |
 | 新建/修改技能、优化触发词                                | `/writing-for-agents`                                                                                                                               |
 | 配 CI secrets / 一次性迁移 / 仅人能做的步骤              | `/wizard`                                                                                                                                           |
 | 笔记收录 / 知识库整理（Obsidian）                        | `/my-note/noteall`                                                                                                                                  |

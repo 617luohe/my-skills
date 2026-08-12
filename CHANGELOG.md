@@ -4,6 +4,20 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-08-12
+
+### Removed
+
+- **multi-worker**：并行 worktree 编排；替代：主流程顺序开发或 Cursor 内置多 agent
+- **leader**：外部 agent 任务书；替代：直接在对话中描述任务
+- **0--explore**：预算驱动深潜探索；替代：只读调查 `docs/analysis/` 或 `/1-规划`
+- **0--tokenless**：超压缩沟通；替代：CLAUDE.md「工作哲学·沟通」简洁表达
+
+### Changed
+
+- 路由表、USAGE、README、3-检查、0--dialectic 同步移除上述技能引用
+- manifest：27 → 23 技能；repository_version → 1.3.0
+
 ## [1.2.0] - 2026-08-12
 
 ### Changed

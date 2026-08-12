@@ -11,7 +11,7 @@
 | ----------------- | --------------------------------------------------------------------- | -------------------------- | ----------------------------------------------- |
 | `grilling`        | 询问循环（默认批量 / 用户说"逐步"时一次一问），沿决策树逐个决议       | `/1-规划`                  | [SKILL.md](vocabulary/grilling/SKILL.md)        |
 | `domain-modeling` | 维护领域术语 `CONTEXT.md`，把架构决策记为独立 ADR                     | `/1-规划`                  | [SKILL.md](vocabulary/domain-modeling/SKILL.md) |
-| `tdd`             | 红-绿-重构循环，pytest 驱动，按行为风险补回归测试                     | `/2-开发`、`/multi-worker` | [SKILL.md](vocabulary/tdd/SKILL.md)             |
+| `tdd`             | 红-绿-重构循环，pytest 驱动，按行为风险补回归测试                     | `/2-开发`                  | [SKILL.md](vocabulary/tdd/SKILL.md)             |
 | `code-review`     | 双轴审查（Standards + Spec），并行子代理                              | `/3-检查`                  | [SKILL.md](vocabulary/code-review/SKILL.md)     |
 | `diagnosing-bugs` | 六阶段 bug 诊断（观测信号 → 复现 → 假设 → 验证 → 修复 + 回归 → 清理） | `/4-调试`                  | [SKILL.md](vocabulary/diagnosing-bugs/SKILL.md) |
 
@@ -23,8 +23,6 @@
 
 | 技能                 | 职责                                                                                            | 触发                  | 文档                                    |
 | -------------------- | ----------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------- |
-| `leader`             | 一句话想法 → 给另一 agent 独立跑的自包含任务书（≤4000 字，五步流程）                            | `/leader`             | [SKILL.md](leader/SKILL.md)             |
-| `multi-worker`       | 内置多 Agent 并行开发（消费已确认 tasks.md，管理配置检查、worktree 隔离、验收）                 | `/multi-worker`       | [SKILL.md](multi-worker/SKILL.md)       |
 | `writing-for-agents` | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning），写/改技能时由模型自动调起 | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
 | `vision-skill`       | 图片描述：为纯文本模型（DeepSeek 等）经 OpenCode Go 视觉 API 描述图片/截图/URL                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |
@@ -36,9 +34,7 @@
 | 技能            | 职责                                                              | 触发                         | 文档                               |
 | --------------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
 | `0--claude`     | 初始化/修复 CLAUDE.md（称呼规则 + 工作哲学 + 工作流路由）         | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
-| `0--explore`    | 预算受限自主探索：模糊种子 + 预算 + 时长 → 多轮探索 → 结构化报告 | `/0--explore`                | [SKILL.md](0--explore/SKILL.md)    |
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
-| `0--tokenless`  | 超压缩沟通模式（caveman / less tokens / be brief）                | `/0--tokenless`              | [SKILL.md](0--tokenless/SKILL.md)  |
 | `0-启动`        | Python 项目最小初始化：项目结构 + 本地 git + uv 环境              | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |
 | `0-询问luohe`   | **技能路由网关**（唯一事实源：规模表 + 场景快速查找）             | 复杂需求先加载；首个复杂需求强制 | [SKILL.md](0-询问luohe/SKILL.md)   |
 | `1-规划`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-规划`                    | [SKILL.md](1-规划/SKILL.md)        |

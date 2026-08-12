@@ -23,7 +23,6 @@ my-skills/
 │   └── vault-publisher/         — 内部 Worker（固定 Vault 发布）
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
-├── multi-worker/                — 并行开发编排器
 └── scripts/                     — manifest 解析与受管技能部署脚本
 ```
 
@@ -38,7 +37,7 @@ my-skills/
 | **路由器**        | `0-询问luohe`         | `0-询问luohe`                                | 唯一入口，独立前缀                 |
 | **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`                        | 可复用核心，不直接调用             |
 | **my-note 层**    | `my-note/英文名称`    | `my-note/noteall`、`my-note/vault-publisher` | 知识管理层，noteall 为唯一用户入口 |
-| **独立方法论**    | `英文或中文名称`      | `multi-worker`                               | 不属于主流程的独立技能             |
+| **独立方法论**    | `英文或中文名称`      | `writing-for-agents`                         | 不属于主流程的独立技能             |
 
 **命名约束**：
 
@@ -51,13 +50,13 @@ my-skills/
 
 **路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。CLAUDE.md 路由表为速查镜像。
 
-**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 `/multi-worker`）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
+**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
 
 按层级分组：
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
-- **扩展能力**：`0--claude`、`0--dialectic`、`0--explore`、`0--laoyoutiao`、`0--neat-freak`、`0--tokenless`
-- **独立方法论**：`leader`、`multi-worker`、`writing-for-agents`、`wizard`、`vision-skill`
+- **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`
+- **独立方法论**：`writing-for-agents`、`wizard`、`vision-skill`
 - **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。优先被阶段技能委托；模型亦可按 description 调用，用户无需记路径。
 - **my-note 层**：`noteall` 唯一入口；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度）
 

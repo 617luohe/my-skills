@@ -1,5 +1,0 @@
-interface:
-  display_name: "Multi-worker Development"
-  short_description: "Parallelize user-confirmed independent tasks"
-policy:
-  allow_implicit_invocation: false
