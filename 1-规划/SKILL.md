@@ -60,4 +60,4 @@ disable-model-invocation: false
 - `/vocabulary/domain-modeling`：领域建模
 - `references/planning-rules.md`：frontier、方案分支和文档权威边界
 - `references/context-format.md`：CONTEXT.md 格式
-- `references/adr-format.md`：ADR 格式（通过 domain-modeling 调用）
+- `/vocabulary/domain-modeling` 的 `references/adr-format.md`：ADR 格式（通过 domain-modeling 调用，不在此复制）

@@ -109,44 +109,11 @@ disable-model-invocation: false
 
 ### 第四步：自检清单
 
-**尺寸/反膨胀**
-
-- [ ] CLAUDE.md 净涨幅 ≤ 30 行
-- [ ] 无新增 blockquote 历史叙事条目
-- [ ] 无 CLAUDE.md 抄 docs 已有细节
-- [ ] 单条 memory ≤ 100 行
-- [ ] MEMORY.md ≤ 25KB 且 ≤ 200 行
-- [ ] 体量没倒挂：`du memory` ≤ `du docs/`
-
-**完整性/反漏改**
-
-- [ ] 第一步每个文件都标了「评估过/要改/不用改」
-- [ ] 记忆索引链接指向存在文件
-- [ ] 记忆无互相矛盾
-- [ ] CLAUDE.md 中路径/命令/工具真实存在
-- [ ] README 安装/运行步骤与代码一致
-- [ ] 新增 API：integration-guide 和 architecture 都有
-- [ ] 新增环境变量：runbook 和 CLAUDE.md 都有
-- [ ] 新增数据库表：architecture Data Model 和 CLAUDE.md 都有
-- [ ] 跨项目影响：下游 docs 已同步
-- [ ] 相对时间清零（grep 检查）
-- [ ] **没有漏！**
+见 [sync-matrix.md §自检清单](references/sync-matrix.md#自检清单)。
 
 ### 第五步：变更摘要
 
-```
-## 同步完成
-
-### 记忆变更
-- 更新/新增/删除：xxx（原因）
-
-### 文档变更
-- <项目>/CLAUDE.md — xxx
-- <项目>/docs/xxx.md — xxx
-
-### 未处理
-- xxx（需用户确认）
-```
+输出格式见 [sync-matrix.md §变更摘要模板](references/sync-matrix.md#变更摘要模板)。
 
 ## 特殊情况
 

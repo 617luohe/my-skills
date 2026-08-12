@@ -14,9 +14,9 @@
 
 | 措辞类型             | 唯一编辑处                         | 引用位置                                     | 传播方式                 |
 | -------------------- | ---------------------------------- | -------------------------------------------- | ------------------------ |
-| **部署路径**         | `README.md` "分发与部署"段         | CONTEXT.md、USAGE.md、各 SKILL.md            | 文字引用或链接           |
+| **部署路径**         | `README.md` 「分发与部署」段       | CONTEXT.md、USAGE.md、各 SKILL.md            | 文字引用或链接           |
 | **技能调用名称**     | 各技能 `SKILL.md` frontmatter name | manifest、openai.yaml、README、USAGE、路由表 | 变量式引用（`/name`）    |
-| **路由规则**         | `0-询问luohe/SKILL.md`             | CLAUDE.md "工作流路由"速查表                 | 镜像同步（CLAUDE 声明）  |
+| **路由规则**         | `0-询问luohe/SKILL.md` description | CLAUDE.md、README、USAGE 路由加载行          | 镜像同步（声明来源）     |
 | **技能触发关键词**   | 各技能 `SKILL.md` frontmatter desc | manifest、openai.yaml、README                | 变量式引用               |
 | **完成标准模板**     | `writing-for-agents/SKILL.md`      | 各技能 SKILL.md 的"完成标准"段               | 按规范自行编写           |
 | **ADR 模板**         | `vocabulary/domain-modeling/ref/`  | 各 `docs/adr/NNNN-*.md`                      | 模板复制，不变后续不同步 |

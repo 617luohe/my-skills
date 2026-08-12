@@ -1,6 +1,6 @@
 # My Skills Library
 
-个人 skills 开发目录。每个 skill 独立文件夹，写好后可部署到 `.claude/skills/`。
+个人 skills 开发目录。每个 skill 独立文件夹；改完 commit + push，由 skills-manager 同步到运行时（见下方「分发与部署」）。
 
 📖 **使用说明书**：[USAGE.md](USAGE.md) — 每个技能的场景描述 + 案例演示。
 🧭 **路由器**：`/0-询问luohe` — 不知道用哪个技能？直接问路由器。
@@ -49,7 +49,7 @@ my-skills/
 
 ## 调用分类
 
-**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；选定后按该技能执行。CLAUDE.md 路由表为速查镜像。
+**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。CLAUDE.md 路由表为速查镜像。
 
 **单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 `/multi-worker`）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
 
@@ -147,7 +147,7 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 - 维护能力（批量/索引/MOC/文件整理）走 noteall 维护模式（`references/maintain.md`）。
 - Git 收尾由 vault-publisher 确定性脚本完成，模型不自由组合 Git 命令。
 
-## 部署方法
+## 分发与部署
 
 技能单一事实源 + **skills-manager** 同步分发：
 
@@ -166,7 +166,7 @@ python scripts/validate_skills.py
 python scripts/validate_skills.py --json
 ```
 
-验证源码治理规则；治理错误返回非零退出码。CI 运行 `python scripts/validate_skills.py`。
+验证源码治理规则；治理错误返回非零退出码。CI 运行 `validate_skills.py` 与 `pytest`。
 
 本地开发（含 pytest）：
 

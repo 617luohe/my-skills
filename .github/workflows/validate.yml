@@ -15,5 +15,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install dev deps
+        run: pip install -e ".[dev]"
       - name: Validate source governance
         run: python scripts/validate_skills.py
+      - name: Run tests
+        run: python -m pytest -q

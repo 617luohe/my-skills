@@ -4,6 +4,23 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 2026-08-12 - 体系优化报告落地（简洁收敛）
+
+#### Changed
+
+- **P0-1**: 路由加载措辞统一（复杂需求先加载 + 每会话首个复杂需求强制加载）
+- **P0-2**: 1-规划 adr-format 引用指向 vocabulary 真源
+- **P0-3**: README「部署方法」→「分发与部署」；治理文档锚点对齐
+- **P1-1**: 2-开发/tdd 委托彻底化（MUST 与子流程去重，93→~80 行）
+- **P1-2**: index-keeper / vault-publisher 改 `invocation: user`
+- **P1-3**: CLAUDE.md 支撑层补 0--explore
+- **P1-4**: CI 增加 pytest
+- **P1-5**: 0-询问luohe 探索类三线分流脚注
+- **P1-6**: CLAUDE 规模表 S/M/L/XL 映射
+- **P2-1**: 5-版本管理 / 6-最后整理 / 0--neat-freak 示例与清单外迁 references
+- **P2-2~4**: README 首行、0-询问luohe 主流程压缩、CONTEXT 部署术语引用 README
+- **P2-5**: repository_version / 全技能 version → 1.1.0
+
 ### 2026-08-12 - 体系优化批次（skills-manager 分发 + 一致性收敛）
 
 #### Added

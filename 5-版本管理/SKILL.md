@@ -103,14 +103,7 @@ git push -u origin $(git branch --show-current)
 
 ### guardrails — Git 安全护栏（可选）
 
-为高风险仓库可选安装 PreToolUse 钩子，拦截危险命令（如 `git push`、`git reset --hard`、`git clean -fd`、`git branch -D`）。
-
-执行前先问作用域：
-
-- 仅当前项目（推荐）→ `.claude/settings.json`
-- 全局所有项目 → `~/.claude/settings.json`
-
-原则：合并现有 hooks 配置，不覆盖其他设置。
+可选安装 PreToolUse 钩子拦截危险命令；作用域问用户（项目 `.claude/settings.json` 或全局）。合并现有 hooks，不覆盖。
 
 ### push / pull — 同步远程
 
@@ -130,24 +123,7 @@ git pull                  # 拉取远程更新
 - 改坏了需要回滚到之前的版本
 - 准备推送到 GitHub
 
-## 案例
-
-```
-你：帮我保存一下进度，我改了用户模块
-Claude：git add src/users.py tests/test_users.py && git commit -m "feat: 完成用户模块基础功能"
-       [<当前分支> abc1234] feat: 完成用户模块基础功能
-
-你：看看改了什么
-Claude：git log --oneline --graph
-       * abc1234 feat: 完成用户模块基础功能
-       * def5678 初始项目脚手架
-
-你：我想推送到 GitHub
-Claude：仓库 URL 是什么？
-你：https://github.com/user/project.git
-Claude：git remote add origin https://github.com/user/project.git
-       git push -u origin $(git branch --show-current)
-```
+对话示例见 [references/examples.md](references/examples.md)。
 
 ## 完成标准
 

@@ -80,65 +80,7 @@ disable-model-invocation: false
 
 ### 4. 会话交接
 
-创建交接文档，让下个会话无缝继续。
-
-**规则**：
-
-- 保存到 `docs/handoff/` 下的交接文件，返回路径给你
-- 不重复已在其他产物（PRD、commit、diff）中的内容，引用路径或 URL 即可
-- 建议下个会话要用到的技能
-
-模板：
-
-```md
-# Handoff: <会话主题>
-
-## 当前状态
-
-做到了哪一步、什么还没做。
-
-## 已做出的决策
-
-- [决策 1] — 为什么
-
-## 未决事项
-
-- [待定事项]
-
-## 下一步行动
-
-1. [行动] → 建议使用的技能
-
-## 引用
-
-- PRD: [路径]
-- 相关文件: [路径]
-```
-
----
-
-## 变更摘要
-
-所有步骤完成后，输出摘要：
-
-```
-## 会话收尾完成
-
-### 修改总结
-- 本次改动：xxx
-
-### 经验沉淀
-- memory 新增/更新：xxx（原因）
-- 决策已并入 memory（luohe 拍板项）
-- （若有毕业信号，提示转 0--neat-freak）
-
-### 项目结构整理
-- 清理临时文件：xxx
-- 归位/调整：xxx
-
-### 交接
-- 交接文档 → `docs/handoff/handoff-xxxx.md`
-```
+创建 `docs/handoff/` 交接文档（模板见 [references/handoff-template.md](references/handoff-template.md)），返回路径；不重复 PRD/commit 已有内容。
 
 ---
 
@@ -150,14 +92,4 @@ disable-model-invocation: false
 
 需要深度审查整个知识库是否与代码一致、记忆是否膨胀 → 用 [`0--neat-freak`]。
 
-## 案例
-
-```
-你：今天做完了，帮我收尾
-Claude：1. 修改总结 → 改了 payment 模块 3 个文件，决定用原路退款
-        2. 经验沉淀 → memory 新增"退款网关有 5% 超时，需重试"；决策"原路退款方案"并入 memory
-        3. 项目结构整理 → 删掉 scratch_test.py 等 2 个临时文件
-        4. 交接 → docs/handoff/handoff-a7k3.md
-
-        注：CLAUDE.md 里 payment 路由表看着有点旧，建议跑一次 0--neat-freak 做全局同步。
-```
+对话示例见 [references/examples.md](references/examples.md)。

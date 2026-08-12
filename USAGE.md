@@ -1,7 +1,7 @@
 # Skills 使用说明书（索引）
 
 > 本文件只做**导航索引**，每个技能的完整规则以其 `SKILL.md` 为唯一事实源，本文件不重复正文。
-> **路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；选定后按该技能执行。完整分类见 [README.md](README.md)。
+> **路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。完整分类见 [README.md](README.md)。
 
 ---
 
@@ -40,7 +40,7 @@
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
 | `0--tokenless`  | 超压缩沟通模式（caveman / less tokens / be brief）                | `/0--tokenless`              | [SKILL.md](0--tokenless/SKILL.md)  |
 | `0-启动`        | Python 项目最小初始化：项目结构 + 本地 git + uv 环境              | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |
-| `0-询问luohe`   | **技能路由网关**（唯一事实源：规模表 + 场景快速查找）             | 每次会话首个复杂需求强制加载 | [SKILL.md](0-询问luohe/SKILL.md)   |
+| `0-询问luohe`   | **技能路由网关**（唯一事实源：规模表 + 场景快速查找）             | 复杂需求先加载；首个复杂需求强制 | [SKILL.md](0-询问luohe/SKILL.md)   |
 | `1-规划`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-规划`                    | [SKILL.md](1-规划/SKILL.md)        |
 | `2-开发`        | TDD 红-绿-重构实现，pytest 驱动                                   | `/2-开发`                    | [SKILL.md](2-开发/SKILL.md)        |
 | `3-检查`        | 代码审查与验收（Review / 只建单 / 架构评估自动路由）              | `/3-检查`                    | [SKILL.md](3-检查/SKILL.md)        |

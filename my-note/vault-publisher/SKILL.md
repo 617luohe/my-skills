@@ -2,7 +2,7 @@
 name: vault-publisher
 layer: my-note
 description: [内部] 固定 Vault 的发布阶段。校验、受控暂存、commit、sync、push。仅由 noteall 编排调度，不可独立触发。
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # vault-publisher — 固定 Vault 发布（内部 Worker）

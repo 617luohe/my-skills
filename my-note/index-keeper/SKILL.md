@@ -2,7 +2,7 @@
 name: index-keeper
 layer: my-note
 description: [内部] 索引维护 Worker。自主维护一级文件夹与领域文件夹的 _INDEX.md：增量更新、缺失补全、健康检查。由 noteall 路由器调度。
-disable-model-invocation: false
+disable-model-invocation: true
 ---
 
 # index-keeper — 索引维护
@@ -38,7 +38,7 @@ disable-model-invocation: false
 | 缺失补全         | noteall Maintain / 手动                    | 仅为无 `_INDEX.md` 的一级/领域文件夹创建初始 INDEX           |
 | 健康检查（轻量） | noteall Publish 收尾前                     | 断链、孤岛、INDEX 缺失条目、统计过期；报告不阻塞             |
 | 健康检查（完整） | noteall Maintain / 手动                    | 全库扫描：缺失 INDEX、失效链接、缺失条目、过期描述、统计过期 |
-| 全量更新         | `/my-note/index-keeper` / noteall Maintain | 扫描所有一级与领域文件夹，生成/更新所有 _INDEX.md            |
+| 全量更新         | noteall Maintain                           | 扫描所有一级与领域文件夹，生成/更新所有 _INDEX.md            |
 
 ### 增量更新自动触发时机
 
@@ -54,9 +54,8 @@ disable-model-invocation: false
 
 ## 四、调用纪律
 
-- **仅由 noteall 调度**：增量更新（Curate 级联）、缺失补全（Maintain）、健康检查（Publish 收尾前/Maintain）
-- **例外——独立维护入口**：用户显式调用 `/my-note/index-keeper` 或 noteall Maintain 触发全量更新（需确认变更）
-- **严禁**：在非 noteall 上下文中直接调用（会缺失 Vault 路径/owned paths 上下文）
+- **仅由 noteall 调度**：增量更新（Curate 级联）、缺失补全/全量更新/健康检查（Maintain）、Publish 收尾前轻量检查
+- **不可独立触发**：缺 Vault 路径与 owned paths 上下文
 
 ## 五、输出
 
