@@ -23,7 +23,7 @@ my-skills/
 │   └── vault-publisher/         — 内部 Worker（固定 Vault 发布）
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
-├── multi-worker/                — 并行开发编排器（实验性）
+├── multi-worker/                — 并行开发编排器
 └── scripts/                     — manifest 解析与受管技能部署脚本
 ```
 
@@ -145,40 +145,33 @@ Intake → Curate → Publish（维护模式跳过 Intake）
 
 ## 部署方法
 
-技能单一事实源 + 管理器同步分发：
+技能单一事实源 + **skills-manager** 同步分发：
 
-1. **权威源（唯一编辑处）**：`E:\workplace\skills工程\my-skills`（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
-2. **运行时生效**：`~/.claude/skills/` 与项目 `.claude/.cursor/.codex/skills/` 下的符号链接指向 `~/.skills-manager/skills/`（skills-manager 同步代理），由 skills-manager 从权威源仓库（GitHub 远端）拉取更新。发布流程：改权威源 → commit + push → skills-manager 触发 update 后运行时生效（存在延迟窗口，非"立即生效"）
-3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/skill_manifest.py` + `scripts/validate_skills.py` 做结构校验（manifest ↔ 目录 ↔ frontmatter ↔ openai.yaml 四方一致）
+1. **权威源（唯一编辑处）**：本仓库（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
+2. **运行时生效**：改权威源 → commit + push → skills-manager 从远端拉取 → 符号链接生效到 `~/.claude/skills/` 及项目 `.claude/.cursor/.codex/skills/`（存在延迟窗口）
+3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/validate_skills.py` 校验源码治理（manifest ↔ 目录 ↔ frontmatter ↔ openai.yaml）
 
-> 历史说明：曾计划 junction 直连权威源（README 2026-08-07 声称已取代 skills-manager），但实际部署仍经 skills-manager 同步代理；`sync-skills.py` 已删除，无独立镜像脚本。
+> 分发由 skills-manager 负责；本仓库治理脚本**不校验**宿主部署目录。
 
 ## 治理验证
 
-治理脚本位于 `scripts/`（`skill_manifest.py` / `validate_skills.py`），在仓库根目录执行：
+治理脚本位于 `scripts/`，在仓库根目录执行：
 
 ```bash
 python scripts/validate_skills.py
 python scripts/validate_skills.py --json
 ```
 
-验证源码治理规则（默认不检查部署目录）；`--check-deployments` 验证父目录下 `.claude/.cursor/.codex` 的受管清单和受管内容与源码一致，忽略未受管的额外技能：
-
-```bash
-python scripts/validate_skills.py --check-deployments
-```
-
-> 注意：`--check-deployments` 目前会报错——各宿主部署根缺 `.my-skills-managed.json` 受管状态文件（部署状态未随分发机制迁移维护），属已知待办。警告不影响退出码；治理错误返回非零退出码。CI 只运行 `python scripts/validate_skills.py` 静态治理验证，不依赖宿主部署目录。
+验证源码治理规则；治理错误返回非零退出码。CI 运行 `python scripts/validate_skills.py`。
 
 ## 技能生命周期
 
-| 阶段     | 动作                                                                                   | 校验                                                                     |
-| -------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 阶段     | 动作                                                                   | 校验                                                                     |
+| -------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | **新建** | 写 `SKILL.md`（description 含触发词）→ manifest 登记（`status: stable`）→ 跑 validator | 命名规范 + frontmatter 三处一致 + 引用完整 + description 非空且 ≥12 字符 |
-| **维护** | 直接改权威源，跑 validator 过闸                                                        | 每次提交前 `python scripts/validate_skills.py`                           |
-| **退役** | manifest `status` 改 `deprecated` + 写 `deprecated_note`（迁移指引）→ 分发层删链接     | deprecated 必须带 `deprecated_note`                                      |
-| **清理** | 从 manifest 删除条目 + 删除目录，同步清理分发层遗留链接                                | validator 报 manifest 与目录的 missing/extra 不一致                      |
+| **维护** | 直接改权威源，跑 validator 过闸                                        | 每次提交前 `python scripts/validate_skills.py`                           |
+| **退役** | manifest `status` 改 `deprecated` + 写 `deprecated_note`（迁移指引）   | deprecated 必须带 `deprecated_note`                                      |
+| **清理** | 从 manifest 删除条目 + 删除目录                                        | validator 报 manifest 与目录的 missing/extra 不一致                      |
 
 - `status: deprecated` 表示技能已弃用但保留一版供迁移，validator 要求必须带 `deprecated_note`。
-- 退役后分发层（`~/.claude/skills`）遗留链接必须删除，防止旧名被模型触发。
-- 废弃技能不应被正文引用（validator 会把未知 `/skill` 引用报错），迁移指引写在 `deprecated_note` 而非旧文档里。
+- 退役后由 skills-manager 同步清除；`deprecated_note` 写迁移指引，正文不应再引用旧技能名。

@@ -304,33 +304,3 @@ def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path
     write_manifest(entry("vocabulary/code-review") + entry("other/code-review"))
     with pytest.raises(ValueError, match="deployment name collision"):
         publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
-
-
-def test_missing_deployment_state_still_checks_nested_deployment_path(tmp_path: Path):
-    from validate_skills import validate_repository
-
-    nested = """schema_version: 1
-repository_version: 1.0.0
-skills:
-  - name: vocabulary/code-review
-    path: vocabulary/code-review
-    version: 1.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-"""
-    (tmp_path / "skills-manifest.yaml").write_text(nested, encoding="utf-8")
-    source = tmp_path / "vocabulary" / "code-review"
-    source.mkdir(parents=True)
-    (source / "SKILL.md").write_text("content", encoding="utf-8")
-    host = tmp_path.parent / ".claude" / "skills"
-    (host / "code-review").mkdir(parents=True)
-    (host / "code-review" / "SKILL.md").write_text("different", encoding="utf-8")
-
-    report = validate_repository(tmp_path, check_deployments=True)
-    assert any(e["code"] == "deployment-state" for e in report["errors"])
-    hash_errors = [e for e in report["errors"] if e["code"] == "deployment-hash"]
-    assert hash_errors and hash_errors[0]["path"].endswith(".claude/skills/code-review")

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import importlib.util
 import json
 import re
@@ -15,7 +14,12 @@ from typing import Any
 SCRIPT_DIR = Path(__file__).resolve().parent
 MANIFEST_MODULE_PATH = SCRIPT_DIR / "skill_manifest.py"
 BANNED_SKILLS = ("0--Agent统筹", "0--auto-iteration", "0--graphify")
-HOSTS = (".claude", ".cursor", ".codex")
+USER_ONLY_BODY_RE = re.compile(
+    r"仅(?:可由|由)?用户(?:显式)?(?:调用|触发|输入)"
+)
+WORKER_ONLY_BODY_RE = re.compile(
+    r"仅由\s+\S+\s+调度|严禁(?:直调|直接调用)"
+)
 LINK_RE = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
 SLASH_SKILL_RE = re.compile(
     r"(?<![\w.])/(?!/)([\w-]+/[\w-]+(?:--?[\w-]+)*|[\w-]+(?:--?[\w-]+)+)",
@@ -160,18 +164,6 @@ def _implicit_invocation(path: Path) -> bool:
                 )
             found = raw_value == "true"
     return True if found is None else found
-
-
-def _tree_hash(path: Path) -> str:
-    digest = hashlib.sha256()
-    for file_path in sorted(item for item in path.rglob("*") if item.is_file()):
-        relative = file_path.relative_to(path).as_posix().encode("utf-8")
-        digest.update(len(relative).to_bytes(8, "big"))
-        digest.update(relative)
-        data = file_path.read_bytes()
-        digest.update(len(data).to_bytes(8, "big"))
-        digest.update(data)
-    return digest.hexdigest()
 
 
 def _validate_naming(name: str) -> str | None:
@@ -654,116 +646,7 @@ def _validate_markdown(
             )
 
 
-def _validate_deployments(
-    root: Path, skills: list[dict[str, Any]], errors: list[dict[str, str]]
-) -> None:
-    published = sorted(
-        (
-            skill["name"],
-            skill_manifest.deployment_name(skill["name"]),
-        )
-        for skill in skills
-        if skill.get("distribution") == "synchronized"
-        and isinstance(skill.get("name"), str)
-    )
-    expected_names = {deployment_name for _, deployment_name in published}
-    for host in HOSTS:
-        deployment = root.parent / host / "skills"
-        if not deployment.is_dir():
-            errors.append(
-                _finding(
-                    "deployment-state",
-                    deployment,
-                    f"{host} deployment root is missing",
-                    root,
-                )
-            )
-            continue
-
-        state_path = deployment / ".my-skills-managed.json"
-        try:
-            state = json.loads(state_path.read_text(encoding="utf-8-sig"))
-        except FileNotFoundError:
-            errors.append(
-                _finding(
-                    "deployment-state",
-                    state_path,
-                    "managed state file is missing; cannot infer managed skills from directory entries",
-                    root,
-                )
-            )
-            # Continue with the deterministic directory checks. A missing state
-            # file is itself an error, but must not hide nested-name path drift.
-            managed_names = set()
-            state = None
-        except (OSError, json.JSONDecodeError) as exc:
-            errors.append(
-                _finding(
-                    "deployment-state",
-                    state_path,
-                    f"invalid managed state: {exc}",
-                    root,
-                )
-            )
-            continue
-
-        managed = state.get("skills") if isinstance(state, dict) else None
-        state_valid = (
-            isinstance(state, dict)
-            and state.get("schema_version") == 1
-            and isinstance(managed, list)
-            and all(isinstance(name, str) and name for name in managed)
-            and len(managed) == len(set(managed))
-        )
-        if not state_valid:
-            if state is not None:
-                errors.append(
-                    _finding(
-                        "deployment-state",
-                        state_path,
-                        "managed state must contain schema_version 1 and a unique list of non-empty skill names",
-                        root,
-                    )
-                )
-            managed_names = set()
-
-        if state_valid:
-            managed_names = set(managed)
-            if managed_names != expected_names:
-                errors.append(
-                    _finding(
-                        "deployment-state-drift",
-                        state_path,
-                        f"expected managed skills {sorted(expected_names)}; found {sorted(managed_names)}",
-                        root,
-                    )
-                )
-
-        # Only names in the source publication are managed by this validation.
-        # Other deployment entries are explicitly left untouched by synchronization.
-        for name, deployment_name in published:
-            deployed_skill = deployment / deployment_name
-            if not deployed_skill.is_dir():
-                errors.append(
-                    _finding(
-                        "deployment-hash",
-                        deployed_skill,
-                        "managed deployment directory is missing",
-                        root,
-                    )
-                )
-            elif _tree_hash(root / name) != _tree_hash(deployed_skill):
-                errors.append(
-                    _finding(
-                        "deployment-hash",
-                        deployed_skill,
-                        "deployment content hash differs from source",
-                        root,
-                    )
-                )
-
-
-def validate_repository(root: Path, check_deployments: bool = False) -> dict[str, Any]:
+def validate_repository(root: Path) -> dict[str, Any]:
     root = root.resolve()
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
@@ -799,8 +682,6 @@ def validate_repository(root: Path, check_deployments: bool = False) -> dict[str
     _validate_dependency_references(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(skill, root, canonical, errors, warnings)
-    if check_deployments:
-        _validate_deployments(root, skills, errors)
     errors.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     warnings.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     return {"ok": not errors, "root": str(root), "errors": errors, "warnings": warnings}
@@ -812,15 +693,10 @@ def main(argv: list[str] | None = None) -> int:
         "--json", action="store_true", help="emit a deterministic JSON report"
     )
     parser.add_argument(
-        "--check-deployments",
-        action="store_true",
-        help="compare parent host deployments with source",
-    )
-    parser.add_argument(
         "--root", type=Path, default=SCRIPT_DIR.parent, help=argparse.SUPPRESS
     )
     args = parser.parse_args(argv)
-    report = validate_repository(args.root, args.check_deployments)
+    report = validate_repository(args.root)
     if args.json:
         json.dump(report, sys.stdout, ensure_ascii=True, indent=2, sort_keys=True)
         print()
