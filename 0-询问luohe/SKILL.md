@@ -29,9 +29,9 @@ disable-model-invocation: false
 
 6. **`/5-版本管理`** — Review 通过后，仅在用户明确授权时 commit + push（可选）
 
-### 并行加速（实验性）
+### 并行加速
 
-- **`/multi-worker`** — 需要完整设计文档 + 独立子任务 + Agent配置验证
+- **`/multi-worker`** — 需要完整设计文档 + 独立子任务 + Agent配置验证（仅用户显式调用）
 
 ## 上游（汇入主流程）
 

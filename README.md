@@ -49,7 +49,11 @@ my-skills/
 
 ## 调用分类
 
-所有技能均允许模型按描述自动调用，也允许用户显式输入调用（统一 `disable-model-invocation: false`、`allow_implicit_invocation: true`）。按层级分组：
+**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；选定后按该技能执行。CLAUDE.md 路由表为速查镜像。
+
+**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 `/multi-worker`）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
+
+按层级分组：
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
 - **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--tokenless`
@@ -118,7 +122,7 @@ my-skills/
 | 技能                                          | 职责                                                                 |
 | --------------------------------------------- | -------------------------------------------------------------------- |
 | **leader** (`leader`)                         | 一句话想法 → agent 可独立执行的任务书                                |
-| **multi-worker** (`multi-worker`)             | 并行开发编排器（实验性）                                             |
+| **multi-worker** (`multi-worker`)             | 并行开发编排器（仅用户显式调用）                                     |
 | **writing-for-agents** (`writing-for-agents`) | 写给 agent 的文档写作规范（触发分支/完成标准/leading words/pruning） |
 | **wizard** (`wizard`)                         | 交互式 bash 向导：带人走完只有人能做的步骤（配 secrets/一次性迁移）  |
 | **vision-skill** (`vision-skill`)             | 图片描述：为纯文本模型（DeepSeek 等）经 OpenCode Go 视觉 API 看图    |
