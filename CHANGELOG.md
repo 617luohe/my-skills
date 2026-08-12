@@ -4,6 +4,10 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **工作哲学**：三源重构（Caveman/Karpathy/Vercel）——Karpathy 四则独立保留，恢复语义完整性
+
 ## [1.3.0] - 2026-08-12
 
 ### Removed

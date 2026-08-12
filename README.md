@@ -48,7 +48,7 @@ my-skills/
 
 ## 调用分类
 
-**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。CLAUDE.md 路由表为速查镜像。
+**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。CLAUDE.md 常驻工作哲学，路由表不镜像。
 
 **单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
 

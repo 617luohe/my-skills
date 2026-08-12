@@ -42,7 +42,7 @@ disable-model-invocation: false
 
 ## 语言风格
 
-> **优先级**：若处于「工作哲学·沟通」简洁表达生效状态，本技能放弃句式强制，以简洁表达为准——内容优先于风格。
+> **优先级**：若 CLAUDE.md「工作哲学·输出（Caveman）」生效，本技能放弃句式强制，以简洁表达为准——内容优先于风格。
 
 - 禁止 AI 腔（客套、公文式、服务员用语）——详见 [references/style-patterns.md](references/style-patterns.md)
 - 每次输出至少使用 **2 种核心句式**（设问/对比/断言/逻辑/比喻/共情），优先设问与对比
