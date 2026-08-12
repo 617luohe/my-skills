@@ -26,7 +26,10 @@ REQUIRED_FIELDS = {
     "sync",
     "dependencies",
 }
-OPTIONAL_FIELDS = {"layer", "deprecated_note"}
+OPTIONAL_FIELDS = {"layer", "deprecated_note", "category"}
+ALLOWED_CATEGORIES = frozenset(
+    {"router", "main-flow", "extension", "standalone", "vocabulary", "my-note"}
+)
 
 
 def _scalar(text: str, line_number: int) -> Any:

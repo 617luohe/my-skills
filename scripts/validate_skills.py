@@ -66,6 +66,67 @@ MY_NOTE_SKILL_RE = re.compile(
 ROUTER_SKILL = "0-询问luohe"
 
 
+def _expected_category(name: str) -> str:
+    if name == ROUTER_SKILL:
+        return "router"
+    if name.startswith("0--"):
+        return "extension"
+    if STAGE_SKILL_RE.match(name):
+        return "main-flow"
+    if name.startswith("vocabulary/"):
+        return "vocabulary"
+    if name.startswith("my-note/"):
+        return "my-note"
+    return "standalone"
+
+
+def _skill_refs_in_markdown(text: str) -> set[str]:
+    refs: set[str] = set()
+    for match in SLASH_SKILL_RE.finditer(text):
+        candidate = match.group(1)
+        if candidate.split("/")[0] not in SKILL_REF_EXCLUSIONS:
+            refs.add(candidate)
+    return refs
+
+
+def _validate_claude_mirror(
+    root: Path,
+    errors: list[dict[str, str]],
+    claude_path: Path | None = None,
+) -> None:
+    router_path = root / ROUTER_SKILL / "SKILL.md"
+    if not router_path.is_file():
+        return
+    if claude_path is None:
+        claude_path = root.parent / "CLAUDE.md"
+    if not claude_path.is_file():
+        return
+    router_refs = _skill_refs_in_markdown(
+        router_path.read_text(encoding="utf-8")
+    )
+    claude_text = claude_path.read_text(encoding="utf-8")
+    support_start = claude_text.find("## 支撑层")
+    if support_start < 0:
+        return
+    support_end = claude_text.find("\n## ", support_start + 1)
+    section = (
+        claude_text[support_start:support_end]
+        if support_end >= 0
+        else claude_text[support_start:]
+    )
+    claude_support_refs = _skill_refs_in_markdown(section)
+    missing = sorted(claude_support_refs - router_refs)
+    if missing:
+        errors.append(
+            _finding(
+                "claude-mirror",
+                claude_path,
+                f"支撑层技能未在 {ROUTER_SKILL} 覆盖: {missing}",
+                root,
+            )
+        )
+
+
 def _load_manifest_module():
     spec = importlib.util.spec_from_file_location(
         "skill_manifest", MANIFEST_MODULE_PATH
@@ -387,6 +448,26 @@ def _validate_manifest(
                     root,
                 )
             )
+        category = skill.get("category")
+        expected = _expected_category(name)
+        if not isinstance(category, str) or category not in skill_manifest.ALLOWED_CATEGORIES:
+            errors.append(
+                _finding(
+                    "manifest-category",
+                    root / "skills-manifest.yaml",
+                    f"{name}: category must be one of {sorted(skill_manifest.ALLOWED_CATEGORIES)}",
+                    root,
+                )
+            )
+        elif category != expected:
+            errors.append(
+                _finding(
+                    "manifest-category",
+                    root / "skills-manifest.yaml",
+                    f"{name}: category {category!r} != expected {expected!r}",
+                    root,
+                )
+            )
     return skills
 
 
@@ -672,7 +753,12 @@ def _validate_markdown(
             )
 
 
-def validate_repository(root: Path) -> dict[str, Any]:
+def validate_repository(
+    root: Path,
+    *,
+    check_claude_mirror: bool = False,
+    claude_path: Path | None = None,
+) -> dict[str, Any]:
     root = root.resolve()
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
@@ -708,6 +794,8 @@ def validate_repository(root: Path) -> dict[str, Any]:
     _validate_dependency_references(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(skill, root, canonical, errors, warnings)
+    if check_claude_mirror:
+        _validate_claude_mirror(root, errors, claude_path)
     errors.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     warnings.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     return {"ok": not errors, "root": str(root), "errors": errors, "warnings": warnings}
@@ -721,8 +809,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--root", type=Path, default=SCRIPT_DIR.parent, help=argparse.SUPPRESS
     )
+    parser.add_argument(
+        "--check-claude-mirror",
+        action="store_true",
+        help="compare CLAUDE.md 支撑层 with 0-询问luohe coverage",
+    )
+    parser.add_argument(
+        "--claude-md",
+        type=Path,
+        default=None,
+        help="CLAUDE.md path (default: <root>/../CLAUDE.md)",
+    )
     args = parser.parse_args(argv)
-    report = validate_repository(args.root)
+    report = validate_repository(
+        args.root,
+        check_claude_mirror=args.check_claude_mirror,
+        claude_path=args.claude_md,
+    )
     if args.json:
         json.dump(report, sys.stdout, ensure_ascii=True, indent=2, sort_keys=True)
         print()

@@ -15,19 +15,21 @@ repository_version: 1.0.0
 skills:
   - name: good
     path: good
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model
-    hosts: [claude]
+    hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
     dependencies: []
   - name: bad
     path: bad
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model
-    hosts: [claude]
+    hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
     dependencies: []
@@ -106,10 +108,12 @@ def test_manifest_user_against_disable_false_reports_parity(repo: Path):
     manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
     manifest = manifest.replace(
         """    path: good
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model""",
         """    path: good
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: user""",
@@ -124,9 +128,11 @@ def test_deprecated_without_note_reports_manifest_error(repo: Path):
     manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
     manifest = manifest.replace(
         """    path: good
+    category: standalone
     version: 1.0.0
     status: stable""",
         """    path: good
+    category: standalone
     version: 1.0.0
     status: deprecated""",
     )
@@ -144,10 +150,12 @@ def test_deprecated_with_note_requires_user_invocation(repo: Path):
     manifest = (repo / "skills-manifest.yaml").read_text(encoding="utf-8")
     manifest = manifest.replace(
         """    path: good
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model""",
         """    path: good
+    category: standalone
     version: 1.0.0
     status: deprecated
     deprecated_note: 迁移至 noteall 三阶段流水线
@@ -186,6 +194,7 @@ repository_version: 1.0.0
 skills:
   - name: main
     path: main
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model
@@ -195,6 +204,7 @@ skills:
     dependencies: [vocabulary/dep]
   - name: vocabulary/dep
     path: vocabulary/dep
+    category: vocabulary
     version: 1.0.0
     status: stable
     invocation: model
@@ -234,6 +244,7 @@ repository_version: 1.0.0
 skills:
   - name: terse
     path: terse
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model
@@ -257,8 +268,7 @@ skills:
 def test_deprecated_publication_is_user_only_with_note(tmp_path: Path):
     from skill_manifest import load_manifest, publication
 
-    manifest = MANIFEST.replace("hosts: [claude]", "hosts: [claude, cursor, codex]")
-    manifest = manifest.replace(
+    manifest = MANIFEST.replace(
         "    status: stable\n    invocation: model",
         "    status: deprecated\n    deprecated_note: use /good\n    invocation: model",
         1,
@@ -292,7 +302,18 @@ def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path
         path = tmp_path / name
         path.mkdir(parents=True, exist_ok=True)
         (path / "SKILL.md").write_text("content", encoding="utf-8")
-        return f"  - name: {name}\n    path: {name}\n    version: 1.0.0\n    status: stable\n    invocation: model\n    hosts: [claude, cursor, codex]\n    distribution: synchronized\n    sync: true\n    dependencies: []\n"
+        if name.startswith("vocabulary/"):
+            category = "vocabulary"
+        elif name.startswith("my-note/"):
+            category = "my-note"
+        else:
+            category = "standalone"
+        return (
+            f"  - name: {name}\n    path: {name}\n    category: {category}\n"
+            f"    version: 1.0.0\n    status: stable\n    invocation: model\n"
+            f"    hosts: [claude, cursor, codex]\n    distribution: synchronized\n"
+            f"    sync: true\n    dependencies: []\n"
+        )
 
     write_manifest(entry("vocabulary/code-review") + entry("my-note/noteall"))
     result = publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
@@ -312,6 +333,7 @@ repository_version: 1.0.0
 skills:
   - name: user-skill
     path: user-skill
+    category: standalone
     version: 1.0.0
     status: stable
     invocation: model
@@ -334,3 +356,38 @@ skills:
     report = validate_repository(tmp_path)
     semantic = [e for e in report["errors"] if e["code"] == "invocation-semantic"]
     assert len(semantic) == 1, report["errors"]
+
+
+def test_claude_mirror_detects_missing_support_skill(tmp_path: Path):
+    manifest = """schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: 0-询问luohe
+    path: 0-询问luohe
+    category: router
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+"""
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    router = tmp_path / "0-询问luohe"
+    router.mkdir()
+    (router / "SKILL.md").write_text(
+        "---\nname: 0-询问luohe\ndescription: router test\ndisable-model-invocation: false\n---\n\n| x | `/1-规划` |\n",
+        encoding="utf-8",
+    )
+    claude = tmp_path / "CLAUDE.md"
+    claude.write_text(
+        "## 支撑层\n\n| 信号 | 技能 |\n| --- | --- |\n| 探索 | `/0--explore` |\n",
+        encoding="utf-8",
+    )
+    report = validate_repository(
+        tmp_path, check_claude_mirror=True, claude_path=claude
+    )
+    mirror = [e for e in report["errors"] if e["code"] == "claude-mirror"]
+    assert len(mirror) == 1
+    assert "0--explore" in mirror[0]["message"]

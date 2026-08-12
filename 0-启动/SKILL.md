@@ -6,133 +6,29 @@ disable-model-invocation: false
 
 # 0-启动 — 新项目最小初始化
 
-小项目开张只要三件事：**一个项目结构、一个本地 git、一个 uv 环境**。做完就能写代码。
+三件事：**项目结构 + 本地 git + uv 环境**。细节见 [references/scaffold.md](references/scaffold.md)。
 
 ## MUST 规则
 
-1. **只做这三件事。** ruff / mypy / pre-commit / CI / 任务管理文件一律不装、不问、不生成——用户主动要才加（见「按需追加」）。
-2. **只问一轮。** 项目名 + 位置。Python 版本不问，默认由 uv 选当前解释器并写入 `.python-version`；用户点名版本才用 `-p`。
+1. **只做这三件事。** ruff/mypy/pre-commit/CI 不装不问不生成——用户主动要才加。
+2. **只问一轮。** 项目名 + 位置；Python 版本默认由 uv 选，点名才用 `-p`。
 3. **uv 缺失自动装，不问。**
-4. **收尾必须验证。** `uv run pytest` 通过才算完成。
+4. **收尾必须 `uv run pytest` 通过。**
 
 ## 流程
 
-### 1. 确认（一轮）
-
-- **项目名** — 用于目录名和包名。带连字符没问题，uv 会把包目录转成下划线（`my-app` → `src/my_app/`）。
-- **位置** — 新建子目录，还是在当前空目录里初始化。
-
-### 2. 备好 uv
-
-```bash
-uv --version
-```
-
-没装就装，装完继续：
-
-```bash
-# Windows
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-# macOS / Linux / WSL
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-### 3. 建结构 + git（一条命令）
-
-```bash
-uv init --package --vcs git <project-name>   # 新建目录
-uv init --package --vcs git .                # 在当前空目录初始化
-```
-
-产出：
-
-```
-project-name/
-├── src/project_name/__init__.py   # 带 main() 入口
-├── pyproject.toml
-├── README.md
-├── .python-version
-├── .gitignore                     # Python 标准规则 + .venv
-└── .git/                          # 已 init，尚无提交
-```
-
-要点：
-
-- 目录名不是合法包名时（比如以数字或下划线开头），补 `--name <pkg-name>`。
-- 指定 Python 版本：`uv init --package --vcs git -p 3.12 <project-name>`。
-- 纯脚本、不打包的一次性工具用 `uv init`（不带 `--package`）——扁平布局，根目录一个 `main.py`。
-
-### 4. 加 tests + 建环境
-
-```bash
-mkdir tests
-```
-
-`tests/test_smoke.py`：
-
-```python
-def test_smoke() -> None:
-    assert True
-```
-
-```bash
-uv add --dev pytest
-```
-
-这一步顺带创建 `.venv/` 和 `uv.lock`，并把项目自身以可编辑方式装进环境——测试里 `from project_name import ...` 直接可用，不用配 path。
-
-### 5. 验证并保持未提交
-
-```bash
-uv run pytest
-git status --short --branch
-```
-
-不执行 `git add` 或 `git commit`。初始化产物保持未提交，用户查看变更清单后，只有明确要求保存版本时才交给 `/5-版本管理`。
+1. **确认** — 项目名 + 位置（新建子目录 vs 当前空目录）
+2. **备好 uv** — `uv --version`，缺失则安装
+3. **建结构 + git** — `uv init --package --vcs git <name>` 或 `.`
+4. **加 tests + 环境** — `tests/test_smoke.py` + `uv add --dev pytest`
+5. **验证并保持未提交** — `uv run pytest` + `git status`；不 commit，保存版本交 `/5-版本管理`
 
 ## 交付回报
 
-收尾必须输出：
-
-- **变更清单**：创建或修改的文件及用途
-- **Git 状态**：`git status --short --branch` 的结果，明确是否保持未提交
-- **验证结果**：`uv run pytest` 的通过/失败摘要
-- **下一阶段推荐**：基于当前结构给出下一步最小开发任务
-
-## 按需追加
-
-用户主动提了才做，各一行搞定，不主动推销：
-
-| 需求              | 命令                                                                                   |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| 代码检查 / 格式化 | `uv add --dev ruff`                                                                    |
-| 类型检查          | `uv add --dev mypy`                                                                    |
-| 提交前门禁        | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
-| 运行时依赖        | `uv add <package>`                                                                     |
-| 推远程            | 交给 `/5-版本管理`                                                                     |
-
-工具配置统一写进 `pyproject.toml` 的 `[tool.*]`，不另开配置文件。
-
-## 验证清单
-
-- [ ] `src/<pkg>/` 和 `tests/` 就位
-- [ ] `.venv/` 和 `uv.lock` 已生成
-- [ ] `uv run pytest` 通过
-- [ ] git 已 init，初始化产物保持未提交并已展示状态
+- 变更清单、Git 状态（是否未提交）、pytest 结果、下一阶段推荐
 
 ## 什么时候用
 
-- 开一个新的 Python 项目，想立刻能写代码
-- 手上一堆散装脚本，要收成一个正经项目
+- 新开 Python 项目、散装脚本收成正经项目
 
-## 案例
-
-```
-你：/0-启动 新建一个项目叫 data-pipeline
-Claude：在当前目录下新建 data-pipeline/ 子目录，还是就在这个目录初始化？
-你：新建子目录
-Claude：[uv init --package --vcs git data-pipeline → tests/test_smoke.py → uv add --dev pytest]
-        1 passed。初始化产物保持未提交，已展示 git status；需要保存版本时交给 /5-版本管理。
-        环境就绪：uv run data-pipeline 跑入口，uv run pytest 跑测试。
-        要 ruff / mypy / pre-commit 说一声，一行就加。
-```
+示例见 [references/examples.md](references/examples.md)。

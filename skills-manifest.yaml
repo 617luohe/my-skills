@@ -1,9 +1,10 @@
 schema_version: 1
-repository_version: 1.1.0
+repository_version: 1.2.0
 skills:
   - name: 0--claude
     path: 0--claude
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -12,7 +13,8 @@ skills:
     dependencies: []
   - name: 0--dialectic
     path: 0--dialectic
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -21,7 +23,8 @@ skills:
     dependencies: []
   - name: 0--laoyoutiao
     path: 0--laoyoutiao
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -30,7 +33,8 @@ skills:
     dependencies: []
   - name: 0--neat-freak
     path: 0--neat-freak
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -39,7 +43,8 @@ skills:
     dependencies: []
   - name: 0--tokenless
     path: 0--tokenless
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -48,7 +53,8 @@ skills:
     dependencies: []
   - name: 0--explore
     path: 0--explore
-    version: 1.1.0
+    category: extension
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -57,7 +63,8 @@ skills:
     dependencies: []
   - name: 0-启动
     path: 0-启动
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -66,7 +73,8 @@ skills:
     dependencies: []
   - name: 1-规划
     path: 1-规划
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -75,7 +83,8 @@ skills:
     dependencies: [vocabulary/grilling, vocabulary/domain-modeling]
   - name: 2-开发
     path: 2-开发
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -84,7 +93,8 @@ skills:
     dependencies: [vocabulary/tdd]
   - name: 3-检查
     path: 3-检查
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -93,7 +103,8 @@ skills:
     dependencies: [vocabulary/code-review]
   - name: 4-调试
     path: 4-调试
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -102,7 +113,8 @@ skills:
     dependencies: [vocabulary/diagnosing-bugs]
   - name: 5-版本管理
     path: 5-版本管理
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -111,7 +123,8 @@ skills:
     dependencies: []
   - name: 6-最后整理
     path: 6-最后整理
-    version: 1.1.0
+    category: main-flow
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -120,7 +133,8 @@ skills:
     dependencies: []
   - name: multi-worker
     path: multi-worker
-    version: 1.1.0
+    category: standalone
+    version: 1.2.0
     status: stable
     invocation: user
     hosts: [claude, cursor, codex]
@@ -129,7 +143,8 @@ skills:
     dependencies: []
   - name: leader
     path: leader
-    version: 1.1.0
+    category: standalone
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -138,7 +153,8 @@ skills:
     dependencies: []
   - name: writing-for-agents
     path: writing-for-agents
-    version: 1.1.0
+    category: standalone
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -147,7 +163,8 @@ skills:
     dependencies: []
   - name: wizard
     path: wizard
-    version: 1.1.0
+    category: standalone
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -156,7 +173,8 @@ skills:
     dependencies: []
   - name: vision-skill
     path: vision-skill
-    version: 1.1.0
+    category: standalone
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -165,7 +183,8 @@ skills:
     dependencies: []
   - name: 0-询问luohe
     path: 0-询问luohe
-    version: 1.1.0
+    category: router
+    version: 1.2.0
     status: stable
     invocation: model
     hosts: [claude, cursor, codex]
@@ -174,7 +193,8 @@ skills:
     dependencies: []
   - name: vocabulary/grilling
     path: vocabulary/grilling
-    version: 1.1.0
+    category: vocabulary
+    version: 1.2.0
     status: stable
     invocation: model
     layer: vocabulary
@@ -184,7 +204,8 @@ skills:
     dependencies: []
   - name: vocabulary/domain-modeling
     path: vocabulary/domain-modeling
-    version: 1.1.0
+    category: vocabulary
+    version: 1.2.0
     status: stable
     invocation: model
     layer: vocabulary
@@ -194,7 +215,8 @@ skills:
     dependencies: []
   - name: vocabulary/tdd
     path: vocabulary/tdd
-    version: 1.1.0
+    category: vocabulary
+    version: 1.2.0
     status: stable
     invocation: model
     layer: vocabulary
@@ -204,7 +226,8 @@ skills:
     dependencies: []
   - name: vocabulary/code-review
     path: vocabulary/code-review
-    version: 1.1.0
+    category: vocabulary
+    version: 1.2.0
     status: stable
     invocation: model
     layer: vocabulary
@@ -214,7 +237,8 @@ skills:
     dependencies: []
   - name: vocabulary/diagnosing-bugs
     path: vocabulary/diagnosing-bugs
-    version: 1.1.0
+    category: vocabulary
+    version: 1.2.0
     status: stable
     invocation: model
     layer: vocabulary
@@ -224,7 +248,8 @@ skills:
     dependencies: []
   - name: my-note/index-keeper
     path: my-note/index-keeper
-    version: 1.1.0
+    category: my-note
+    version: 1.2.0
     status: stable
     invocation: user
     layer: my-note
@@ -234,7 +259,8 @@ skills:
     dependencies: []
   - name: my-note/noteall
     path: my-note/noteall
-    version: 1.1.0
+    category: my-note
+    version: 1.2.0
     status: stable
     invocation: model
     layer: my-note
@@ -244,7 +270,8 @@ skills:
     dependencies: [my-note/vault-publisher]
   - name: my-note/vault-publisher
     path: my-note/vault-publisher
-    version: 1.1.0
+    category: my-note
+    version: 1.2.0
     status: stable
     invocation: user
     layer: my-note

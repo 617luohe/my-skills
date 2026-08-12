@@ -6,139 +6,25 @@ disable-model-invocation: false
 
 # 5-版本管理 — Git 版本控制全流程
 
-覆盖 git 版本管理全部核心操作。默认本地仓库，需连接远程时按需配置。
+覆盖 git 核心操作。默认本地仓库，远程按需配置。命令详见 [references/commands.md](references/commands.md)。
 
 ## MUST 规则
 
-1. **危险操作必须先确认再执行。** `git reset --hard`、`git push --force`、`git branch -D` 需要用户明确同意。
-2. **回滚默认用 revert，不用 reset。** 除非用户明确要求 reset。
-3. **首次推送自动设置当前分支的上游分支。** 使用 `git branch --show-current` 动态获取分支名。
-4. **保存版本必须由用户明确授权。** `/2-开发` 和 `/3-检查` 不默认提交；审查通过后，只有用户明确要求保存、提交或调用 `/5-版本管理`，才执行 `git add` 或 `git commit`。
-
-### init — 初始化仓库
-
-```bash
-git init
-```
-
-如果已有仓库则跳过。自动创建 `.gitignore` 如果不存在（含 Python 标准规则）。
-
----
-
-### save — 保存版本
-
-```bash
-git add <具体文件或目录>
-git commit -m "<描述>"
-```
-
-**优先暂存具体文件**，避免 `git add .` 误提交敏感文件（如 `.env`、临时文件）。
-
-如果未提供描述，自动根据变更生成提交信息。
-
-新增文件时自动检测是否需更新 `.gitignore`。
-
----
-
-### log — 查看历史
-
-```bash
-git log --oneline --graph
-```
-
-显示版本历史和分支图。
-
----
-
-### diff — 查看变更
-
-```bash
-git diff                  # 未暂存的变更
-git diff <commit>         # 与某个版本的差异
-git diff <commit1>..<commit2>  # 两个版本间的差异
-```
-
----
-
-### rollback — 安全回滚
-
-```bash
-git revert <commit>       # 安全回滚（保留历史，推荐）
-```
-
-默认用 `git revert`。只在用户明确要求时才用 `git reset`。
-
----
-
-### reset — 硬重置
-
-```bash
-git reset --hard <commit>  # 丢弃该版本之后的所有变更
-```
-
-**危险操作**。执行前必须确认你要丢弃的变更，获得你明确同意后才执行。
-
----
-
-### branch — 分支管理
-
-```bash
-git branch <name>         # 创建分支
-git checkout <name>       # 切换分支
-git branch -d <name>      # 删除已合并的分支
-```
-
----
-
-### remote — 连接远程
-
-```bash
-git remote add origin <url>
-git push -u origin $(git branch --show-current)
-```
-
-在你要求连接 GitHub 时执行。**动态获取当前分支名**，避免硬编码 `main`。首次推送后告知你后续可直接用 `push` 和 `pull`。
-
----
-
-### guardrails — Git 安全护栏（可选）
-
-可选安装 PreToolUse 钩子拦截危险命令；作用域问用户（项目 `.claude/settings.json` 或全局）。合并现有 hooks，不覆盖。
-
-### push / pull — 同步远程
-
-```bash
-git push                  # 推送到远程
-git pull                  # 拉取远程更新
-```
-
-仅在配置了远程仓库后可用。首次推送时自动设置上游分支。
-
----
+1. **危险操作必须先确认。** `reset --hard`、`push --force`、`branch -D` 须用户明确同意。
+2. **回滚默认 revert，不用 reset。** 除非用户明确要求 reset。
+3. **首次推送用 `git branch --show-current` 设上游**，不写死 `main`。
+4. **保存版本须用户明确授权。** `/2-开发`、`/3-检查` 不默认提交；审查通过且用户要求时才 `git add`/`commit`。
 
 ## 什么时候用
 
-- 完成一个功能阶段，需要保存进度
-- 想查看改了什么东西
-- 改坏了需要回滚到之前的版本
-- 准备推送到 GitHub
+- 完成功能阶段要存盘、查看变更、回滚、推远程
 
 对话示例见 [references/examples.md](references/examples.md)。
 
 ## 完成标准
 
-**必须满足**：
+**必须**：操作无错误退出码；push 后远端已收到；`git status` 状态清晰。
 
-- Git 操作成功执行（commit/push/branch/merge 等），无错误退出码
-- 如果执行了 push，远程仓库已收到提交
-- 工作区状态清晰：`git status` 显示预期状态（clean 或明确的未暂存文件）
+**可选**：commit message 符合约定；遵守分支保护。
 
-**可选验收**：
-
-- commit message 符合项目约定（如果有 commitlint 配置）
-- 分支保护规则已遵守（不直接 push 到 main/master，除非用户明确授权）
-
-**交接**：
-
-- 功能阶段收尾时，建议用户调用 `/6-最后整理` 沉淀产出
-- 中途存盘时，回到上游 skill（如 `/2-开发`）继续执行
+**交接**：阶段收尾 → `/6-最后整理`；中途存盘 → 回到上游（如 `/2-开发`）。
