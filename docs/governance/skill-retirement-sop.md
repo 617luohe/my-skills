@@ -121,4 +121,21 @@ grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGE
 
 ---
 
+## 示例：v1.3.0 硬删除（2026-08-12）
+
+与 deprecated 保留目录不同，以下 4 技能因低频/冗余**直接从 manifest 删除**（非 deprecated 过渡）：
+
+| 技能 | 替代 |
+|------|------|
+| `multi-worker` | 主流程顺序开发；Cursor 内置多 agent |
+| `leader` | 对话直接描述任务 |
+| `0--explore` | 只读调查 `docs/analysis/` 或 `/1-规划` |
+| `0--tokenless` | CLAUDE.md「工作哲学·沟通」 |
+
+**执行**：manifest 删条目 → 删技能目录 → CHANGELOG [1.3.0] → 路由/CLAUDE/运行时/父仓库文档全量清理 → 父仓库 `docs/analysis/retired-skills-v1.3.0.md` 索引。
+
+**与 deprecated 流程差异**：无 SKILL.md 警告块（目录已删）；历史证据保留在 CHANGELOG + 分析文档头注。
+
+---
+
 _本 SOP 遵循 mattpocock 的退役纪律：标注 → 记录 → 清理 → 保留目录，确保历史可追溯且用户有迁移路径。_
