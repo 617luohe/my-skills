@@ -65,7 +65,7 @@ disable-model-invocation: false
 
 ## 编码准则
 
-遵循项目 CLAUDE.md 的 **Karpathy 编码准则**（先想后写 / 简洁优先 / 外科手术式改动 / 目标驱动），此处不重复。本技能只补充 TDD 特有的纪律，见下方 MUST 规则。
+遵循项目 CLAUDE.md 的 **工作哲学·编码层**（先想后写 / 最小代码 / 外科手术 / 目标驱动），此处不重复。本技能只补充 TDD 特有的纪律，见下方 MUST 规则。
 
 ## MUST 规则
 

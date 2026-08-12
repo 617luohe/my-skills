@@ -10,7 +10,7 @@ disable-model-invocation: false
 
 ## 编码准则（贯穿全程）
 
-沿用 Karpathy 四准则（见 CLAUDE.md）与 `/vocabulary/tdd` 的完整定义，此处不重复：先想后写、简单第一、手术刀式改动、目标驱动执行。
+沿用 CLAUDE.md「工作哲学·编码」四准则与 `/vocabulary/tdd` 的完整定义，此处不重复：先想后写、最小代码、外科手术、目标驱动。
 
 ## 开发流程
 
