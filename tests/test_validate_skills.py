@@ -304,3 +304,33 @@ def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path
     write_manifest(entry("vocabulary/code-review") + entry("other/code-review"))
     with pytest.raises(ValueError, match="deployment name collision"):
         publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+
+
+def test_user_only_body_requires_user_invocation(tmp_path: Path):
+    manifest = """schema_version: 1
+repository_version: 1.0.0
+skills:
+  - name: user-skill
+    path: user-skill
+    version: 1.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+"""
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    (tmp_path / "user-skill").mkdir()
+    (tmp_path / "user-skill" / "SKILL.md").write_text(
+        "---\nname: user-skill\ndescription: test user only skill\ndisable-model-invocation: false\n---\n\n仅可由用户显式调用。\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "user-skill" / "agents").mkdir()
+    (tmp_path / "user-skill" / "agents" / "openai.yaml").write_text(
+        "interface:\n  display_name: test\npolicy:\n  allow_implicit_invocation: true\n",
+        encoding="utf-8",
+    )
+    report = validate_repository(tmp_path)
+    semantic = [e for e in report["errors"] if e["code"] == "invocation-semantic"]
+    assert len(semantic) == 1, report["errors"]

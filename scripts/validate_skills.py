@@ -15,7 +15,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 MANIFEST_MODULE_PATH = SCRIPT_DIR / "skill_manifest.py"
 BANNED_SKILLS = ("0--Agent统筹", "0--auto-iteration", "0--graphify")
 USER_ONLY_BODY_RE = re.compile(
-    r"仅(?:可由|由)?用户(?:显式)?(?:调用|触发|输入)"
+    r"^仅(?:可由|由)?用户(?:显式)?(?:调用|触发|输入)",
+    re.MULTILINE,
 )
 WORKER_ONLY_BODY_RE = re.compile(
     r"仅由\s+\S+\s+调度|严禁(?:直调|直接调用)"
@@ -540,7 +541,32 @@ def _validate_skill(
             )
         )
 
-    line_count = len(document.read_text(encoding="utf-8-sig").splitlines())
+    body = document.read_text(encoding="utf-8-sig")
+    if USER_ONLY_BODY_RE.search(body):
+        if manifest_invocation != "user" or not disabled:
+            errors.append(
+                _finding(
+                    "invocation-semantic",
+                    document,
+                    "body declares user-only invocation but manifest/frontmatter allow model invocation",
+                    root,
+                )
+            )
+    if (
+        WORKER_ONLY_BODY_RE.search(body)
+        and manifest_invocation == "model"
+        and name.startswith("my-note/")
+    ):
+        warnings.append(
+            _finding(
+                "invocation-semantic",
+                document,
+                f"{name}: body restricts direct invocation; consider invocation user if truly worker-only",
+                root,
+            )
+        )
+
+    line_count = len(body.splitlines())
     if line_count > 500:
         errors.append(
             _finding(
