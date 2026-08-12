@@ -4,6 +4,10 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **0--loop**：长时间自主迭代环；开场 grilling（含 mode/预算）一次确认后主环零 HITL；`min_rounds` 反早停；默认 max/min=8/3；产物 `docs/loop/`
+
 ### Changed
 
 - **工作哲学**：三源重构（Caveman/Karpathy/Vercel）——Karpathy 四则独立保留，恢复语义完整性

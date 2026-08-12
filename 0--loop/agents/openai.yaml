@@ -1,0 +1,5 @@
+interface:
+  display_name: "Iterative Loop"
+  short_description: "Explore fuzzy goals or drive clear goals by acceptance criteria"
+policy:
+  allow_implicit_invocation: true
