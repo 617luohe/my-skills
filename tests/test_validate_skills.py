@@ -382,7 +382,7 @@ skills:
     )
     claude = tmp_path / "CLAUDE.md"
     claude.write_text(
-        "## 支撑层\n\n| 信号 | 技能 |\n| --- | --- |\n| 探索 | `/0--explore` |\n",
+        "## 支撑层\n\n| 信号 | 技能 |\n| --- | --- |\n| 视觉 | `/vision-skill` |\n",
         encoding="utf-8",
     )
     report = validate_repository(
@@ -390,4 +390,4 @@ skills:
     )
     mirror = [e for e in report["errors"] if e["code"] == "claude-mirror"]
     assert len(mirror) == 1
-    assert "0--explore" in mirror[0]["message"]
+    assert "vision-skill" in mirror[0]["message"]

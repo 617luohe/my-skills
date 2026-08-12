@@ -243,7 +243,7 @@ def _validate_naming(name: str) -> str | None:
         return None
     if MY_NOTE_SKILL_RE.match(name):
         return None
-    # Allow standalone methodology skills (e.g., multi-worker, 0--dialectic with uppercase)
+    # Allow standalone methodology skills (e.g., writing-for-agents, 0--dialectic with uppercase)
     if "/" not in name and not name[0].isdigit():
         return None
     # Check for common naming violations
