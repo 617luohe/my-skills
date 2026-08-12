@@ -4,6 +4,31 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 2026-08-12 - 体系优化批次（skills-manager 分发 + 一致性收敛）
+
+#### Added
+
+- **governance**: `invocation-semantic` 校验（正文 user-only 声明须与 manifest/frontmatter 一致）
+- **0--dialectic**: `references/style-patterns.md`（句式示例外迁）
+- **dev**: `pyproject.toml`（pytest 本地开发依赖）
+
+#### Changed
+
+- **P0-1**: 删除 `--check-deployments` 与宿主部署层校验（分发由 skills-manager 负责）
+- **P0-2/3**: multi-worker 晋升 stable + `invocation: user` 三方对齐
+- **P0-4**: 路由加载模型措辞统一（README/USAGE/0-询问luohe/CLAUDE.md）
+- **P1-1**: README/USAGE 补 `0--explore` 索引
+- **P1-3**: 0-询问luohe 三表合并为规模表 + 场景快速查找（129→102 行）
+- **P1-5**: 6-最后整理 ↔ neat-freak 记忆交接声明
+- **P2-1**: vocabulary 暴露策略定稿（优先委托，模型可调用）
+- **P2-2**: 0--dialectic 瘦身（108→63 行）
+- **P2-5**: 主流程 1-5 description 补中文触发同义词
+- **skill_manifest**: `status: experimental` 纳入 publication 校验
+
+#### Removed
+
+- **validate_skills**: `_validate_deployments`、`.my-skills-managed.json` 检查、部署 hash 对账
+
 ### 2026-08-08 - 知识库技能覆盖优化批次（noteall 场景补强）
 
 #### Added

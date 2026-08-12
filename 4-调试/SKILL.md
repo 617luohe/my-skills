@@ -1,6 +1,6 @@
 ---
 name: 4-调试
-description: Diagnose bugs and performance regressions: reproduce → hypothesize → instrument → fix → regression test. Use when errors, crashes, intermittent failures, or unexplained behavior need systematic investigation.
+description: Diagnose bugs and performance regressions via structured six-phase loop. 触发：调试、debug、根因、bug、性能回归。
 disable-model-invocation: false
 ---
 

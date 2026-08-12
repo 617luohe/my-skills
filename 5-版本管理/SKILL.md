@@ -1,6 +1,6 @@
 ---
 name: 5-版本管理
-description: Manage Git repositories, history, branches, remotes, rollback, and synchronization.
+description: Manage Git repositories, history, branches, remotes, rollback, and synchronization. 触发：提交、commit、push、版本管理、回滚、分支。
 disable-model-invocation: false
 ---
 

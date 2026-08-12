@@ -147,8 +147,8 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
             raise ValueError(f"skill {name}: path must equal a safe name")
         if skill["version"] != repository_version:
             raise ValueError(f"skill {name}: version must equal repository_version")
-        if skill["status"] not in ("stable", "deprecated"):
-            raise ValueError(f"skill {name}: status must be stable or deprecated")
+        if skill["status"] not in ("stable", "deprecated", "experimental"):
+            raise ValueError(f"skill {name}: status must be stable, deprecated, or experimental")
         if skill["status"] == "deprecated":
             if (
                 not isinstance(skill.get("deprecated_note"), str)

@@ -1,6 +1,6 @@
 ---
 name: 1-规划
-description: Plan non-trivial features through requirements, domain terms, interfaces, PRD, and task breakdown.
+description: Plan non-trivial features through requirements, domain terms, interfaces, PRD, and task breakdown. 触发：规划、方案设计、PRD、任务拆解、plan。
 disable-model-invocation: false
 ---
 

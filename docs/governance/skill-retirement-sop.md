@@ -1,6 +1,6 @@
 # Skill 退役标准操作流程（SOP）
 
-> 本 SOP 确保技能退役时：①用户知道替代方案；②分发层清理遗留链接；③历史可追溯。
+> 本 SOP 确保技能退役时：①用户知道替代方案；②skills-manager 同步清除运行时副本；③历史可追溯。
 
 ## 退役触发条件
 
@@ -47,9 +47,9 @@
 - **old-skill-name**: Replaced by `/new-skill-name`. Reason: [简述原因]. Migration: [迁移步骤]
 ```
 
-### 4. 分发层清理检查清单
+### 4. 同步与文档清理检查清单
 
-**必须检查**（避免遗留链接）：
+**文档**（避免路由仍指向旧技能）：
 
 - [ ] `README.md` 的技能清单：删除或标注 deprecated
 - [ ] `USAGE.md` 的索引表：删除或移至 deprecated 段
@@ -69,9 +69,7 @@ python scripts/validate_skills.py
 grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGELOG.md" .
 # 预期：仅在 CHANGELOG/README deprecated 段出现，或无结果
 
-# 3. 检查部署目标（如果已 sync）
-ls ~/.claude/skills/old-skill-name/  # 预期：仍存在（用户可能有活跃引用）
-# deprecated 技能不从 ~/.claude/skills 删除，只标注状态
+# 3. 权威源 push 后，skills-manager 同步至运行时（用户环境自行 update）
 ```
 
 ### 6. 用户通知（可选）
