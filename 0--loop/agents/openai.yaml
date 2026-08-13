@@ -1,5 +1,5 @@
 interface:
-  display_name: "Iterative Loop"
-  short_description: "Explore fuzzy goals or drive clear goals by acceptance criteria"
+  display_name: "Long-run Loop (0--)"
+  short_description: "Consensus-first multi-round explore or criteria-driven delivery; not timed /loop or Ralph while-loop"
 policy:
   allow_implicit_invocation: true

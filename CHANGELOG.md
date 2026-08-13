@@ -10,6 +10,10 @@ All notable changes to this skills repository will be documented in this file.
 
 ### Changed
 
+- **0--loop**：共识长跑定位与触发负例（vs Cursor `/loop`、Ralph）；何时用/不用决策树与市场三角；续跑示例；`completion_promise` 双安全阀；每轮必报一行进度；`slice-progress.md` 取代 `progress.md`；grilling 草拟 AC；hybrid 切换条件；触压信号与 blocker 优先级；术语表与 report 落地字段
+
+### Changed
+
 - **工作哲学**：三源重构（Caveman/Karpathy/Vercel）——Karpathy 四则独立保留，恢复语义完整性
 
 ## [1.3.0] - 2026-08-12
