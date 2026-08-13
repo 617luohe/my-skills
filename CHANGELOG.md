@@ -11,6 +11,7 @@ All notable changes to this skills repository will be documented in this file.
 ### Changed
 
 - **0--loop**：共识长跑定位与触发负例（vs Cursor `/loop`、Ralph）；何时用/不用决策树与市场三角；续跑示例；`completion_promise` 双安全阀；每轮必报一行进度；`slice-progress.md` 取代 `progress.md`；grilling 草拟 AC；hybrid 切换条件；触压信号与 blocker 优先级；术语表与 report 落地字段
+- **0-询问luohe**：移除 `0--dialectic` 路由推荐；新增「不经路由器（用户显式调用）」说明
 
 ### Changed
 
