@@ -217,20 +217,55 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
     }
 
 
+def contract(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
+    """Return the stable downstream contract for active skills."""
+    publication(manifest, root)  # Reuse publication validation without changing it.
+    return {
+        "generated_by": "scripts/skill_manifest.py contract from skills-manifest.yaml",
+        "schema_version": manifest["schema_version"],
+        "repository_version": manifest["repository_version"],
+        "skills": [
+            {
+                "name": skill["name"],
+                "deployment_name": deployment_name(skill["name"]),
+                "hosts": skill["hosts"],
+                "invocation": skill["invocation"],
+                "status": skill["status"],
+            }
+            for skill in manifest["skills"]
+            if skill["status"] != "deprecated"
+        ],
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=("publication",))
+    parser.add_argument("command", choices=("publication", "contract"))
     parser.add_argument(
         "--manifest",
         type=Path,
         default=Path(__file__).resolve().parent.parent / "skills-manifest.yaml",
     )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        help="write UTF-8 JSON with a trailing newline instead of stdout",
+    )
     args = parser.parse_args()
 
     manifest_path = args.manifest.resolve()
-    result = publication(load_manifest(manifest_path), manifest_path.parent)
-    json.dump(result, fp=__import__("sys").stdout, ensure_ascii=True, indent=2)
-    print()
+    manifest = load_manifest(manifest_path)
+    result = (
+        publication(manifest, manifest_path.parent)
+        if args.command == "publication"
+        else contract(manifest, manifest_path.parent)
+    )
+    if args.output is None:
+        json.dump(result, fp=__import__("sys").stdout, ensure_ascii=True, indent=2)
+        print()
+    else:
+        payload = json.dumps(result, ensure_ascii=True, indent=2) + "\n"
+        args.output.write_text(payload, encoding="utf-8", newline="\n")
     return 0
 
 

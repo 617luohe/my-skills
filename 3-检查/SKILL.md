@@ -1,92 +1,44 @@
 ---
 name: 3-检查
-description: Route review, issue-only reporting, or root-cause repair from the supplied input contract. 触发：检查、审查、review、验收、架构评估。
+description: 正式审查指定 diff，核对项目规范与需求并给出 PASS、PASS WITH WARNINGS 或 FAIL。触发：审查改动、review diff、代码验收。
 disable-model-invocation: false
 ---
 
-# 3-检查 — 正式验收与问题建单
+# 3-检查 — 正式 Diff Review
 
-**职责**：根据输入契约选择 Review、Bug 报告或 `/4-调试`，不把已足够的信息再变成模式选择题。
+本技能只审查指定 diff。问题建单由 `/issue-reporting` 负责；根因调查由 `/4-调试` 负责；架构调查走 `/0-询问luohe` 的只读调查路由。
 
-## 输入契约路由
+## 输入契约
 
-按以下优先级路由：
+在 fresh context 中接收且只接收：
 
-0. **架构评估**：用户明确要求“架构评估”“评估代码腐烂”或“评估模块臃肿”时，进入本模式；此意图必须明确，避免与既有 Review、Bug 报告和 `/4-调试` 路由混淆。评估架构边界与测试 seam，输出 `docs/analysis/<topic>.md`（项目地图、发现、风险与停止条件）及可追踪的 `docs/plans/<topic>/` 改造任务；评估完成即停止，由用户决定是否 `/1-规划`。不进入 Review、Bug 报告或 `/4-调试`。
-1. **根因修复**：用户要求“找根因”“排查原因”“立即修复”或同等意图时，直接进入 **`/4-调试`**；传递已有现象、复现步骤、issue 编号和相关模块。不要先建单，也不要做 Review。
-2. **Review**：来自 `/2-开发`，且带有 **fixed point/base（审查基点）**、**spec/需求来源** 和 **diff 审查意图**时，强制进入 Review，**不再询问模式**。用户独立请求审查、验收、检查 diff，且已提供或可明确定位这些审查输入时，也进入 Review。
-3. **Bug 报告**：用户明确要求“记录”“建 issue”或“只建单”，并提供问题现象时，进入 Bug 报告；只记录和追踪，不启动根因分析或修复。
-4. **确实模糊**：仅在输入确实模糊时，即以上输入契约都不成立，问**一个澄清问题**：`你要审查改动、只记录为 Bug，还是查根因并立即修复？`
+1. **fixed point/base**：审查基点、提交列表与 `git diff <fixed-point>...HEAD` 提交差异。
+2. **spec**：PRD、任务、issue、验收标准或用户明确需求。
+3. **workspace diff**：`git diff --cached`、`git diff`，以及 `git ls-files --others --exclude-standard` 返回的未跟踪文件列表与内容。
+4. **证据**：开发方已运行的项目原生 test/type/lint/build 命令及结果。
 
-## 架构评估 — 只评估，不改造
+无意纳入的用户文件必须逐项显式排除并说明理由。缺少任何一项时只询问缺失项；不得用规划或开发聊天记忆补齐。四项可定位后，输入契约完成。
 
-仅接受明确的“架构评估”输入意图；不要从“检查”或一般 Bug 描述推断进入本模式。
+## 流程
 
-1. 只读调查模块职责、依赖方向、公共边界和现有测试，识别架构 seam 与测试 seam。
-2. 写入 `docs/analysis/<topic>.md`：项目地图、已验证发现、风险、可观测性缺口、建议的改造边界和停止条件。
-3. 在 `docs/plans/<topic>/` 写入可追踪的改造任务，包含目标、验收标准、依赖和建议顺序。
-4. 输出文档路径后停止；不写生产代码、不创建新 skill、不自行进入 `/1-规划`。用户决定是否启动规划。
+1. 固定并记录基点、提交列表、spec、规范来源、diff 范围和验证证据。
+2. 按 [review-rules.md](references/review-rules.md) 选择审查深度，并保持 Standards 与 Spec 两轴独立。
+3. 功能、性能、可靠性或资源门禁能自动验证则运行；不能验证则记录“需手动验证”并至少给出 warning。
+4. 输出可追踪意见：ID、轴、严重级别、`文件:行`、证据与最小修复建议。
+5. 给出唯一裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
 
-## Review — 正式验收
+## 裁决
 
-使用 `/vocabulary/code-review` 执行 Standards 和 Spec 双轴审查。
+- **FAIL**：至少一个阻断问题，包括核心功能缺失、严重需求不符或严重违反项目规范。
+- **PASS WITH WARNINGS**：无阻断，但存在警告或未自动验证的门禁。
+- **PASS**：无阻断和警告。
 
-### 交接输入
+报告必须包含输入契约四项、Standards、Spec、意见清单、未验证项和裁决。详细 reviewer 边界见 [standards-reviewer.md](references/standards-reviewer.md) 与 [spec-reviewer.md](references/spec-reviewer.md)。
 
-- `/2-开发` 的未提交改动、自检结果、审查基点和需求来源。
-- 独立 Review 的 fixed point/base、spec/需求来源和 diff；若其中一项不能明确定位，才使用上面的一个澄清问题。
+## 交接
 
-### 流程
+- FAIL：把全部阻断意见回传 `/2-开发` 或 `/4-调试`，修复后使用同一基点与 spec 复评。
+- PASS WITH WARNINGS：默认完成审查；交接时保留 warning ID 与未修复理由。
+- PASS：可交接。
 
-1. 固定并记录审查基点、需求来源、规范来源和 diff 范围。
-2. 按 `/vocabulary/code-review` 的规则运行 Standards 与 Spec 审查。
-3. 输出完整审查报告和唯一正式验收裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
-4. 输出**可追踪意见清单**：每条意见带 ID（`S-n`=Standards 轴、`SP-n`=Spec 轴）、轴、严重级别（❌ 阻断 / ⚠️ 警告 / ℹ️ 建议）、文件:行和修复建议，逐条对应 code-review 报告的发现。
-5. 该裁决及报告是可选进入 `/5-版本管理` 的**正式交接产物**。审查通过（PASS 或 PASS WITH WARNINGS）也保持改动未提交；只有用户明确授权才可进入 `/5-版本管理`。FAIL 不得作为版本管理交接。
-6. **复评回环** — FAIL 时自动回传意见清单给修复方。PASS WITH WARNINGS 默认完成验收并允许交接；报告记录 warning ID、严重级别和未修复理由，用户若接受则由用户明确确认后记录接受人/时间。进入 `/5-版本管理` 前必须展示剩余 warning。只有用户明确选择修复某条 warning 时，才回传该条进入复评。复评仅在所有阻断项关闭后以 PASS 结束。
-
-## Bug 报告 — 只建单
-
-**支持范围**：完整支持已探测到的 GitHub（`gh`）和 GitLab（`glab`）。Jira 仅在仓库没有可靠的 Jira CLI 或配置时降级为本地草稿；不得假装已自动创建。没有远程 tracker 时同样只生成本地草稿。一次报告只能使用探测到的**同一 tracker**完成“探测 → 查重 → 创建 → URL/编号”，绝不跨 tracker 回退。
-
-### 共同准备与只读查重
-
-用户提供现象并明确只记录/建 issue 时：
-
-1. 探测仓库 remote、项目配置和可用 CLI，明确目标为 GitHub、GitLab、Jira 或无远程 tracker；探测不确定时停止并说明无法确定目标，不猜测平台。
-2. 采集触发操作、预期、实际结果、复现性和日志；信息不足时只问一个最关键的现象问题。探索相关代码和测试，生成不编造根因的报告。Bug 标题和正文使用领域术语，不写文件路径或行号。
-3. 对已确定目标执行该平台的**只读**查重；查重可在用户确认前执行。查重发现已有 issue 时，输出同一 tracker 的 URL/编号并停止，不再创建。
-4. 查重未命中后，先显示将要提交的**标题、完整正文和目标 tracker**，明确这是 outward-facing 创建操作；只有取得用户明确确认后才能创建。未确认则停止，不创建。
-
-### GitHub
-
-仅当探测结果为 GitHub 时使用 `gh`：先确认 `gh` 存在且认证可用，再用 `gh issue list`（或等效只读查询）在该 GitHub 仓库查重。获得用户确认后才用 `gh issue create` 创建，并输出该 GitHub issue 的 URL/编号。
-
-- `gh` 缺失、认证失败或查重失败：停止，不执行创建，不改用 `glab` 或其他 tracker；报告具体失败出口。
-- 创建失败：停止并报告失败；不得声称已创建，不改用其他 tracker。
-
-### GitLab
-
-仅当探测结果为 GitLab 时使用 `glab`：先确认 `glab` 存在且认证可用，再用 `glab issue list`（或等效只读查询）在该 GitLab 项目查重。获得用户确认后才用 `glab issue create` 创建，并输出该 GitLab issue 的 URL/编号。
-
-- `glab` 缺失、认证失败或查重失败：停止，不执行创建，不改用 `gh` 或其他 tracker；报告具体失败出口。
-- 创建失败：停止并报告失败；不得声称已创建，不改用其他 tracker。
-
-### Jira
-
-若探测到 Jira，但仓库没有可靠的 Jira CLI 或明确可用的 Jira 配置，**不执行 `gh`、`glab` 或任何别的平台 CLI**。将标题和完整正文写入 `docs/issues/<slug>.md` 本地草稿，标明目标为 Jira、状态为“未提交”，并明确告知用户未创建远程 issue、不得声称已自动创建。该草稿是普通文档，必须位于 `docs/issues/` 下。
-
-若存在可靠且已验证的 Jira CLI/配置，仍须先在同一 Jira tracker 只读查重，并在展示标题、正文和目标 Jira tracker、获得用户明确确认后才创建；CLI 缺失、认证失败、查重失败或创建失败均停止，不跨平台回退。
-
-### 无远程 tracker
-
-未探测到远程 tracker 时，将标题和完整正文写入 `docs/issues/<slug>.md` 本地草稿，标明“无远程 tracker；未提交”。普通文档必须位于 `docs/` 下；不得写到仓库根目录或 `docs/` 之外。输出草稿路径和已记录现象，不声称远程 issue 已创建。
-
-除非用户随后要求找根因或立即修复，不转 `/4-调试`。
-
-## 边界
-
-- `/2-开发`：开发、自检并提供 Review 输入契约；FAIL/WARNINGS 时接收意见清单回环修复并交回复评。
-- `/3-检查`：正式 Review 或只建单，不在 Bug 报告中猜测根因。
-- `/4-调试`：根因定位与修复，必须从反馈回路开始并补回归测试。
-- `/5-版本管理`：仅接收通过 Review 的正式交接产物，且仍须用户明确授权。
+任何裁决都不自动 commit。只有 PASS 或 PASS WITH WARNINGS 且用户明确授权，才进入 `/5-版本管理`。

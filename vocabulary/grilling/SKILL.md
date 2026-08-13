@@ -1,7 +1,7 @@
 ---
 name: grilling
 layer: vocabulary
-description: Grill the user relentlessly about a plan or decision. Use when the user wants to stress-test their thinking.
+description: 内部 vocabulary，仅由规划类父工作流加载以穷尽决策依赖；不直接承接用户的规划、开发或审查主流程意图。
 disable-model-invocation: false
 ---
 
@@ -32,8 +32,8 @@ Do not act on it until I confirm we have reached a shared understanding.
 2. **歧义已清零** — 无待澄清的前提/边界冲突（领域术语歧义不归本技能，见下方分工）
 3. **你明确确认** — 你说理解一致；或连续一轮无新决策提出且你未提出异议
 
-## 与 domain-modeling 的分工
+## 与父工作流领域建模的分工
 
 - 本技能问**计划决策**：方案选择、边界、取舍（"要不要做 X？"）
-- `/vocabulary/domain-modeling` 问**领域术语语义**：术语歧义、领域边界（"account 指 Customer 还是 User？"）
-- 询问中发现术语歧义 → 转 domain-modeling 处理，不在本技能内纠缠
+- `/1-规划` 的领域建模参考处理**领域术语语义**：术语歧义、领域边界（"account 指 Customer 还是 User？"）
+- 询问中发现术语歧义 → 交回父工作流处理，不在本技能内纠缠

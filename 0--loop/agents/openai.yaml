@@ -1,5 +1,6 @@
 interface:
-  display_name: "Long-run Loop (0--)"
-  short_description: "Consensus-first multi-round explore or criteria-driven delivery; not timed /loop or Ralph while-loop"
+  display_name: "Experimental Consensus Loop"
+  short_description: "User-invoked multi-round exploration or acceptance loop"
+
 policy:
-  allow_implicit_invocation: true
+  allow_implicit_invocation: false

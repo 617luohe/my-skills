@@ -6,7 +6,7 @@
 
 | 角色 | 做什么 | 不做什么 |
 | ---- | ------ | -------- |
-| Orchestrator（父） | 读磁盘状态、写方向卡、Task 派子进程、收卡片、合成、CHECKPOINT | 大范围搜索深挖、写实现、跑长测试、粘贴 worker 全文 |
+| Orchestrator（父） | 读磁盘状态、写方向卡、用宿主可用能力派发隔离执行单元、收卡片、合成、CHECKPOINT | 大范围搜索深挖、写实现、跑长测试、粘贴 worker 全文 |
 | Worker（子） | 只领一张卡，在全新上下文执行，回传卡片或写 `cards/` | 领取第二张卡、改父状态文件以外的编排文件 |
 | Disk | `docs/loop/<run-id>/` 为唯一共享记忆 | — |
 
@@ -59,13 +59,19 @@ status: ok | blocked | empty
 
 ## 派发
 
-| 模式 | 子进程 | 约束 |
-| ---- | ------ | ---- |
-| explore | `researcher` / `explore` | 并行 ≤3；格子互斥 |
-| criteria | `worker-dev` / `coder` | `/2-开发` + `tdd`；分支 `loop/<run-id>/<slice-id>` |
-| 评判 | `reviewer` | 输入 = 本轮 `cards/`，非聊天记录 |
+先探测宿主的隔离子进程、fresh context、并行派发和独立评判能力。`researcher`、`explore`、`worker-dev`、`coder`、`reviewer` 仅是宿主确实提供时可选的示例名称。
+
+| 模式 | 能力 | 约束 |
+| ---- | ---- | ---- |
+| explore | 只读隔离执行单元 | 并行 ≤3；格子互斥 |
+| criteria | 隔离实现执行单元 | `/2-开发` + `tdd`；分支 `loop/<run-id>/<slice-id>` |
+| 评判 | 独立评判执行单元 | 输入 = 本轮 `cards/`，非聊天记录 |
 
 同轮 worker **互不共享上下文**。冲突只在 SYNTHESIZE 去重。
+
+无并行能力时，每张卡按顺序在独立 fresh context 执行。无隔离或 fresh-context 等价能力时，写 checkpoint 与 `PROGRESS.md`，标记 `status: stopped`、原因 `capability-unavailable`，然后安全停止。
+
+每次派发前先检查是否出现新用户消息；若有，只写 `PROGRESS.md` 标记 `superseded`，不写 `report.md`，取消尚未派发工作并停止旧主环。已运行的安全结果只作 checkpoint 证据，不据此继续旧目标。
 
 ## blocker 优先级（同轮资源不足时）
 

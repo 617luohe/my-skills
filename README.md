@@ -13,10 +13,7 @@ my-skills/
 ├── 0-询问luohe/                 — 技能路由器（唯一入口）
 ├── vocabulary/                   — 可复用核心循环（被其他技能调用）
 │   ├── grilling/                — 询问循环
-│   ├── domain-modeling/         — 领域建模
-│   ├── tdd/                     — TDD 循环
-│   ├── code-review/             — 代码审查
-│   └── diagnosing-bugs/         — Bug 诊断
+│   └── tdd/                     — TDD 循环
 ├── my-note/                      — 知识管理技能体系（类比 vocabulary 层）
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
 │   ├── index-keeper/            — 内部 Worker（索引维护）
@@ -48,19 +45,21 @@ my-skills/
 
 ## 调用分类
 
-**路由加载**：复杂需求先加载 `/0-询问luohe` 选路径；每会话首个复杂需求强制加载。CLAUDE.md 常驻工作哲学，路由表不镜像。
-
 **单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
+
+**名称契约**：manifest 的 `name`、`path`、`dependencies` 使用 canonical name（如 `vocabulary/tdd`）；skills-manager 按末段扁平部署，运行时 slash 调用必须使用 contract 的 `deployment_name`（如 `/tdd`、`/noteall`）。
 
 按层级分组：
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
 - **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--loop`
-- **独立方法论**：`writing-for-agents`、`wizard`、`vision-skill`
-- **vocabulary 层**：`grilling`、`domain-modeling`、`tdd`、`code-review`、`diagnosing-bugs`。优先被阶段技能委托；模型亦可按 description 调用，用户无需记路径。
+- **独立方法论**：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
+- **vocabulary 层**：`grilling`、`tdd`。description 将它们限定为父工作流加载的内部 vocabulary，不直接承接主流程用户意图。
 - **my-note 层**：`noteall` 唯一入口；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度）
 
-技能完整索引见 [USAGE.md](USAGE.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
+`0--dialectic` 与 `0--loop` 均为 `invocation: user`；`0--loop` 额外标记 experimental。
+
+技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 分发与部署
 
@@ -68,7 +67,7 @@ my-skills/
 
 1. **权威源（唯一编辑处）**：本仓库（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
 2. **运行时生效**：改权威源 → commit + push → skills-manager 从远端拉取 → 符号链接生效到 `~/.claude/skills/` 及项目 `.claude/.cursor/.codex/skills/`（存在延迟窗口）
-3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/validate_skills.py` 校验源码治理（manifest ↔ 目录 ↔ frontmatter ↔ openai.yaml）
+3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/validate_skills.py` 按运行时 deployment name 校验 slash 引用；`scripts/skill_manifest.py contract` 输出 active skill 的 canonical name、deployment_name、hosts、invocation 与 status
 
 > 分发由 skills-manager 负责；本仓库治理脚本**不校验**宿主部署目录。
 
@@ -79,10 +78,12 @@ my-skills/
 ```bash
 python scripts/validate_skills.py
 python scripts/validate_skills.py --json
-python scripts/validate_skills.py --check-claude-mirror --claude-md ../CLAUDE.md
+python scripts/validate_skills.py --check-claude-pointer --claude-md <project>/CLAUDE.md
+python scripts/skill_manifest.py contract
+python scripts/skill_manifest.py contract --output skills-contract.json
 ```
 
-验证源码治理规则；治理错误返回非零退出码。CI 运行 `validate_skills.py` 与 `pytest`。
+验证源码治理规则；治理错误返回非零退出码。显式 CLAUDE 指针检查必须传入实际项目文件，不能假设父目录布局。`--output` 直接写 UTF-8 JSON（含末尾换行），避免依赖 shell 重定向编码。CI 运行 `validate_skills.py` 与 `pytest`。
 
 本地开发（含 pytest）：
 

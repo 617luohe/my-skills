@@ -1,6 +1,6 @@
 interface:
   display_name: "Grilling"
-  short_description: "Core reusable vocabulary skill"
+  short_description: "Internal decision interview loaded by parent workflows"
 
 policy:
   allow_implicit_invocation: true

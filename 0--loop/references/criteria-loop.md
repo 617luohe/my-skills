@@ -1,6 +1,6 @@
 # Criteria Loop — 明确支（长跑）
 
-目标：从共识自动生成 metrics/AC/切片，再静默推进直至预算或全达标。编排器不写代码；子进程守 `/2-开发` + `tdd`，分支 `loop/<run-id>/<slice-id>`。
+目标：从共识生成 metrics/AC/切片，再推进至 AC 达标或停止条件命中。编排器不写代码；隔离实现单元守 `/2-开发` + `/tdd`，分支 `loop/<run-id>/<slice-id>`。
 
 前置：`consensus.md` 已确认（`mode=criteria` 或 hybrid 已切换）。
 
@@ -11,12 +11,14 @@
 | `mode=criteria` | 从阶段 A Define 开始 |
 | `mode=hybrid`（explore 已切换） | 跳过 Define 若 `criteria.md` 已由 explore 写入；否则快速 Define（仍计 1 轮） |
 
-## 反早停 / 静默
+## 运行门禁
 
 - Define 与切片环 **不问用户**  
-- 未满 `min_rounds`：即使部分 AC 已过，继续余下切片或加固测试  
-- 全 AC 达标且 `rounds_done ≥ min_rounds` → 可收敛  
+- 全 AC 达标 → 当轮 checkpoint 后立即停止
+- 连续两轮没有关闭 AC、产生关键证据或解除 blocker → 停止
 - blocked：自动剪枝/改范围 1 次；仍失败 → report，不中途问人  
+- 任何新用户消息 → 只在 PROGRESS checkpoint 标记 superseded，不写 report，立即停止旧主环
+- 先探测宿主隔离与 fresh-context 能力；无并行能力则顺序执行，无等价隔离则以 `capability-unavailable` 安全停止
 
 ## 阶段 A — Define（自动，计 1 轮）
 
@@ -29,20 +31,24 @@
 
 ## 阶段 B — 切片环
 
-Orient → Act（子进程）→ Measure → Reflect → CHECKPOINT → `rounds_done += 1`。  
+Orient → Act（隔离执行单元，或顺序 fresh-context 降级）→ Measure → Reflect → CHECKPOINT → `rounds_done += 1`。
 进度写入 **`slice-progress.md`**（勿用 `progress.md`）。  
 同切片失败最多再派 **1** 次；然后 blocked 或跳过可独立下一项。
 
 blocker 优先级：**blocked 切片** > 依赖未满足的 pending > 加深已通过切片的测试证据。
 
-## 收敛条件
+## 停止条件
 
-须 `rounds_done ≥ min_rounds` 或已无 pending 切片，且任一：
+命中任一即停止：
 
-- 全部切片 done（**completion_promise** 若定义也应满足）  
-- `max_rounds` 触顶  
-- 剩余均为不可自动解除的 blocked  
+- 全部 AC 达标。
+- 连续两轮无高价值进展。
+- `max_rounds` 触顶。
+- 剩余均为不可自动解除的 blocked。
+- 宿主缺少等价隔离与 fresh-context 能力。
+
+新用户消息覆盖属于 superseded 分支，不是正常停止原因。
 
 ## 报告
 
-终局 `report.md`：AC 表、分支、blocked、建议清单（等级|工作量|下一步技能）。合并授权只在终局问一次。
+正常终局 `report.md`：停止原因、AC 表、分支、blocked 和一条下一步。`max_rounds`、停滞或能力不足停止时明确未满足 AC；合并授权只在成功终局问一次。superseded 不写 report。

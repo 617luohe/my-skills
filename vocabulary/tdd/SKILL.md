@@ -1,13 +1,13 @@
 ---
 name: tdd
 layer: vocabulary
-description: Test-driven development with red-green-refactor loop using pytest. Use when building Python features or fixing bugs one vertical slice at a time.
+description: 内部 vocabulary，仅由开发、调试或 criteria loop 父工作流为行为变更加载；使用项目原生测试命令执行垂直切片 RED-GREEN-REFACTOR，不直接承接主流程开发意图。
 disable-model-invocation: false
 ---
 
 # TDD — 测试驱动开发
 
-红-绿-重构循环，pytest 驱动，先写失败测试再写实现。
+使用项目已经定义的测试框架和命令，先写失败测试，再写最少实现。
 
 ## 核心理念
 
@@ -34,6 +34,7 @@ disable-model-invocation: false
 - 读术语与决策上下文（`CONTEXT.md` / ADR）
 - 确认接口设计
 - 列出要测试的行为（不是实现步骤）
+- 从项目清单、任务运行器、贡献文档或 CI 确认原生测试命令；不按语言猜测工具
 
 **测试策略（按行为风险，而非任务规模或代码行数）**：
 
@@ -44,7 +45,7 @@ disable-model-invocation: false
 
 ### 2. 示踪弹
 
-写一个测试确认一件事 → 最少代码让它通过，证明路径可行。
+写一个测试确认一件事 → 用项目原生测试命令确认它因目标行为缺失而失败 → 最少代码让它通过。
 
 ### 3. 递增循环
 
@@ -61,7 +62,7 @@ disable-model-invocation: false
 - 提取重复逻辑
 - 浅模块深化（合并小接口、隐藏实现细节）
 - 删除投机代码
-- 每次重构后运行测试确认仍然全绿
+- 每次重构后运行项目原生测试命令确认仍然全绿
 
 ## 编码准则
 
@@ -69,10 +70,12 @@ disable-model-invocation: false
 
 ## MUST 规则
 
-1. **绝不在 RED 时重构。** 全部变绿后才检查提取重复/加深模块。
-2. **测试通过公共接口验证行为，不验证实现细节。**
-3. **一次一个测试。** 写一个测试 → 让它通过 → 再写下一个。
-4. **最少代码通过测试。** 不提前实现未测试的功能。
+1. **RED 必须可信。** 新测试应因目标行为缺失而失败，不得接受环境、语法或依赖错误造成的假红。
+2. **绝不在 RED 时重构。** 全部变绿后才检查提取重复/加深模块。
+3. **测试通过公共接口验证行为，不验证实现细节。**
+4. **一次一个测试。** 写一个测试 → 让它通过 → 再写下一个。
+5. **最少代码通过测试。** 不提前实现未测试的功能。
+6. **只用项目原生命令。** 未配置自动化测试时，交回父工作流记录 seam 缺失与风险，不临时指定框架。
 
 ## 测试原则
 
@@ -90,25 +93,13 @@ disable-model-invocation: false
 - 测试之间有依赖
 - 需要复杂的 setup/teardown
 
-## 示例
+## 行为示例
 
-**好的测试**：
+- 好：给定有效凭据，调用公开登录入口后返回成功结果和会话凭证。
+- 坏：断言某个私有校验函数恰好被调用三次。
 
-```python
-def test_user_can_login_with_valid_credentials():
-    response = client.post('/login', json={
-        'email': 'user@example.com',
-        'password': 'password123'
-    })
-    assert response.status_code == 200
-    assert 'token' in response.json()
-```
+## 完成条件
 
-**坏的测试**：
-
-```python
-def test_login_calls_validate_password():
-    with patch('auth.validate_password') as mock:
-        login('user', 'pass')
-        assert mock.called  # 测试实现细节
-```
+- 每个行为切片都有可观察的可信 RED 和对应 GREEN 证据。
+- 测试只依赖公共行为，重构后项目原生测试仍全绿。
+- 例外切片已记录无需新增测试或无法自动测试的证据与风险。

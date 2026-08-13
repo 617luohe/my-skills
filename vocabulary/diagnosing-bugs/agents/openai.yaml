@@ -1,6 +1,0 @@
-interface:
-  display_name: "Diagnosing Bugs"
-  short_description: "Core reusable vocabulary skill"
-
-policy:
-  allow_implicit_invocation: true

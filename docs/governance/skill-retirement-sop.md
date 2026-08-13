@@ -19,7 +19,7 @@
 ```yaml
 - name: old-skill-name
   status: deprecated # stable → deprecated
-  deprecated_note: "Replaced by /new-skill-name. Reason: clearer scope separation. Migration: rename calls to /new-skill-name."
+  deprecated_note: "Replaced by runtime deployment name NEW_NAME. Reason: clearer scope separation. Migration: rename calls to NEW_NAME with a leading slash."
   invocation: user # deprecated 技能禁止模型自动调用
 ```
 
@@ -28,12 +28,14 @@
 - `deprecated_note`: 必须包含替代方案（如果有）和迁移指引
 - `invocation: user`: deprecated 技能不可模型自动调用
 
+Manifest 中的技能名与 dependencies 使用 canonical name；迁移说明里的 slash 调用使用替代技能的 runtime `deployment_name`。
+
 ### 2. SKILL.md 标注（人类可读）
 
 在 SKILL.md 顶部 frontmatter 后立即加警告块：
 
 ```markdown
-> **⚠️ DEPRECATED**: This skill has been retired. Use `/new-skill-name` instead.
+> **⚠️ DEPRECATED**: This skill has been retired. Use the replacement runtime deployment name with a leading slash.
 > See [CHANGELOG.md](../../CHANGELOG.md#yyyy-mm-dd---skill-retirement) for details.
 ```
 
@@ -44,7 +46,7 @@
 ```markdown
 #### Deprecated
 
-- **old-skill-name**: Replaced by `/new-skill-name`. Reason: [简述原因]. Migration: [迁移步骤]
+- **old-skill-name**: Replaced by the documented runtime deployment name. Reason: [简述原因]. Migration: [迁移步骤]
 ```
 
 ### 4. 同步与文档清理检查清单
@@ -53,8 +55,8 @@
 
 - [ ] `README.md` 的技能清单：删除或标注 deprecated
 - [ ] `USAGE.md` 的索引表：删除或移至 deprecated 段
-- [ ] `CLAUDE.md` 的路由表：删除或注释
-- [ ] `0-询问luohe/SKILL.md` 的快速判断表：删除或改指向替代者
+- [ ] `CLAUDE.md`：保持 `/0-询问luohe` 指针，不加入技能级路由
+- [ ] `0-询问luohe/SKILL.md`：删除旧技能条目或改指向替代者
 - [ ] `CONTEXT.md`（如有）：删除对该技能的引用
 
 ### 5. 验证退役完整性
@@ -102,7 +104,7 @@ grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGE
 - [ ] CHANGELOG: 记录退役原因和替代方案
 - [ ] README: 删除或标注 deprecated
 - [ ] USAGE: 删除或移至 deprecated 段
-- [ ] CLAUDE.md: 路由表删除或注释
+- [ ] CLAUDE.md: 仅保留路由指针，无技能级路由镜像
 - [ ] 0-询问luohe: 快速判断表清理
 - [ ] validator: 0 error/0 warning
 - [ ] 遗留引用检查: grep 无意外引用
@@ -115,7 +117,7 @@ grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGE
 2026-08-07，`cleanup` 和 `cleanupclaude` 技能退役：
 
 - **原因**：职责被 `0--neat-freak` 完全覆盖，且边界更清晰
-- **迁移**：所有 `/cleanup` 调用改为 `/0--neat-freak`
+- **迁移**：所有旧 cleanup 调用改为 `/0--neat-freak`
 - **执行**：manifest 标注 deprecated → SKILL.md 警告块 → CHANGELOG 记录 → 路由表清理 → validator 通过
 - **结果**：技能目录保留但标注 deprecated，分发层遗留链接已清理
 

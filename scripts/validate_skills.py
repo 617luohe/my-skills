@@ -22,11 +22,12 @@ WORKER_ONLY_BODY_RE = re.compile(
     r"仅由\s+\S+\s+调度|严禁(?:直调|直接调用)"
 )
 LINK_RE = re.compile(r"!?\[[^]]*\]\(([^)]+)\)")
-SLASH_SKILL_RE = re.compile(
+STRUCTURED_SLASH_SKILL_RE = re.compile(
     r"(?<![\w.])/(?!/)([\w-]+/[\w-]+(?:--?[\w-]+)*|[\w-]+(?:--?[\w-]+)+)",
     re.UNICODE,
 )
-# Vault / system path references that look like skill names to SLASH_SKILL_RE
+BACKTICKED_SINGLE_SLASH_RE = re.compile(r"`/([A-Za-z0-9][A-Za-z0-9_-]*)`")
+# Vault / system path references that look like structured slash skill names
 # but aren't (matched by first path segment)
 SKILL_REF_EXCLUSIONS = frozenset(
     {
@@ -52,7 +53,10 @@ SKILL_REF_EXCLUSIONS = frozenset(
         "Cleanup-Image",
     }
 )
-ROUTE_ROW_RE = re.compile(r"^\|[^\n]*\|\s*([^|`]+?)\s*\|[^\n]*$")
+HOST_COMMAND_ALLOWLIST = frozenset({"loop", "changelog"})
+FAT_ROUTE_HEADING_RE = re.compile(
+    r"^##\s+(?:工作流路由|支撑层)(?:\s|[（(]|$)", re.MULTILINE
+)
 
 # Naming convention patterns
 STAGE_SKILL_RE = re.compile(r"^[0-6]-[一-鿿]+$")  # N-中文
@@ -64,6 +68,23 @@ MY_NOTE_SKILL_RE = re.compile(
     r"^my-note/[a-z][a-z0-9-]*(-[a-z][a-z0-9-]*)*$"
 )  # my-note/lowercase-hyphenated
 ROUTER_SKILL = "0-询问luohe"
+
+
+def _slash_skill_references(text: str, runtime_names: set[str]) -> set[str]:
+    """Find structured, known flat, and backticked single-segment references."""
+    references = set(STRUCTURED_SLASH_SKILL_RE.findall(text))
+    references.update(BACKTICKED_SINGLE_SLASH_RE.findall(text))
+    plain_names = sorted(
+        (name for name in runtime_names if "/" not in name and "-" not in name),
+        key=len,
+        reverse=True,
+    )
+    if plain_names:
+        exact_runtime = re.compile(
+            r"(?<![\w./-])/(" + "|".join(map(re.escape, plain_names)) + r")(?![\w/-])"
+        )
+        references.update(exact_runtime.findall(text))
+    return references
 
 
 def _expected_category(name: str) -> str:
@@ -80,48 +101,75 @@ def _expected_category(name: str) -> str:
     return "standalone"
 
 
-def _skill_refs_in_markdown(text: str) -> set[str]:
-    refs: set[str] = set()
-    for match in SLASH_SKILL_RE.finditer(text):
-        candidate = match.group(1)
-        if candidate.split("/")[0] not in SKILL_REF_EXCLUSIONS:
-            refs.add(candidate)
-    return refs
-
-
-def _validate_claude_mirror(
+def _validate_claude_pointer(
     root: Path,
     errors: list[dict[str, str]],
     claude_path: Path | None = None,
 ) -> None:
-    router_path = root / ROUTER_SKILL / "SKILL.md"
-    if not router_path.is_file():
-        return
     if claude_path is None:
         claude_path = root.parent / "CLAUDE.md"
     if not claude_path.is_file():
-        return
-    router_refs = _skill_refs_in_markdown(
-        router_path.read_text(encoding="utf-8")
-    )
-    claude_text = claude_path.read_text(encoding="utf-8")
-    support_start = claude_text.find("## 支撑层")
-    if support_start < 0:
-        return
-    support_end = claude_text.find("\n## ", support_start + 1)
-    section = (
-        claude_text[support_start:support_end]
-        if support_end >= 0
-        else claude_text[support_start:]
-    )
-    claude_support_refs = _skill_refs_in_markdown(section)
-    missing = sorted(claude_support_refs - router_refs)
-    if missing:
         errors.append(
             _finding(
-                "claude-mirror",
+                "claude-pointer",
                 claude_path,
-                f"支撑层技能未在 {ROUTER_SKILL} 覆盖: {missing}",
+                "CLAUDE.md does not exist",
+                root,
+            )
+        )
+        return
+    claude_text = claude_path.read_text(encoding="utf-8")
+    if FAT_ROUTE_HEADING_RE.search(claude_text):
+        errors.append(
+            _finding(
+                "claude-pointer",
+                claude_path,
+                "CLAUDE.md contains Fat route headings; keep only ## 路由入口",
+                root,
+            )
+        )
+    route_heading = re.search(r"^## 路由入口\s*$", claude_text, re.MULTILINE)
+    if route_heading is None:
+        errors.append(
+            _finding(
+                "claude-pointer",
+                claude_path,
+                "CLAUDE.md must contain ## 路由入口",
+                root,
+            )
+        )
+        return
+    next_heading = re.search(r"^## ", claude_text[route_heading.end() :], re.MULTILINE)
+    section_end = (
+        route_heading.end() + next_heading.start()
+        if next_heading is not None
+        else len(claude_text)
+    )
+    section = claude_text[route_heading.start() : section_end]
+    if f"/{ROUTER_SKILL}" not in section:
+        errors.append(
+            _finding(
+                "claude-pointer",
+                claude_path,
+                f"## 路由入口 must point to /{ROUTER_SKILL}",
+                root,
+            )
+        )
+        return
+    body_lines = [
+        line.strip()
+        for line in section.splitlines()[1:]
+        if line.strip()
+    ]
+    pointer_line = re.compile(
+        rf"^完整路由(?:只)?见\s+`/{re.escape(ROUTER_SKILL)}`[。.]?$"
+    )
+    if len(body_lines) != 1 or pointer_line.fullmatch(body_lines[0]) is None:
+        errors.append(
+            _finding(
+                "claude-pointer",
+                claude_path,
+                "## 路由入口 must contain only the /0-询问luohe pointer",
                 root,
             )
         )
@@ -542,7 +590,8 @@ def _validate_dependency_references(
 def _validate_skill(
     skill: dict[str, Any],
     root: Path,
-    canonical: set[str],
+    runtime_names: set[str],
+    canonical_to_deployment: dict[str, str],
     errors: list[dict[str, str]],
     warnings: list[dict[str, str]],
 ) -> None:
@@ -668,7 +717,9 @@ def _validate_skill(
         )
 
     for markdown in sorted(skill_path.rglob("*.md")):
-        _validate_markdown(markdown, root, canonical, errors)
+        _validate_markdown(
+            markdown, root, runtime_names, canonical_to_deployment, errors
+        )
 
 
 def _validate_document_authority(
@@ -703,14 +754,18 @@ def _validate_document_authority(
             _finding(
                 "adr-template-owner",
                 path,
-                "ADR template must be owned by vocabulary/domain-modeling/references/adr-format.md",
+                "ADR template must be owned by 1-规划/references/adr-format.md",
                 root,
             )
         )
 
 
 def _validate_markdown(
-    path: Path, root: Path, canonical: set[str], errors: list[dict[str, str]]
+    path: Path,
+    root: Path,
+    runtime_names: set[str],
+    canonical_to_deployment: dict[str, str],
+    errors: list[dict[str, str]],
 ) -> None:
     text = path.read_text(encoding="utf-8-sig")
     _validate_document_authority(path, text, root, errors)
@@ -737,17 +792,25 @@ def _validate_markdown(
             errors.append(
                 _finding("markdown-link", path, f"broken local link: {target}", root)
             )
-    for reference in SLASH_SKILL_RE.findall(text):
+    for reference in _slash_skill_references(text, runtime_names):
+        if reference in HOST_COMMAND_ALLOWLIST:
+            continue
         if reference.split("/", 1)[0] in SKILL_REF_EXCLUSIONS:
             continue
         if reference.endswith("-"):
             continue  # incomplete template token (e.g. <root>/report-<stamp>.md)
-        if reference not in canonical:
+        if reference not in runtime_names:
+            expected = canonical_to_deployment.get(reference)
+            message = (
+                f"canonical skill reference /{reference} is not deployed; use /{expected}"
+                if expected is not None
+                else f"unknown runtime skill reference /{reference}"
+            )
             errors.append(
                 _finding(
                     "skill-reference",
                     path,
-                    f"unknown canonical skill reference /{reference}",
+                    message,
                     root,
                 )
             )
@@ -756,6 +819,7 @@ def _validate_markdown(
 def validate_repository(
     root: Path,
     *,
+    check_claude_pointer: bool = False,
     check_claude_mirror: bool = False,
     claude_path: Path | None = None,
 ) -> dict[str, Any]:
@@ -772,6 +836,12 @@ def validate_repository(
     canonical = {
         skill["name"] for skill in skills if isinstance(skill.get("name"), str)
     }
+    canonical_to_deployment = {
+        skill["name"]: skill_manifest.deployment_name(skill["name"])
+        for skill in skills
+        if isinstance(skill.get("name"), str) and skill.get("status") != "deprecated"
+    }
+    runtime_names = set(canonical_to_deployment.values())
     # Discover skills recursively: top-level and any nested under subdirectories
     discovered = set()
     for skill_md in root.rglob("*/SKILL.md"):
@@ -793,9 +863,25 @@ def validate_repository(
     _validate_dependencies(skills, root, errors)
     _validate_dependency_references(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
-        _validate_skill(skill, root, canonical, errors, warnings)
-    if check_claude_mirror:
-        _validate_claude_mirror(root, errors, claude_path)
+        _validate_skill(
+            skill,
+            root,
+            runtime_names,
+            canonical_to_deployment,
+            errors,
+            warnings,
+        )
+    navigation_docs = [root / "README.md", root / "USAGE.md"]
+    governance_root = root / "docs" / "governance"
+    if governance_root.is_dir():
+        navigation_docs.extend(sorted(governance_root.rglob("*.md")))
+    for markdown in navigation_docs:
+        if markdown.is_file():
+            _validate_markdown(
+                markdown, root, runtime_names, canonical_to_deployment, errors
+            )
+    if check_claude_pointer or check_claude_mirror:
+        _validate_claude_pointer(root, errors, claude_path)
     errors.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     warnings.sort(key=lambda item: (item["path"], item["code"], item["message"]))
     return {"ok": not errors, "root": str(root), "errors": errors, "warnings": warnings}
@@ -810,9 +896,14 @@ def main(argv: list[str] | None = None) -> int:
         "--root", type=Path, default=SCRIPT_DIR.parent, help=argparse.SUPPRESS
     )
     parser.add_argument(
+        "--check-claude-pointer",
+        action="store_true",
+        help="require CLAUDE.md small-kernel route pointer",
+    )
+    parser.add_argument(
         "--check-claude-mirror",
         action="store_true",
-        help="compare CLAUDE.md 支撑层 with 0-询问luohe coverage",
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--claude-md",
@@ -823,6 +914,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     report = validate_repository(
         args.root,
+        check_claude_pointer=args.check_claude_pointer,
         check_claude_mirror=args.check_claude_mirror,
         claude_path=args.claude_md,
     )

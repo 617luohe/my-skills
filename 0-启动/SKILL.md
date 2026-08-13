@@ -1,12 +1,12 @@
 ---
 name: 0-启动
-description: Python 项目最小初始化：项目结构 + 本地 git + uv 环境
+description: 仅初始化 Python + uv 项目：最小项目结构、本地 git、uv 环境与 smoke test；不作为通用项目启动器。
 disable-model-invocation: false
 ---
 
-# 0-启动 — 新项目最小初始化
+# 0-启动 — Python + uv 项目最小初始化
 
-三件事：**项目结构 + 本地 git + uv 环境**。细节见 [references/scaffold.md](references/scaffold.md)。
+仅服务 Python + uv 项目：**项目结构 + 本地 git + uv 环境**。其他语言或包管理器交回 `/0-询问luohe`。细节见 [references/scaffold.md](references/scaffold.md)。
 
 ## MUST 规则
 

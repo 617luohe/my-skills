@@ -4,18 +4,33 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-08-13
+
 ### Added
 
-- **0--loop**：长时间自主迭代环；开场 grilling（含 mode/预算）一次确认后主环零 HITL；`min_rounds` 反早停；默认 max/min=8/3；产物 `docs/loop/`
+- **issue-reporting**：显式建单触发的独立技能；同 tracker 查重，远程创建前展示完整内容并确认。
+- **skill_manifest contract**：输出 schema/repository 版本与 active skill 的 canonical name、deployment_name、hosts、invocation、status；publication/contract 支持 `--output` 直接写 UTF-8 JSON。
 
 ### Changed
 
-- **0--loop**：共识长跑定位与触发负例（vs Cursor `/loop`、Ralph）；何时用/不用决策树与市场三角；续跑示例；`completion_promise` 双安全阀；每轮必报一行进度；`slice-progress.md` 取代 `progress.md`；grilling 草拟 AC；hybrid 切换条件；触压信号与 blocker 优先级；术语表与 report 落地字段
-- **0-询问luohe**：移除 `0--dialectic` 路由推荐；新增「不经路由器（用户显式调用）」说明
+- **0-询问luohe**：成为单一路由事实源，按歧义/影响/可逆性分三路，并定义 planning→fresh development slice→fresh review 的磁盘契约。
+- **2-开发**：改为宿主与语言中立，发现并运行项目原生 test/type/lint/build；行为变更继续加载内部 TDD vocabulary；正式 review 交接覆盖 committed/staged/unstaged 与未跟踪文件内容。
+- **3-检查**：收敛为正式 diff review，固定 fixed point/spec/workspace diff/证据输入和三态裁决；未跟踪文件不得静默漏审。
+- **0--dialectic**：统一为 user-only，禁止模型隐式调用。
+- **0--loop**：标记 experimental + user-only；移除最小轮次与耗尽轮次逻辑，AC 达标或连续两轮无高价值发现即停；新用户消息只写 superseded PROGRESS；执行前探测宿主隔离能力并支持顺序 fresh-context 降级。
+- **0-启动**：明确只服务 Python + uv。
+- **0--claude / 0--neat-freak**：统一 CLAUDE.md 小内核与路由指针职责；neat-freak 改用跨平台文件工具语义。
+- **grilling / tdd**：description 限定为父工作流加载的内部 vocabulary；TDD 使用项目原生测试命令。
+- **治理文档与索引**：更新调用图、唯一事实源路径和 1.4.0 技能清单；CLAUDE 校验改为小内核路由指针，导航只保留一句路由指针。
+- **manifest**：24 → 22 个 active skill；`repository_version` 升至 1.4.0。
+- **跨宿主调用契约**：manifest dependencies 保持 canonical name；正文 slash 引用与 validator 统一使用扁平 deployment name。
+- **validator / router fixtures**：显式 CLAUDE 指针检查要求目标存在；slash 校验覆盖导航与治理文档并识别反引号单段 typo；路由 fixture 增加 pytest 结构门禁，语义判断仍由人工或模型 eval。
 
-### Changed
+### Removed
 
-- **工作哲学**：三源重构（Caveman/Karpathy/Vercel）——Karpathy 四则独立保留，恢复语义完整性
+- **vocabulary/domain-modeling**：内容迁入 `1-规划/references/`。
+- **vocabulary/code-review**：内容迁入 `3-检查/references/`。
+- **vocabulary/diagnosing-bugs**：内容迁入 `4-调试/references/`。
 
 ## [1.3.0] - 2026-08-12
 
