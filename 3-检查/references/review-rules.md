@@ -24,7 +24,7 @@
 
 ## 完成条件
 
-- fixed point 提交差异、spec、staged/unstaged、未跟踪文件内容与验证证据均已记录。
+- fixed point 提交差异、spec、staged/unstaged、未跟踪文件内容，以及已有或审查时新运行的验证证据均已记录。
 - 所有排除文件均逐项列出理由。
 - 每条发现有轴、严重级别、位置、证据和最小修复建议。
 - 未验证门禁已列为 warning。

@@ -10,18 +10,18 @@ disable-model-invocation: false
 
 ## 输入契约
 
-在 fresh context 中接收且只接收：
+在 fresh context 中接收三项必需输入，可附已有验证证据：
 
 1. **fixed point/base**：审查基点、提交列表与 `git diff <fixed-point>...HEAD` 提交差异。
 2. **spec**：PRD、任务、issue、验收标准或用户明确需求。
 3. **workspace diff**：`git diff --cached`、`git diff`，以及 `git ls-files --others --exclude-standard` 返回的未跟踪文件列表与内容。
-4. **证据**：开发方已运行的项目原生 test/type/lint/build 命令及结果。
+4. **已有证据（可选）**：开发方已运行的项目原生 test/type/lint/build 命令及结果。
 
-无意纳入的用户文件必须逐项显式排除并说明理由。缺少任何一项时只询问缺失项；不得用规划或开发聊天记忆补齐。四项可定位后，输入契约完成。
+无意纳入的用户文件必须逐项显式排除并说明理由。缺少前三项时只询问缺失项；不得用规划或开发聊天记忆补齐。没有已有证据时由审查者按流程运行可自动验证门禁，不阻塞进入审查。
 
 ## 流程
 
-1. 固定并记录基点、提交列表、spec、规范来源、diff 范围和验证证据。
+1. 固定并记录基点、提交列表、spec、规范来源、diff 范围和已有证据状态。
 2. 按 [review-rules.md](references/review-rules.md) 选择审查深度，并保持 Standards 与 Spec 两轴独立。
 3. 功能、性能、可靠性或资源门禁能自动验证则运行；不能验证则记录“需手动验证”并至少给出 warning。
 4. 输出可追踪意见：ID、轴、严重级别、`文件:行`、证据与最小修复建议。
@@ -33,7 +33,7 @@ disable-model-invocation: false
 - **PASS WITH WARNINGS**：无阻断，但存在警告或未自动验证的门禁。
 - **PASS**：无阻断和警告。
 
-报告必须包含输入契约四项、Standards、Spec、意见清单、未验证项和裁决。详细 reviewer 边界见 [standards-reviewer.md](references/standards-reviewer.md) 与 [spec-reviewer.md](references/spec-reviewer.md)。
+报告必须包含三项必需输入、已有/新运行证据、Standards、Spec、意见清单、未验证项和裁决。详细 reviewer 边界见 [standards-reviewer.md](references/standards-reviewer.md) 与 [spec-reviewer.md](references/spec-reviewer.md)。
 
 ## 交接
 

@@ -57,6 +57,15 @@ HOST_COMMAND_ALLOWLIST = frozenset({"loop", "changelog"})
 FAT_ROUTE_HEADING_RE = re.compile(
     r"^##\s+(?:工作流路由|支撑层)(?:\s|[（(]|$)", re.MULTILINE
 )
+CHANGELOG_RELEASE_RE = re.compile(
+    r"^##\s+\[?([0-9]+\.[0-9]+\.[0-9]+)\]?(?:\s+-[^\n]*)?\s*$",
+    re.MULTILINE,
+)
+MANIFEST_DEPENDENCY_BLOCK_RE = re.compile(
+    r"^[^\n]*manifest[^\n]*(?:dependenc(?:y|ies)|依赖)[^\n]*\n"
+    r"\s*```[^\n]*\n(.*?)^```",
+    re.IGNORECASE | re.MULTILINE | re.DOTALL,
+)
 
 # Naming convention patterns
 STAGE_SKILL_RE = re.compile(r"^[0-6]-[一-鿿]+$")  # N-中文
@@ -519,6 +528,56 @@ def _validate_manifest(
     return skills
 
 
+def _pyproject_version(path: Path) -> str | None:
+    in_project = False
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        stripped = line.strip()
+        if re.fullmatch(r"\[[^]]+\]", stripped):
+            in_project = stripped == "[project]"
+            continue
+        if not in_project:
+            continue
+        match = re.fullmatch(
+            r"""version\s*=\s*(["'])([^"']+)\1(?:\s*#.*)?""", stripped
+        )
+        if match:
+            return match.group(2)
+    return None
+
+
+def _validate_release_versions(
+    manifest: dict[str, Any], root: Path, errors: list[dict[str, str]]
+) -> None:
+    expected = manifest.get("repository_version")
+    if not isinstance(expected, str) or not skill_manifest.SEMVER.fullmatch(expected):
+        return
+
+    pyproject = root / "pyproject.toml"
+    if pyproject.is_file():
+        actual = _pyproject_version(pyproject)
+        if actual != expected:
+            message = (
+                f"repository_version {expected} != [project].version {actual}"
+                if actual is not None
+                else "[project].version is missing"
+            )
+            errors.append(_finding("release-version", pyproject, message, root))
+
+    changelog = root / "CHANGELOG.md"
+    if changelog.is_file():
+        match = CHANGELOG_RELEASE_RE.search(
+            changelog.read_text(encoding="utf-8-sig")
+        )
+        actual = match.group(1) if match else None
+        if actual != expected:
+            message = (
+                f"repository_version {expected} != first published CHANGELOG version {actual}"
+                if actual is not None
+                else "CHANGELOG has no published semantic version"
+            )
+            errors.append(_finding("release-version", changelog, message, root))
+
+
 def _validate_dependencies(
     skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
 ) -> None:
@@ -554,6 +613,58 @@ def _validate_dependencies(
                         root,
                     )
                 )
+            if (
+                isinstance(target, str)
+                and target in by_name
+                and skill.get("status") in ("stable", "experimental")
+                and by_name[target].get("status") == "deprecated"
+            ):
+                errors.append(
+                    _finding(
+                        "dependency-status",
+                        root / "skills-manifest.yaml",
+                        f"{name}: {skill['status']} skill cannot depend on deprecated {target}",
+                        root,
+                    )
+                )
+
+    graph = {
+        name: sorted(
+            target
+            for target in skill.get("dependencies", [])
+            if isinstance(target, str) and target in by_name
+        )
+        for name, skill in by_name.items()
+        if isinstance(skill.get("dependencies"), list)
+    }
+    state: dict[str, int] = {}
+    stack: list[str] = []
+    positions: dict[str, int] = {}
+
+    def visit(name: str) -> None:
+        state[name] = 1
+        positions[name] = len(stack)
+        stack.append(name)
+        for target in graph.get(name, []):
+            if state.get(target, 0) == 0:
+                visit(target)
+            elif state[target] == 1:
+                cycle = stack[positions[target] :] + [target]
+                errors.append(
+                    _finding(
+                        "dependency-cycle",
+                        root / "skills-manifest.yaml",
+                        f"dependency cycle: {' -> '.join(cycle)}",
+                        root,
+                    )
+                )
+        stack.pop()
+        positions.pop(name)
+        state[name] = 2
+
+    for name in sorted(graph):
+        if state.get(name, 0) == 0:
+            visit(name)
 
 
 def _validate_dependency_references(
@@ -585,6 +696,106 @@ def _validate_dependency_references(
                         root,
                     )
                 )
+
+
+def _validate_usage_index(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    usage = root / "USAGE.md"
+    if not usage.is_file():
+        return
+
+    targets: set[str] = set()
+    text = usage.read_text(encoding="utf-8-sig")
+    for raw_target in LINK_RE.findall(text):
+        target = raw_target.strip().strip("<>")
+        if " " in target and not raw_target.strip().startswith("<"):
+            target = target.split(maxsplit=1)[0].strip('"')
+        else:
+            target = target.strip('"')
+        local = target.split("#", 1)[0]
+        if local.startswith("./"):
+            local = local[2:]
+        targets.add(local)
+
+    for skill in skills:
+        path = skill.get("path")
+        if (
+            not isinstance(path, str)
+            or skill.get("status") == "deprecated"
+            or skill.get("distribution") != "synchronized"
+        ):
+            continue
+        expected = f"{path}/SKILL.md"
+        if expected not in targets:
+            errors.append(
+                _finding(
+                    "usage-index",
+                    usage,
+                    f"{skill.get('name')}: missing Markdown link target {expected}",
+                    root,
+                )
+            )
+
+
+def _manifest_dependency_edges(text: str) -> set[tuple[str, str]]:
+    block = MANIFEST_DEPENDENCY_BLOCK_RE.search(text)
+    if block is None:
+        return set()
+
+    edges: set[tuple[str, str]] = set()
+    for line in block.group(1).splitlines():
+        match = re.fullmatch(
+            r"\s*`?([^`\s]+)`?\s*(?:-+>|─+>|→)\s*(.*?)\s*", line
+        )
+        if match is None:
+            continue
+        source = match.group(1)
+        for raw_target in match.group(2).split("+"):
+            target = raw_target.strip().strip("`")
+            if target:
+                edges.add((source, target))
+    return edges
+
+
+def _validate_invocation_graph(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    graph_path = root / "docs" / "governance" / "invocation-graph.md"
+    if not graph_path.is_file():
+        return
+
+    documented = _manifest_dependency_edges(
+        graph_path.read_text(encoding="utf-8-sig")
+    )
+    expected: set[tuple[str, str]] = set()
+    for skill in skills:
+        source = skill.get("name")
+        dependencies = skill.get("dependencies")
+        if not isinstance(source, str) or not isinstance(dependencies, list):
+            continue
+        for target in dependencies:
+            if isinstance(target, str):
+                expected.add((source, target))
+
+    for source, target in sorted(expected - documented):
+        errors.append(
+            _finding(
+                "invocation-graph",
+                graph_path,
+                f"{source} -> {target} missing from manifest dependency code block",
+                root,
+            )
+        )
+    for source, target in sorted(documented - expected):
+        errors.append(
+            _finding(
+                "invocation-graph",
+                graph_path,
+                f"{source} -> {target} is not declared in manifest",
+                root,
+            )
+        )
 
 
 def _validate_skill(
@@ -833,6 +1044,7 @@ def validate_repository(
         errors.append(_finding("manifest", manifest_path, str(exc), root))
         manifest = {"skills": []}
     skills = _validate_manifest(manifest, root, errors)
+    _validate_release_versions(manifest, root, errors)
     canonical = {
         skill["name"] for skill in skills if isinstance(skill.get("name"), str)
     }
@@ -862,6 +1074,8 @@ def validate_repository(
         )
     _validate_dependencies(skills, root, errors)
     _validate_dependency_references(skills, root, errors)
+    _validate_usage_index(skills, root, errors)
+    _validate_invocation_graph(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(
             skill,
@@ -871,7 +1085,7 @@ def validate_repository(
             errors,
             warnings,
         )
-    navigation_docs = [root / "README.md", root / "USAGE.md"]
+    navigation_docs = [root / "README.md", root / "USAGE.md", root / "CONTEXT.md"]
     governance_root = root / "docs" / "governance"
     if governance_root.is_dir():
         navigation_docs.extend(sorted(governance_root.rglob("*.md")))

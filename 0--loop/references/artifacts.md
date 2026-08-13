@@ -31,7 +31,7 @@ grilling 退出并经用户确认后写入，主环只认此文件为需求边�
 - max_rounds: 8
 - AC / 探索问题：
 - 残余假设 / 风险：
-- 确认：用户已确认（日期）— 确认后主环静默长跑
+- 确认：用户已确认（日期）— 确认后主环不再索取新决策
 ```
 
 `max_rounds` 只是安全上限；AC 满足或连续两轮无高价值新发现时立即停止。
@@ -74,7 +74,7 @@ grilling 退出并经用户确认后写入，主环只认此文件为需求边�
 - stop_reason：none | grilling | pressure | per-round | ac-satisfied | no-progress | max-rounds | blocked | capability-unavailable | user-superseded
 ```
 
-父会话对用户**必输出一行**（从上述字段抽取）：`R<n>/<max> · <top_finding> · 剩余 <k> 轮 · <停靠|继续>`
+父会话对用户**必输出一行**（从上述字段抽取）：`R<n>/<max> · <top_finding> · 剩余 <k> 轮 · <继续|停靠·原因|停止·原因>`
 
 ## map.md（explore）
 

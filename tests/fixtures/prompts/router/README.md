@@ -2,7 +2,7 @@
 
 每个 prompt 以 frontmatter 声明 `expected`；不调用技能的直接路径另声明 `router_marker`。pytest 只校验 metadata 可解析、runtime skill 存在，以及 canonical router 包含目标或 marker，不实现第二份路由分类器。
 
-语义路由是否正确仍需人工或模型 eval：读 prompt，判断预期是否合理。
+`trigger-evals.json` 保存真实正例与近似负例；pytest 校验其 schema、目标技能和边界覆盖。发布前应由固定宿主/模型多次运行该集合，记录命中率；模型结果有波动，不进入阻断式 CI。
 
 | 文件 | 用户说法 | 预期技能 |
 |------|----------|----------|

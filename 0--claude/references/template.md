@@ -44,5 +44,5 @@
 
 ## 本项目配置
 
-- **默认知识库**：`C:\Users\Administrator\Documents\Obsidian Vault`（note 技能默认写入；当前目录含 `.obsidian/` 时用当前 vault）
+- **知识库**：按 `/noteall` 的 `references/config.yaml` 解析；当前目录含 `.obsidian/` 时优先当前 Vault，否则使用配置默认值
 - **命令**：（补充 dev / build / test / deploy，如 `pytest -q`）

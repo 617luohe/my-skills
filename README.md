@@ -17,7 +17,7 @@ my-skills/
 ├── my-note/                      — 知识管理技能体系（类比 vocabulary 层）
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
 │   ├── index-keeper/            — 内部 Worker（索引维护）
-│   └── vault-publisher/         — 内部 Worker（固定 Vault 发布）
+│   └── vault-publisher/         — 内部 Worker（所选 Vault 发布）
 ├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 └── scripts/                     — manifest 解析与受管技能部署脚本
@@ -46,6 +46,8 @@ my-skills/
 ## 调用分类
 
 **单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
+
+**hosts 语义**：`hosts` 表示 skills-manager 的分发目标，不等于各宿主已通过完整行为认证；技能应在正文声明环境要求，并在执行前探测所需能力。
 
 **名称契约**：manifest 的 `name`、`path`、`dependencies` 使用 canonical name（如 `vocabulary/tdd`）；skills-manager 按末段扁平部署，运行时 slash 调用必须使用 contract 的 `deployment_name`（如 `/tdd`、`/noteall`）。
 
@@ -83,7 +85,7 @@ python scripts/skill_manifest.py contract
 python scripts/skill_manifest.py contract --output skills-contract.json
 ```
 
-验证源码治理规则；治理错误返回非零退出码。显式 CLAUDE 指针检查必须传入实际项目文件，不能假设父目录布局。`--output` 直接写 UTF-8 JSON（含末尾换行），避免依赖 shell 重定向编码。CI 运行 `validate_skills.py` 与 `pytest`。
+验证源码治理规则；治理错误返回非零退出码。显式 CLAUDE 指针检查必须传入实际项目文件，不能假设父目录布局。`--output` 直接写 UTF-8 JSON（含末尾换行），避免依赖 shell 重定向编码。CI 在 Windows/Ubuntu 与 Python 3.11/3.12 运行 CLAUDE 模板指针校验、`validate_skills.py` 与 `pytest`。
 
 本地开发（含 pytest）：
 

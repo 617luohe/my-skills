@@ -4,9 +4,10 @@
 
 ## Step 1 — 前置校验（不可跳过）
 
-1. 读取 `config.yaml` 的 `vault_path`，确认目录存在且含 `.obsidian/`。
-2. 检查 Vault Git 工作区是否干净（`git -C {vault} status --porcelain`）。
-3. 任一步失败 → 立即停止并提示，不进入后续处理。
+1. 按 `config.yaml` 解析 Vault：允许时优先当前目录的 `.obsidian/`，否则使用 `vault_path`。
+2. 确认所选目录存在且含 `.obsidian/`，并锁定为本次运行的 `{selected_vault}`。
+3. 检查 Vault Git 工作区是否干净（`git -C {selected_vault} status --porcelain`）。
+4. 任一步失败 → 立即停止并提示，不进入后续处理。
 
 ## Step 2 — 输入解析（按来源类型）
 
@@ -32,7 +33,7 @@
 
 ## MUST 规则
 
-1. **前置校验失败即停止。** 不回退当前目录，不处理资料。
+1. **前置校验失败即停止。** 不尝试配置外目录，不处理资料。
 2. **原件复制保持外部原件不变。** 只复制，不移动、不修改外部文件。
 3. **URL 不创建无意义副本。** 来源记录进 7-Sources/ 而非 raw/。
 4. **正文提取失败 → 提示，不猜测填充。**

@@ -1,3 +1,4 @@
-# Noteall 固定知识库配置（唯一配置值）
-# 全流水线只引用此处路径；校验失败即停止，绝不回退到当前工作目录。
+# Noteall Vault 解析配置（唯一事实源）
+# 当前目录本身是 Vault 时优先使用；否则使用默认路径。
+prefer_current_vault: true
 vault_path: C:\Users\Administrator\Documents\Obsidian Vault

@@ -208,7 +208,7 @@ def main(argv: list[str] | None = None) -> int:
             pass
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--vault", required=True, help="fixed vault path (from noteall config.yaml)"
+        "--vault", required=True, help="vault path selected by noteall"
     )
     parser.add_argument(
         "--paths", nargs="*", default=[], help="owned paths relative to the vault"

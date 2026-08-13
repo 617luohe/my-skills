@@ -1,17 +1,17 @@
 ---
 name: vault-publisher
 layer: my-note
-description: [内部] 固定 Vault 的发布阶段。校验、受控暂存、commit、sync、push。仅由 noteall 编排调度，不可独立触发。
+description: [内部] noteall 所选 Vault 的发布阶段。校验、受控暂存、commit、sync、push。仅由 noteall 编排调度，不可独立触发。
 disable-model-invocation: true
 ---
 
-# vault-publisher — 固定 Vault 发布（内部 Worker）
+# vault-publisher — 受控 Vault 发布（内部 Worker）
 
-承担 noteall 流水线的 Publish 阶段：把本次流水线拥有的改动受控提交并同步到固定 Vault 远端。只接受 noteall 调度，不接收用户直接调用。
+承担 noteall 流水线的 Publish 阶段：把本次流水线拥有的改动受控提交并同步到本次所选 Vault 远端。只接受 noteall 调度，不接收用户直接调用。
 
 ## 职责
 
-1. 校验固定 Vault 与 Git 前置状态。
+1. 校验 noteall 所选 Vault 与 Git 前置状态。
 2. 同步远端（快进 / 干净自动合并 / 冲突停止）。
 3. 只暂存本次 owned paths，commit，push。
 4. 报告 commit hash、push 状态与失败恢复建议。
@@ -22,13 +22,13 @@ noteall 通过 `references/publish.md` 以脚本方式调用，模型不自由�
 
 ```
 python my-note/vault-publisher/scripts/publish_vault.py \
-  --vault {vault_path} \
+  --vault {selected_vault} \
   --paths {owned_path1} {owned_path2} ... \
   --message "notes(<type>): ingest <normalized-title>"
 ```
 
 参数含义：
-- `--vault`：固定 Vault 路径（来自 noteall `references/config.yaml`）。
+- `--vault`：noteall 启动时解析并锁定的 Vault 路径。
 - `--paths`：本次流水线创建的 Vault 内路径（相对 Vault）。
 - `--message`：提交信息。单条 `notes(<type>): ingest <title>`；批量 `notes(batch): curate <count> sources`。
 

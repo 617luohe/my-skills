@@ -73,12 +73,13 @@ disable-model-invocation: true
 1. 无已确认 `consensus.md` 不开主环。
 2. 父会话不深潜；一卡一窗；磁盘是唯一共享记忆。
 3. 每轮 PLAN → FAN-OUT → SYNTHESIZE → CHECKPOINT，并记录是否产生高价值新发现。
-4. 每个 CHECKPOINT 后检查新用户消息，再决定是否继续。
-5. 命中任一停止条件立即停止，不追加“加深轮”：
+4. CHECKPOINT 后先检查新用户消息；命中则标记 `superseded` 并停止。
+5. 无新消息时执行 STOP CHECK；命中任一条件立即停止，不追加“加深轮”：
    - criteria/hybrid 的全部 AC 已满足；
    - 连续两轮无高价值新发现或无可验证进展；
    - `max_rounds` 触顶；
    - 剩余工作全部不可解除 blocked。
+6. 写入检查后的最终状态，再向用户输出一行 `<继续|停靠|停止·原因>`；只有 `running` 才进入下一轮。
 
 ### rounds_done 语义
 
@@ -126,7 +127,7 @@ blocker 优先级：**blocked 切片** > **未探索关键格** > wildcard。
 ## 完成标准
 
 - [ ] 用户显式调用，且 mode、AC、max_rounds 已写入并确认。
-- [ ] 每轮有 checkpoint 与“高价值新发现/进展”判定。
+- [ ] 每轮有 checkpoint、“高价值新发现/进展”判定与一行对外进度。
 - [ ] AC 达标或连续两轮无高价值新发现时立即停止。
 - [ ] 新用户消息出现时旧主环已标记 superseded 并停止。
 - [ ] 正常停止已写 `report.md`；superseded 已写 `PROGRESS.md`；默认分支未合并。

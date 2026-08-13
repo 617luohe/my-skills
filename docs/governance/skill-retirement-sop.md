@@ -18,9 +18,9 @@
 
 ```yaml
 - name: old-skill-name
-  status: deprecated # stable → deprecated
-  deprecated_note: "Replaced by runtime deployment name NEW_NAME. Reason: clearer scope separation. Migration: rename calls to NEW_NAME with a leading slash."
-  invocation: user # deprecated 技能禁止模型自动调用
+  status: deprecated
+  deprecated_note: Replaced by runtime deployment name NEW_NAME; migrate slash calls to NEW_NAME
+  invocation: user
 ```
 
 **必填字段**：
@@ -67,8 +67,8 @@ Manifest 中的技能名与 dependencies 使用 canonical name；迁移说明里
 # 1. validator 通过（deprecated 状态 + deprecated_note + invocation user）
 python scripts/validate_skills.py
 
-# 2. 搜索遗留引用（排除 deprecated skill 自身的 SKILL.md 和 CHANGELOG）
-grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGELOG.md" .
+# 2. 搜索遗留引用（跨平台；再人工排除 deprecated skill 自身与 CHANGELOG）
+rg "old-skill-name" --glob "*.md" .
 # 预期：仅在 CHANGELOG/README deprecated 段出现，或无结果
 
 # 3. 权威源 push 后，skills-manager 同步至运行时（用户环境自行 update）
@@ -86,13 +86,17 @@ grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGE
 
 ## 退役后的文件处理
 
-**保留在 my-skills/**：deprecated 技能的 `SKILL.md` 和目录保留，不删除。原因：
+**默认保留在 my-skills/**：minor 版本中的 deprecated 技能保留目录，不删除。原因：
 
 - 已部署到用户环境的技能可能仍在使用
 - CHANGELOG 历史引用需要文件存在
 - 用户需要时间迁移
 
-**删除时机**：下次 major version bump 时，批量清理已 deprecated ≥6 个月的技能。
+**删除时机**：
+
+- minor 版本只标记 deprecated，不硬删除已部署名称。
+- major 版本可删除已给出迁移指引的 deprecated 技能。
+- 仅内部、无已知用户入口的名称可在 major 版本直接删除，但必须记录替代路径、完成全库引用扫描并更新下游 contract。
 
 ---
 
@@ -138,6 +142,8 @@ grep -r "old-skill-name" --include="*.md" --exclude="SKILL.md" --exclude="CHANGE
 
 **与 deprecated 流程差异**：无 SKILL.md 警告块（目录已删）；历史证据保留在 CHANGELOG + 分析文档头注。
 
+该批次发生在现行 major/minor 规则建立前，只作历史记录，不作为 minor 版本硬删除先例。
+
 ---
 
-_本 SOP 遵循 mattpocock 的退役纪律：标注 → 记录 → 清理 → 保留目录，确保历史可追溯且用户有迁移路径。_
+_目标：退役过程可迁移、可验证、可追溯。_

@@ -4,12 +4,16 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
-## [1.4.0] - 2026-08-13
+## [2.0.0] - 2026-08-13
+
+> Major 版本：三个曾部署的 vocabulary 名称已删除，其工作流内聚到对应阶段技能。
 
 ### Added
 
 - **issue-reporting**：显式建单触发的独立技能；同 tracker 查重，远程创建前展示完整内容并确认。
 - **skill_manifest contract**：输出 schema/repository 版本与 active skill 的 canonical name、deployment_name、hosts、invocation、status；publication/contract 支持 `--output` 直接写 UTF-8 JSON。
+- **路由语义 eval 数据集**：24 个真实正例与近似负例，覆盖相邻技能和 user-only 边界；静态测试只校验数据结构。
+- **治理门禁**：新增依赖循环、active→deprecated、调用图、USAGE 全量索引及 manifest/pyproject/CHANGELOG 版本一致性检查。
 
 ### Changed
 
@@ -20,17 +24,21 @@ All notable changes to this skills repository will be documented in this file.
 - **0--loop**：标记 experimental + user-only；移除最小轮次与耗尽轮次逻辑，AC 达标或连续两轮无高价值发现即停；新用户消息只写 superseded PROGRESS；执行前探测宿主隔离能力并支持顺序 fresh-context 降级。
 - **0-启动**：明确只服务 Python + uv。
 - **0--claude / 0--neat-freak**：统一 CLAUDE.md 小内核与路由指针职责；neat-freak 改用跨平台文件工具语义。
+- **noteall**：统一 Vault 解析策略；当前目录是 Vault 时按配置优先使用，否则使用默认路径，整次流水线锁定同一路径。
+- **3-检查**：已有验证证据改为可选；缺失时由审查者运行可自动验证门禁，不阻塞独立 review。
+- **4-调试 / 0--loop**：恢复中文调试触发边界；loop 统一逐轮一行进度规则。
 - **grilling / tdd**：description 限定为父工作流加载的内部 vocabulary；TDD 使用项目原生测试命令。
-- **治理文档与索引**：更新调用图、唯一事实源路径和 1.4.0 技能清单；CLAUDE 校验改为小内核路由指针，导航只保留一句路由指针。
-- **manifest**：24 → 22 个 active skill；`repository_version` 升至 1.4.0。
+- **治理文档与索引**：更新调用图、唯一事实源路径和 2.0.0 技能清单；CLAUDE 校验改为小内核路由指针，导航只保留一句路由指针。
+- **manifest**：24 → 22 个 active skill；补齐 noteall Worker 依赖，`repository_version` 升至 2.0.0。
 - **跨宿主调用契约**：manifest dependencies 保持 canonical name；正文 slash 引用与 validator 统一使用扁平 deployment name。
 - **validator / router fixtures**：显式 CLAUDE 指针检查要求目标存在；slash 校验覆盖导航与治理文档并识别反引号单段 typo；路由 fixture 增加 pytest 结构门禁，语义判断仍由人工或模型 eval。
+- **CI**：扩展为 Windows/Ubuntu × Python 3.11/3.12，并校验 CLAUDE 模板小内核指针。
 
 ### Removed
 
-- **vocabulary/domain-modeling**：内容迁入 `1-规划/references/`。
-- **vocabulary/code-review**：内容迁入 `3-检查/references/`。
-- **vocabulary/diagnosing-bugs**：内容迁入 `4-调试/references/`。
+- **vocabulary/domain-modeling**：内容迁入 `1-规划/references/`；旧 `/domain-modeling` 调用迁移到 `/1-规划`。
+- **vocabulary/code-review**：内容迁入 `3-检查/references/`；旧 `/code-review` 调用迁移到 `/3-检查`。
+- **vocabulary/diagnosing-bugs**：内容迁入 `4-调试/references/`；旧 `/diagnosing-bugs` 调用迁移到 `/4-调试`。
 
 ## [1.3.0] - 2026-08-12
 

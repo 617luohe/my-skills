@@ -11,6 +11,7 @@
 2-开发 ──> vocabulary/tdd
 4-调试 ──> vocabulary/tdd
 0--loop ──> vocabulary/grilling + vocabulary/tdd
+my-note/noteall ──> my-note/index-keeper + my-note/vault-publisher
 ```
 
 领域建模、正式 review 和诊断循环分别内聚在 `1-规划/references/`、`3-检查/references/`、`4-调试/references/`，不再作为可发现 vocabulary。
@@ -21,7 +22,7 @@
 
 1. 规划会话把共识收敛为磁盘契约。
 2. 每个开发切片使用 fresh context，只加载该切片契约与证据。
-3. 正式 review 使用 fresh context，只接收 fixed point、spec、diff 和验证证据。
+3. 正式 review 使用 fresh context，只接收 fixed point、spec、diff 与可选的已有验证证据。
 
 ## 调用策略
 

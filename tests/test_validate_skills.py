@@ -74,6 +74,71 @@ policy:
 """
 
 
+def _write_governance_repo(
+    root: Path, skills: list[dict[str, object]], version: str = "1.0.0"
+) -> None:
+    manifest_lines = [
+        "schema_version: 1",
+        f"repository_version: {version}",
+        "skills:",
+    ]
+    for skill in skills:
+        name = str(skill["name"])
+        dependencies = [str(dep) for dep in skill.get("dependencies", [])]
+        status = str(skill.get("status", "stable"))
+        invocation = str(
+            skill.get("invocation", "user" if status == "deprecated" else "model")
+        )
+        distribution = str(skill.get("distribution", "synchronized"))
+        category = (
+            "vocabulary"
+            if name.startswith("vocabulary/")
+            else "my-note"
+            if name.startswith("my-note/")
+            else "standalone"
+        )
+        manifest_lines.extend(
+            [
+                f"  - name: {name}",
+                f"    path: {name}",
+                f"    category: {category}",
+                f"    version: {version}",
+                f"    status: {status}",
+            ]
+        )
+        if status == "deprecated":
+            manifest_lines.append("    deprecated_note: replaced")
+        manifest_lines.extend(
+            [
+                f"    invocation: {invocation}",
+                "    hosts: [claude, cursor, codex]",
+                f"    distribution: {distribution}",
+                f"    sync: {'true' if distribution == 'synchronized' else 'false'}",
+                f"    dependencies: [{', '.join(dependencies)}]",
+            ]
+        )
+
+        skill_path = root / name
+        skill_path.mkdir(parents=True)
+        (skill_path / "SKILL.md").write_text(
+            f"---\nname: {name.rsplit('/', 1)[-1]}\n"
+            "description: sufficiently long test description\n"
+            f"disable-model-invocation: {'true' if invocation == 'user' else 'false'}\n"
+            "---\n\n"
+            f"# {name}\n\nDependencies: {', '.join(dependencies)}.\n",
+            encoding="utf-8",
+        )
+        (skill_path / "agents").mkdir()
+        (skill_path / "agents" / "openai.yaml").write_text(
+            "policy:\n"
+            f"  allow_implicit_invocation: {'false' if invocation == 'user' else 'true'}\n",
+            encoding="utf-8",
+        )
+    (root / "skills-manifest.yaml").write_text(
+        "\n".join(manifest_lines) + "\n", encoding="utf-8"
+    )
+
+
 @pytest.fixture
 def repo(tmp_path: Path):
     (tmp_path / "skills-manifest.yaml").write_text(MANIFEST, encoding="utf-8")
@@ -614,7 +679,7 @@ def test_explicit_claude_pointer_check_requires_existing_file(
 
 @pytest.mark.parametrize(
     "relative_path",
-    ["README.md", "USAGE.md", "docs/governance/names.md"],
+    ["README.md", "USAGE.md", "CONTEXT.md", "docs/governance/names.md"],
 )
 def test_navigation_docs_detect_backticked_single_segment_skill_typos(
     repo: Path, relative_path: str
@@ -693,3 +758,292 @@ def test_router_fixtures_have_structural_metadata_without_reclassifying():
         else:
             assert expected in runtime_names, (path, expected)
             assert f"/{expected}" in router, (path, expected)
+
+
+def test_dependency_cycles_report_readable_paths(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [
+            {"name": "self-cycle", "dependencies": ["self-cycle"]},
+            {"name": "alpha", "dependencies": ["beta"]},
+            {"name": "beta", "dependencies": ["gamma"]},
+            {"name": "gamma", "dependencies": ["alpha"]},
+        ],
+    )
+
+    report = validate_repository(tmp_path)
+
+    cycles = {
+        error["message"]
+        for error in report["errors"]
+        if error["code"] == "dependency-cycle"
+    }
+    assert cycles == {
+        "dependency cycle: alpha -> beta -> gamma -> alpha",
+        "dependency cycle: self-cycle -> self-cycle",
+    }
+
+
+def test_active_skills_cannot_depend_on_deprecated_skills(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [
+            {"name": "legacy-base", "status": "deprecated"},
+            {
+                "name": "legacy-client",
+                "status": "deprecated",
+                "dependencies": ["legacy-base"],
+            },
+            {"name": "stable-client", "dependencies": ["legacy-base"]},
+            {
+                "name": "experimental-client",
+                "status": "experimental",
+                "dependencies": ["legacy-base"],
+            },
+        ],
+    )
+
+    report = validate_repository(tmp_path)
+
+    status_errors = {
+        error["message"]
+        for error in report["errors"]
+        if error["code"] == "dependency-status"
+    }
+    assert status_errors == {
+        "experimental-client: experimental skill cannot depend on deprecated legacy-base",
+        "stable-client: stable skill cannot depend on deprecated legacy-base",
+    }
+
+
+def test_release_versions_match_manifest_when_files_exist(tmp_path: Path):
+    _write_governance_repo(tmp_path, [{"name": "active"}])
+    assert not [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "release-version"
+    ]
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nname = "fixture"\nversion = "2.0.0"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## [Unreleased]\n\n## [3.0.0] - 2026-08-13\n",
+        encoding="utf-8",
+    )
+
+    report = validate_repository(tmp_path)
+
+    mismatches = {
+        (error["path"], error["message"])
+        for error in report["errors"]
+        if error["code"] == "release-version"
+    }
+    assert mismatches == {
+        (
+            "CHANGELOG.md",
+            "repository_version 1.0.0 != first published CHANGELOG version 3.0.0",
+        ),
+        (
+            "pyproject.toml",
+            "repository_version 1.0.0 != [project].version 2.0.0",
+        ),
+    }
+
+    (tmp_path / "pyproject.toml").write_text(
+        '[project]\nversion = "1.0.0"\n',
+        encoding="utf-8",
+    )
+    (tmp_path / "CHANGELOG.md").write_text(
+        "# Changelog\n\n## [Unreleased]\n\n## [1.0.0] - 2026-08-13\n",
+        encoding="utf-8",
+    )
+    assert not [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "release-version"
+    ]
+
+
+def test_usage_indexes_active_synchronized_skills_by_link_target(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [
+            {"name": "active-one"},
+            {"name": "active-two"},
+            {"name": "retired", "status": "deprecated"},
+            {"name": "host-skill", "distribution": "host-provided"},
+        ],
+    )
+    (tmp_path / "USAGE.md").write_text(
+        "Plain text is not an index: active-one/SKILL.md\n\n"
+        "[Active two](<active-two/SKILL.md>)\n",
+        encoding="utf-8",
+    )
+
+    report = validate_repository(tmp_path)
+
+    usage_errors = [
+        error for error in report["errors"] if error["code"] == "usage-index"
+    ]
+    assert usage_errors == [
+        {
+            "code": "usage-index",
+            "path": "USAGE.md",
+            "message": "active-one: missing Markdown link target active-one/SKILL.md",
+        }
+    ]
+
+
+def test_invocation_graph_indexes_each_manifest_dependency_edge(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [
+            {"name": "main", "dependencies": ["dep-one", "dep-two"]},
+            {"name": "dep-one"},
+            {"name": "dep-two"},
+        ],
+    )
+    governance = tmp_path / "docs" / "governance"
+    governance.mkdir(parents=True)
+    graph = governance / "invocation-graph.md"
+    graph.write_text(
+        "# Invocation graph\n\n"
+        "Outside the manifest block does not count: main -> dep-two\n\n"
+        "The manifest canonical dependencies are:\n\n"
+        "```text\n"
+        "main -> dep-one\n"
+        "```\n",
+        encoding="utf-8",
+    )
+
+    report = validate_repository(tmp_path)
+
+    graph_errors = [
+        error for error in report["errors"] if error["code"] == "invocation-graph"
+    ]
+    assert graph_errors == [
+        {
+            "code": "invocation-graph",
+            "path": "docs/governance/invocation-graph.md",
+            "message": "main -> dep-two missing from manifest dependency code block",
+        }
+    ]
+
+    graph.write_text(
+        "# Invocation graph\n\n"
+        "The manifest canonical dependencies are:\n\n"
+        "```text\n"
+        "main ──> dep-one + dep-two\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    assert not [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "invocation-graph"
+    ]
+
+    graph.write_text(
+        "# Invocation graph\n\n"
+        "The manifest canonical dependencies are:\n\n"
+        "```text\n"
+        "main ──> dep-one + dep-two\n"
+        "dep-one ──> dep-two\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    extra_edges = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "invocation-graph"
+    ]
+    assert extra_edges == [
+        {
+            "code": "invocation-graph",
+            "path": "docs/governance/invocation-graph.md",
+            "message": "dep-one -> dep-two is not declared in manifest",
+        }
+    ]
+
+
+def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
+    from skill_manifest import contract, load_manifest
+
+    root = Path(__file__).resolve().parents[1]
+    dataset = json.loads(
+        (
+            root
+            / "tests"
+            / "fixtures"
+            / "prompts"
+            / "router"
+            / "trigger-evals.json"
+        ).read_text(encoding="utf-8")
+    )
+    runtime_names = {
+        skill["deployment_name"]
+        for skill in contract(
+            load_manifest(root / "skills-manifest.yaml"), root
+        )["skills"]
+    }
+    cases = dataset["cases"]
+
+    assert dataset["schema_version"] == 1
+    assert len(cases) >= 24
+    assert len({case["id"] for case in cases}) == len(cases)
+    for case in cases:
+        assert case["prompt"].strip()
+        assert case["reason"].strip()
+        assert case["expected"] == "direct" or case["expected"] in runtime_names
+        assert isinstance(case["forbidden"], list)
+        assert case["expected"] not in case["forbidden"]
+        assert set(case["forbidden"]) <= runtime_names
+
+    assert any(case["forbidden"] for case in cases)
+    assert any(
+        case["expected"] == "direct" and "noteall" in case["forbidden"]
+        for case in cases
+    )
+    assert any(
+        case["expected"] == "direct" and "0--loop" in case["forbidden"]
+        for case in cases
+    )
+
+    by_id = {case["id"]: case for case in cases}
+    required_boundaries = {
+        "plan-ambiguous-auth": ("1-规划", {"2-开发"}),
+        "review-without-upstream-evidence": ("3-检查", {"2-开发"}),
+        "issue-only": ("issue-reporting", {"4-调试"}),
+        "memory-near-miss": ("direct", {"noteall"}),
+        "neat-freak": ("0--neat-freak", {"6-最后整理"}),
+        "consensus-loop-implicit-negative": ("1-规划", {"0--loop"}),
+        "host-loop-near-miss": ("direct", {"0--loop"}),
+        "dialectic-implicit-negative": ("direct", {"0--dialectic"}),
+    }
+    for case_id, (expected, forbidden) in required_boundaries.items():
+        assert by_id[case_id]["expected"] == expected
+        assert forbidden <= set(by_id[case_id]["forbidden"])
+
+
+def test_noteall_locks_one_selected_vault_across_pipeline_docs():
+    root = Path(__file__).resolve().parents[1]
+    config = (
+        root / "my-note" / "noteall" / "references" / "config.yaml"
+    ).read_text(encoding="utf-8")
+    runtime_docs = [
+        root / "my-note" / "noteall" / "SKILL.md",
+        root / "my-note" / "noteall" / "references" / "intake.md",
+        root / "my-note" / "noteall" / "references" / "maintain.md",
+        root / "my-note" / "noteall" / "references" / "publish.md",
+        root / "my-note" / "vault-publisher" / "SKILL.md",
+    ]
+    texts = [path.read_text(encoding="utf-8") for path in runtime_docs]
+    joined = "\n".join(texts)
+
+    assert "prefer_current_vault: true" in config
+    assert "vault_path:" in config
+    assert all("{selected_vault}" in text for text in texts)
+    assert "{vault_path}" not in joined
+    assert "{vault}" not in joined

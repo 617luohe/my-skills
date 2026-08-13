@@ -1,6 +1,6 @@
 # Publish — 发布阶段
 
-职责：把本次流水线拥有的改动受控提交并同步到固定 Vault 的 Git 远端。这里的"发布"指发布到个人知识库远端，不表示公开发布文章。
+职责：把本次流水线拥有的改动受控提交并同步到本次所选 Vault 的 Git 远端。这里的"发布"指发布到个人知识库远端，不表示公开发布文章。
 
 ## Step 1 — 校验本次改动
 
@@ -28,7 +28,7 @@
 
 ```
 python my-note/vault-publisher/scripts/publish_vault.py \
-  --vault {vault_path} \
+  --vault {selected_vault} \
   --paths {owned_path1} {owned_path2} ... \
   --message "notes(<type>): ingest <normalized-title>"
 ```

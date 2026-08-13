@@ -17,8 +17,6 @@
 
 ## 独立方法论（不绑定开发阶段，跨场景通用）
 
-> `0--dialectic` 仅用户显式 `/0--dialectic`；`0--laoyoutiao` 为 0-- 扩展能力。
-
 | 技能                 | 职责                                                                                            | 触发                         | 文档                                    |
 | -------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------- | --------------------------------------- |
 | `issue-reporting`    | 用户明确要求建单时查重、展示完整草稿并经确认后创建单个远程 issue                              | `/issue-reporting` 或明确建单 | [SKILL.md](issue-reporting/SKILL.md)    |
@@ -33,6 +31,8 @@
 | 技能            | 职责                                                              | 触发                         | 文档                               |
 | --------------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
 | `0--claude`     | 初始化/修复 CLAUDE.md（称呼 + 工作哲学 + 路由入口 + 项目配置） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
+| `0--dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0--dialectic`     | [SKILL.md](0--dialectic/SKILL.md)  |
+| `0--laoyoutiao` | Python 项目面向甲方的交付节奏管理                              | `/0--laoyoutiao`             | [SKILL.md](0--laoyoutiao/SKILL.md) |
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
 | `0--loop`       | experimental、user-only 共识长跑；AC 达标或连续两轮无高价值发现即停 | 用户显式 `/0--loop`          | [SKILL.md](0--loop/SKILL.md)       |
 | `0-启动`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |
@@ -50,8 +50,8 @@
 
 | 技能              | 职责                                                                         | 触发               | 文档                                         |
 | ----------------- | ---------------------------------------------------------------------------- | ------------------ | -------------------------------------------- |
-| `noteall`         | 固定知识库唯一入口，编排 Intake → Curate → Publish 三阶段流水线              | `/noteall` | [SKILL.md](my-note/noteall/SKILL.md)         |
-| `vault-publisher` | 固定 Vault 受控发布 Worker（校验 → 同步 → 只暂存 owned paths → commit/push） | 被 `noteall` 调度  | [SKILL.md](my-note/vault-publisher/SKILL.md) |
+| `noteall`         | 受控知识库唯一入口，解析并锁定 Vault 后编排 Intake → Curate → Publish        | `/noteall` | [SKILL.md](my-note/noteall/SKILL.md)         |
+| `vault-publisher` | 所选 Vault 受控发布 Worker（校验 → 同步 → 只暂存 owned paths → commit/push） | 被 `noteall` 调度  | [SKILL.md](my-note/vault-publisher/SKILL.md) |
 | `index-keeper`    | 索引维护 Worker（增量更新 `_INDEX.md`、缺失补全、健康检查）                  | 被 `noteall` 调度  | [SKILL.md](my-note/index-keeper/SKILL.md)    |
 
 ---

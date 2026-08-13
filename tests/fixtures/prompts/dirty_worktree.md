@@ -5,7 +5,7 @@
 /noteall C:\Users\Administrator\Downloads\report.pdf
 ```
 
-前置状态：固定 Vault 工作区存在未提交改动。
+前置状态：本次所选 Vault 工作区存在未提交改动。
 
 期望行为：
 - 立即停止，不处理资料

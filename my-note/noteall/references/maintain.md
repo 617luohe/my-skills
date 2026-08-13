@@ -54,7 +54,7 @@ INDEX = "文件夹里有什么"（结构性导航），与 MOC 分工。
 触发词：**修复断链 / 修复孤儿 / 修链接**。把健康检查报告升级为可执行修复：
 
 1. 输入：健康检查（轻量/完整）输出的断链清单、孤岛清单、统计过期项。全量扫描优先用确定性脚本：
-   `python my-note/vault-publisher/scripts/vault_check.py --vault {vault_path} [--json]`（孤儿/断链/frontmatter/重复/统计核对，可复现可测试）。
+   `python my-note/vault-publisher/scripts/vault_check.py --vault {selected_vault} [--json]`（孤儿/断链/frontmatter/重复/统计核对，可复现可测试）。
 2. 断链修复选项（逐项确认或按规则批量）：
    - 改链接到正确目标（同主题更名/路径变更时）。
    - 移除失效链接（目标确已删除且无替代）。
