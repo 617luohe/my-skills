@@ -4,6 +4,8 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+- **vocabulary/grilling、vocabulary/tdd**：`invocation: user` + `disable-model-invocation: true`，不再进入模型技能表；仍由 `/1-规划`、`/2-开发`、`/4-调试` 按需加载。
+
 ## [3.0.0] - 2026-08-18
 
 > Major 版本：第一性原理精简。修复全部治理漂移（validator 9→0 错误），删除 1.3.0 残留技能 leader，fat 技能收敛为 grilling 式内核 + references 指针。

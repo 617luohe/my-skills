@@ -27,4 +27,4 @@ my-note/noteall ──> my-note/index-keeper + my-note/vault-publisher
 
 - `0--dialectic`：user-only。
 - `issue-reporting`：仅在用户明确要求建单时触发；远程创建前展示完整内容并确认。
-- `vocabulary/grilling` 与 `vocabulary/tdd`：仅由父工作流加载，不直接承接主流程用户意图。
+- `vocabulary/grilling` 与 `vocabulary/tdd`：`invocation: user`，仅由父工作流加载，不进入模型技能表。

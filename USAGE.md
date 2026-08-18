@@ -10,8 +10,8 @@
 
 | 技能       | 职责                                                               | 调用方                       | 文档                                     |
 | ---------- | ------------------------------------------------------------------ | ---------------------------- | ---------------------------------------- |
-| `grilling` | 内部询问循环，沿决策依赖图收敛共享理解                             | `/1-规划`                    | [SKILL.md](vocabulary/grilling/SKILL.md) |
-| `tdd`      | 内部 RED-GREEN-REFACTOR，使用项目原生测试命令保护行为变更          | `/2-开发`、`/4-调试`         | [SKILL.md](vocabulary/tdd/SKILL.md)      |
+| `grilling` | 内部询问循环，沿决策依赖图收敛共享理解；不进入模型技能表 | `/1-规划`                    | [SKILL.md](vocabulary/grilling/SKILL.md) |
+| `tdd`      | 内部 RED-GREEN-REFACTOR；不进入模型技能表              | `/2-开发`、`/4-调试`         | [SKILL.md](vocabulary/tdd/SKILL.md)      |
 
 ---
 
