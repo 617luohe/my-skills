@@ -1,6 +1,6 @@
 ---
 name: writing-for-agents
-description: 写给 agent 的文档写作规范。创建或编辑技能、优化技能描述/触发词、修改 CLAUDE.md 或路由表时使用。触发：用户说"写个技能、改技能、触发不准改描述、优化触发词、写/更新 CLAUDE.md、更新路由表"。
+description: 写给 agent 的文档写作规范。触发：改技能、优化触发词、写或更新 CLAUDE.md、路由表。
 disable-model-invocation: false
 ---
 

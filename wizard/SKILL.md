@@ -1,6 +1,6 @@
 ---
 name: wizard
-description: 生成交互式 bash 向导，带人走完只有人能做的步骤。触发：配置基础设施、设置凭据或 CI secrets、走陌生的第三方 dashboard、一次性迁移或切换（cutover）。不触发：agent 自己能做的步骤。
+description: 生成交互式 bash 向导，带人走完只有人能做的步骤。触发：配置基础设施、凭据、CI secrets、迁移或 cutover。
 disable-model-invocation: false
 ---
 
@@ -58,3 +58,9 @@ wizard 是 bash 脚本，一步步带人走完手动流程：自动开 URL、说
 - **`1-规划`** — 一次性迁移任务标 `[HITL]` 并注明用 wizard
 - **`6-最后整理`** — 清理 ephemeral wizard 脚本
 - **`5-版本管理`** — 用户要保留重复性 setup 路径时才 commit
+
+## 完成标准
+
+- 每个阶段都说明了人去哪里、拿什么、写到哪里。
+- 生成的脚本已通过 `bash -n`，并与目标配置项一一对应。
+- 用户已拿到可运行向导；只有可复用路径才建议入库。

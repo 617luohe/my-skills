@@ -1,30 +1,43 @@
 ---
 name: 5-版本管理
-description: Manage Git repositories, history, branches, remotes, rollback, and synchronization. 触发：提交、commit、push、版本管理、回滚、分支。
+description: Git 版本管理：初始化、保存、查看历史、回滚、分支与远程同步。
 disable-model-invocation: false
 ---
 
-# 5-版本管理 — Git 版本控制全流程
+# 5-版本管理 — Git 版本管理
 
-覆盖 git 核心操作。默认本地仓库，远程按需配置。命令详见 [references/commands.md](references/commands.md)。
+处理 Git 保存、查看、回滚、分支和远程同步。
 
-## MUST 规则
+## 核心规则
 
-1. **危险操作必须先确认。** `reset --hard`、`push --force`、`branch -D` 须用户明确同意。
-2. **回滚默认 revert，不用 reset。** 除非用户明确要求 reset。
-3. **首次推送用 `git branch --show-current` 设上游**，不写死 `main`。
-4. **保存版本须用户明确授权。** `/2-开发`、`/3-检查` 不默认提交；审查通过且用户要求时才 `git add`/`commit`。
+1. 保存、提交、推送都要用户明确授权。
+2. 危险操作先确认：`reset --hard`、`push --force`、`branch -D`。
+3. 回滚默认用 `git revert`，不用 `reset`。
+4. 优先暂存具体文件，不用 `git add .`。
+5. 首次推送用当前分支名设置上游，不硬编码 `main`。
 
-## 什么时候用
+## 常见任务
 
-- 完成功能阶段要存盘、查看变更、回滚、推远程
+- 初始化仓库：`git init`
+- 保存版本：`git add <具体文件>` → `git commit`
+- 查看历史：`git log --oneline --graph`
+- 查看变更：`git diff`
+- 安全回滚：`git revert <commit>`
+- 分支管理：创建 / 切换 / 删除已合并分支
+- 连接远程：`git remote add origin <url>`
+- 首次推送：`git push -u origin $(git branch --show-current)`
+- 后续同步：`git push` / `git pull`
 
-对话示例见 [references/examples.md](references/examples.md)。
+## 流程
+
+1. 先确认目标：初始化、查看、提交、回滚、分支还是远程同步。
+2. 先读当前仓库状态，再执行对应 Git 操作。
+3. 涉及提交或推送时，只处理用户明确要求的内容。
+4. 涉及远程时，先确认 remote 和当前分支。
+5. 涉及危险操作时，再次确认影响范围后执行。
 
 ## 完成标准
 
-**必须**：操作无错误退出码；push 后远端已收到；`git status` 状态清晰。
-
-**可选**：commit message 符合约定；遵守分支保护。
-
-**交接**：阶段收尾 → `/6-最后整理`；中途存盘 → 回到上游（如 `/2-开发`）。
+- Git 操作成功完成，且无错误退出码。
+- 若执行了提交或推送，范围与目标和用户授权一致。
+- 操作后 `git status` 处于预期状态。

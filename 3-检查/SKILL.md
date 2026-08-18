@@ -1,44 +1,56 @@
 ---
 name: 3-检查
-description: 正式审查指定 diff，核对项目规范与需求并给出 PASS、PASS WITH WARNINGS 或 FAIL。触发：审查改动、review diff、代码验收。
+description: 按输入契约在正式审查、只建单和根因修复之间分流，并产出可追踪结果。
 disable-model-invocation: false
 ---
 
-# 3-检查 — 正式 Diff Review
+# 3-检查 — 正式验收与问题建单
 
-本技能只审查指定 diff。问题建单由 `/issue-reporting` 负责；根因调查由 `/4-调试` 负责；架构调查走 `/0-询问luohe` 的只读调查路由。
+根据输入契约，在 Review、Bug 报告和 `/4-调试` 之间做唯一分流。
 
-## 输入契约
+## 输入契约路由
 
-在 fresh context 中接收三项必需输入，可附已有验证证据：
+按优先级判断：
 
-1. **fixed point/base**：审查基点、提交列表与 `git diff <fixed-point>...HEAD` 提交差异。
-2. **spec**：PRD、任务、issue、验收标准或用户明确需求。
-3. **workspace diff**：`git diff --cached`、`git diff`，以及 `git ls-files --others --exclude-standard` 返回的未跟踪文件列表与内容。
-4. **已有证据（可选）**：开发方已运行的项目原生 test/type/lint/build 命令及结果。
+1. **架构评估**：用户明确要求架构评估、代码腐烂评估或模块臃肿评估。
+2. **根因修复**：用户要求找根因、排查原因或立即修复 → 直接转 `/4-调试`。
+3. **Review**：已给出 fixed point/base、spec/需求来源和 diff 审查意图。
+4. **Bug 报告**：用户明确要求只记录、建 issue 或只建单。
+5. **确实模糊**：只问一个问题，确认是审查、建单还是查根因。
 
-无意纳入的用户文件必须逐项显式排除并说明理由。缺少前三项时只询问缺失项；不得用规划或开发聊天记忆补齐。没有已有证据时由审查者按流程运行可自动验证门禁，不阻塞进入审查。
+## Review
 
-## 流程
+使用 `/vocabulary/code-review` 执行 Standards 和 Spec 双轴审查。
 
-1. 固定并记录基点、提交列表、spec、规范来源、diff 范围和已有证据状态。
-2. 按 [review-rules.md](references/review-rules.md) 选择审查深度，并保持 Standards 与 Spec 两轴独立。
-3. 功能、性能、可靠性或资源门禁能自动验证则运行；不能验证则记录“需手动验证”并至少给出 warning。
-4. 输出可追踪意见：ID、轴、严重级别、`文件:行`、证据与最小修复建议。
-5. 给出唯一裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
+1. 固定并记录审查基点、需求来源、规范来源和 diff 范围。
+2. 按 `/vocabulary/code-review` 的规则运行 Standards 与 Spec 审查。
+3. 输出正式裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
+4. 给出可追踪意见清单：ID、严重级别、定位与修复建议。
+5. FAIL 回传修复；PASS 或 PASS WITH WARNINGS 才能作为进入 `/5-版本管理` 的交接产物。
 
-## 裁决
+## Bug 报告
 
-- **FAIL**：至少一个阻断问题，包括核心功能缺失、严重需求不符或严重违反项目规范。
-- **PASS WITH WARNINGS**：无阻断，但存在警告或未自动验证的门禁。
-- **PASS**：无阻断和警告。
+1. 先探测唯一 tracker：GitHub、GitLab、Jira 或无远程 tracker。
+2. 采集现象、预期、实际结果、复现性和必要日志；不编造根因。
+3. 在同一 tracker 内只读查重；若已存在同类 issue，输出链接后停止。
+4. 查重未命中时，先展示标题、完整正文和目标 tracker。
+5. 只有用户明确确认后才创建 issue；失败时如实停止，不跨平台回退。
+6. 没有可靠远程 tracker 时，写 `docs/issues/<slug>.md` 本地草稿并标明未提交。
 
-报告必须包含三项必需输入、已有/新运行证据、Standards、Spec、意见清单、未验证项和裁决。详细 reviewer 边界见 [standards-reviewer.md](references/standards-reviewer.md) 与 [spec-reviewer.md](references/spec-reviewer.md)。
+## 架构评估
 
-## 交接
+1. 只读调查模块职责、依赖方向、边界和测试 seam。
+2. 输出 `docs/analysis/<topic>.md` 与 `docs/plans/<topic>/` 改造任务。
+3. 输出文档路径后停止，由用户决定是否进入 `/1-规划`。
 
-- FAIL：把全部阻断意见回传 `/2-开发` 或 `/4-调试`，修复后使用同一基点与 spec 复评。
-- PASS WITH WARNINGS：默认完成审查；交接时保留 warning ID 与未修复理由。
-- PASS：可交接。
+## 边界
 
-任何裁决都不自动 commit。只有 PASS 或 PASS WITH WARNINGS 且用户明确授权，才进入 `/5-版本管理`。
+- `/3-检查` 只做正式审查、只建单或架构评估。
+- 根因定位与修复交给 `/4-调试`。
+- 版本提交与推送交给 `/5-版本管理`，且仍需用户授权。
+
+## 完成标准
+
+- 已依据输入契约完成唯一分流。
+- Review 产出正式裁决和可追踪意见。
+- Bug 报告未编造根因，且创建前已取得用户确认。
