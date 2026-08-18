@@ -18,7 +18,7 @@ disable-model-invocation: false
 
 ### 阶段 1 — 方案追问
 
-使用 `/vocabulary/grilling` 建立决策依赖图并推进 frontier。进入追问前扫描 `CONTEXT-MAP.md`、`CONTEXT.md`、`docs/adr/`；术语冲突立即指出，已读内容在全程复用。默认批量询问互不依赖的决策；用户要求逐步时一次只问一个。用场景压力测试边界，用代码交叉验证现状。算法细节见 [references/planning-rules.md](references/planning-rules.md)。
+使用 `/grilling` 建立决策依赖图并推进 frontier。进入追问前扫描 `CONTEXT-MAP.md`、`CONTEXT.md`、`docs/adr/`；术语冲突立即指出，已读内容在全程复用。默认批量询问互不依赖的决策；用户要求逐步时一次只问一个。用场景压力测试边界，用代码交叉验证现状。算法细节见 [references/planning-rules.md](references/planning-rules.md)。
 
 退出前必须确认：
 
@@ -30,11 +30,11 @@ disable-model-invocation: false
 
 ### 阶段 2 — 领域术语
 
-使用 `/vocabulary/domain-modeling` 维护 `CONTEXT.md`。标记术语冲突，锐化模糊或过载词，按确认结果实时更新。该文件只保存规范术语、关系、少量场景和已标记歧义；不写 ADR、技术栈、模块地图、任务状态或历史归档。
+使用 `references/domain-modeling.md` 维护 `CONTEXT.md`。标记术语冲突，锐化模糊或过载词，按确认结果实时更新。该文件只保存规范术语、关系、少量场景和已标记歧义；不写 ADR、技术栈、模块地图、任务状态或历史归档。
 
 ### 阶段 2.5 — 决策记录（ADR，可选）
 
-仅当决策同时满足难逆转、少见、存在真实取舍时提议 ADR。使用 `/vocabulary/domain-modeling` 的 ADR 模板，写入 `docs/adr/NNNN-title.md`。
+仅当决策同时满足难逆转、少见、存在真实取舍时提议 ADR。使用 `references/domain-modeling.md` 的 ADR 模板，写入 `docs/adr/NNNN-title.md`。
 
 ### 阶段 3 — 接口设计与原型验证
 
@@ -62,8 +62,8 @@ disable-model-invocation: false
 
 ## 详细规则参考
 
-- `/vocabulary/grilling`：询问循环
-- `/vocabulary/domain-modeling`：领域建模
+- `/grilling`（canonical `vocabulary/grilling`）：询问循环
+- `references/domain-modeling.md`：领域建模
 - `references/planning-rules.md`：frontier、方案分支和文档权威边界
 - `references/context-format.md`：CONTEXT.md 格式
-- `references/adr-format.md`：ADR 格式（通过 domain-modeling 调用）
+- `references/adr-format.md`：ADR 格式（领域建模阶段使用）

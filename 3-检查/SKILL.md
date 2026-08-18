@@ -20,10 +20,10 @@ disable-model-invocation: false
 
 ## Review
 
-使用 `/vocabulary/code-review` 执行 Standards 和 Spec 双轴审查。
+使用 `references/review-rules.md` 执行 Standards 和 Spec 双轴审查。
 
 1. 固定并记录审查基点、需求来源、规范来源和 diff 范围。
-2. 按 `/vocabulary/code-review` 的规则运行 Standards 与 Spec 审查。
+2. 按 `references/review-rules.md` 的规则运行 Standards 与 Spec 审查。
 3. 输出正式裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
 4. 给出可追踪意见清单：ID、严重级别、定位与修复建议。
 5. FAIL 回传修复；PASS 或 PASS WITH WARNINGS 才能作为进入 `/5-版本管理` 的交接产物。

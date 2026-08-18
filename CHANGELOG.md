@@ -4,6 +4,23 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-08-18
+
+> Major 版本：第一性原理精简。修复全部治理漂移（validator 9→0 错误），删除 1.3.0 残留技能 leader，fat 技能收敛为 grilling 式内核 + references 指针。
+
+### Removed
+
+- **leader**：删除残留目录与路由引用（1.3.0 已删除）；manifest 22 → 21 active skill。
+- **已删除 vocabulary 的正文引用**：`1-规划`/`3-检查`/`4-调试` 对 `/vocabulary/domain-modeling`、`/vocabulary/code-review`、`/vocabulary/diagnosing-bugs` 的引用改为各自 `references/` 指针。
+
+### Changed
+
+- **0--neat-freak**：收敛为内核（身份、三层知识、毕业、五步流程骨架、MUST）；盘点细节/编辑原则/特殊情况迁入 `references/sync-matrix.md`。
+- **vocabulary/tdd**：测试策略去重；好的/坏的测试与行为示例迁入 `references/test-principles.md`。
+- **2-开发**：复评回环压缩为 `/3-检查` 契约指针；验证段改用项目原生 test/type/lint 命令；MUST 去重。
+- **0-询问luohe**：三路判定与规模表合并为「规模路由」表。
+- **引用规范**：`/vocabulary/grilling`、`/vocabulary/tdd` 统一为扁平 deployment name（`/grilling`、`/tdd`），canonical 名仅保留在 manifest 依赖与文档契约处。
+
 ## [2.0.0] - 2026-08-13
 
 > Major 版本：三个曾部署的 vocabulary 名称已删除，其工作流内聚到对应阶段技能。
