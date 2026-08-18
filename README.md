@@ -30,7 +30,7 @@ my-skills/
 | 类型              | 命名格式              | 示例                                         | 说明                               |
 | ----------------- | --------------------- | -------------------------------------------- | ---------------------------------- |
 | **阶段技能**      | `N-中文名称`          | `0-启动`、`1-规划`、`2-开发`                 | N 为阶段编号 0-6                   |
-| **扩展能力**      | `0--英文名称`         | `0--claude`、`0--laoyoutiao`                 | 双连字符标识阶段 0 扩展            |
+| **扩展能力**      | `0--英文名称`         | `0--claude`、`0--dialectic`                 | 双连字符标识阶段 0 扩展            |
 | **路由器**        | `0-询问luohe`         | `0-询问luohe`                                | 唯一入口，独立前缀                 |
 | **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`                        | 可复用核心，不直接调用             |
 | **my-note 层**    | `my-note/英文名称`    | `my-note/noteall`、`my-note/vault-publisher` | 知识管理层，noteall 为唯一用户入口 |
@@ -54,7 +54,7 @@ my-skills/
 按层级分组：
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
-- **扩展能力**：`0--claude`、`0--dialectic`、`0--laoyoutiao`、`0--neat-freak`、`0--loop`
+- **扩展能力**：`0--claude`、`0--dialectic`、`0--neat-freak`、`0--loop`
 - **独立方法论**：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
 - **vocabulary 层**：`grilling`、`tdd`。description 将它们限定为父工作流加载的内部 vocabulary，不直接承接主流程用户意图。
 - **my-note 层**：`noteall` 唯一入口；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度）

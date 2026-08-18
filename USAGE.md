@@ -32,7 +32,6 @@
 | --------------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
 | `0--claude`     | 初始化/修复 CLAUDE.md（称呼 + 工作哲学 + 路由入口 + 项目配置） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
 | `0--dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0--dialectic`     | [SKILL.md](0--dialectic/SKILL.md)  |
-| `0--laoyoutiao` | Python 项目面向甲方的交付节奏管理                              | `/0--laoyoutiao`             | [SKILL.md](0--laoyoutiao/SKILL.md) |
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
 | `0--loop`       | experimental、user-only 共识长跑；AC 达标或连续两轮无高价值发现即停 | 用户显式 `/0--loop`          | [SKILL.md](0--loop/SKILL.md)       |
 | `0-启动`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |

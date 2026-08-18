@@ -138,8 +138,8 @@
     {
       "id": "client-delivery",
       "prompt": "这个 Python 项目要分阶段给甲方展示优化成果，帮我安排交付节奏。",
-      "expected": "0--laoyoutiao",
-      "forbidden": ["1-规划"],
+      "expected": "1-规划",
+      "forbidden": ["0--laoyoutiao"],
       "reason": "明确是面向甲方的 Python 交付节奏。"
     },
     {

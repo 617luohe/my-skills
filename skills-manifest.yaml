@@ -21,16 +21,6 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0--laoyoutiao
-    path: 0--laoyoutiao
-    category: extension
-    version: 2.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
   - name: 0--neat-freak
     path: 0--neat-freak
     category: extension

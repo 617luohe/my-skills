@@ -1,6 +1,0 @@
-interface:
-  display_name: "Delivery Pacing"
-  short_description: "Manage staged Python project delivery"
-
-policy:
-  allow_implicit_invocation: true
