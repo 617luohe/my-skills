@@ -1,8 +1,8 @@
 ---
 name: grilling
 layer: vocabulary
-description: 内部 vocabulary，仅由规划类父工作流加载以穷尽决策依赖；不直接承接用户的规划、开发或审查主流程意图。
-disable-model-invocation: false
+description: [内部] 询问循环。由 /1-规划 加载以穷尽决策依赖，不进入模型技能表。
+disable-model-invocation: true
 ---
 
 # Grilling — 询问循环

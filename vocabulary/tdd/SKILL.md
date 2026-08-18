@@ -1,8 +1,8 @@
 ---
 name: tdd
 layer: vocabulary
-description: 内部 vocabulary，仅由开发、调试或 criteria loop 父工作流为行为变更加载；使用项目原生测试命令执行垂直切片 RED-GREEN-REFACTOR，不直接承接主流程开发意图。
-disable-model-invocation: false
+description: [内部] RED-GREEN-REFACTOR。由 /2-开发、/4-调试 为行为变更加载，不进入模型技能表。
+disable-model-invocation: true
 ---
 
 # TDD — 测试驱动开发
