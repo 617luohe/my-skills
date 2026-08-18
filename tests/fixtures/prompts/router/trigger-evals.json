@@ -80,25 +80,11 @@
       "reason": "明确授权本地提交。"
     },
     {
-      "id": "consensus-loop-explicit",
-      "prompt": "/0--loop 续跑 run-id=2026-08-13-search-quality",
-      "expected": "0--loop",
-      "forbidden": [],
-      "reason": "仅显式调用共识长跑。"
-    },
-    {
-      "id": "consensus-loop-implicit-negative",
-      "prompt": "这个需求比较复杂，帮我多想几轮然后实现。",
-      "expected": "1-规划",
-      "forbidden": ["0--loop"],
-      "reason": "未显式调用实验性 loop，且需求仍有歧义。"
-    },
-    {
       "id": "host-loop-near-miss",
       "prompt": "每 5 分钟检查一次部署状态，成功后通知我。",
       "expected": "direct",
-      "forbidden": ["0--loop"],
-      "reason": "这是宿主定时调度，不是共识长跑。"
+      "forbidden": [],
+      "reason": "宿主定时调度属宿主能力，直答。"
     },
     {
       "id": "dialectic-explicit",
@@ -139,7 +125,7 @@
       "id": "client-delivery",
       "prompt": "这个 Python 项目要分阶段给甲方展示优化成果，帮我安排交付节奏。",
       "expected": "1-规划",
-      "forbidden": ["0--laoyoutiao"],
+      "forbidden": [],
       "reason": "明确是面向甲方的 Python 交付节奏。"
     },
     {

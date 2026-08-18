@@ -31,16 +31,6 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0--loop
-    path: 0--loop
-    category: extension
-    version: 2.0.0
-    status: experimental
-    invocation: user
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: [vocabulary/grilling, vocabulary/tdd]
   - name: 0-启动
     path: 0-启动
     category: main-flow

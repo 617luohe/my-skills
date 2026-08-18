@@ -10,7 +10,6 @@
 1-规划 ──> vocabulary/grilling
 2-开发 ──> vocabulary/tdd
 4-调试 ──> vocabulary/tdd
-0--loop ──> vocabulary/grilling + vocabulary/tdd
 my-note/noteall ──> my-note/index-keeper + my-note/vault-publisher
 ```
 
@@ -26,7 +25,6 @@ my-note/noteall ──> my-note/index-keeper + my-note/vault-publisher
 
 ## 调用策略
 
-- `0--loop`：experimental、user-only。
 - `0--dialectic`：user-only。
 - `issue-reporting`：仅在用户明确要求建单时触发；远程创建前展示完整内容并确认。
 - `vocabulary/grilling` 与 `vocabulary/tdd`：仅由父工作流加载，不直接承接主流程用户意图。

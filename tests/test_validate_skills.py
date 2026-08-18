@@ -991,7 +991,7 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
     cases = dataset["cases"]
 
     assert dataset["schema_version"] == 1
-    assert len(cases) >= 24
+    assert len(cases) >= 22
     assert len({case["id"] for case in cases}) == len(cases)
     for case in cases:
         assert case["prompt"].strip()
@@ -1006,10 +1006,6 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         case["expected"] == "direct" and "noteall" in case["forbidden"]
         for case in cases
     )
-    assert any(
-        case["expected"] == "direct" and "0--loop" in case["forbidden"]
-        for case in cases
-    )
 
     by_id = {case["id"]: case for case in cases}
     required_boundaries = {
@@ -1018,8 +1014,6 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         "issue-only": ("issue-reporting", {"4-调试"}),
         "memory-near-miss": ("direct", {"noteall"}),
         "neat-freak": ("0--neat-freak", {"6-最后整理"}),
-        "consensus-loop-implicit-negative": ("1-规划", {"0--loop"}),
-        "host-loop-near-miss": ("direct", {"0--loop"}),
         "dialectic-implicit-negative": ("direct", {"0--dialectic"}),
     }
     for case_id, (expected, forbidden) in required_boundaries.items():

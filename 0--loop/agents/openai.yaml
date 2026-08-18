@@ -1,6 +1,0 @@
-interface:
-  display_name: "Experimental Consensus Loop"
-  short_description: "User-invoked multi-round exploration or acceptance loop"
-
-policy:
-  allow_implicit_invocation: false

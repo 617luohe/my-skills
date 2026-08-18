@@ -54,12 +54,12 @@ my-skills/
 按层级分组：
 
 - **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
-- **扩展能力**：`0--claude`、`0--dialectic`、`0--neat-freak`、`0--loop`
+- **扩展能力**：`0--claude`、`0--dialectic`、`0--neat-freak`
 - **独立方法论**：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
 - **vocabulary 层**：`grilling`、`tdd`。description 将它们限定为父工作流加载的内部 vocabulary，不直接承接主流程用户意图。
 - **my-note 层**：`noteall` 唯一入口；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度）
 
-`0--dialectic` 与 `0--loop` 均为 `invocation: user`；`0--loop` 额外标记 experimental。
+`0--dialectic` 为 `invocation: user`。
 
 技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
