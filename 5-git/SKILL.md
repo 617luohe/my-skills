@@ -1,10 +1,10 @@
 ---
-name: 5-版本管理
+name: 5-git
 description: Git 版本管理：初始化、保存、查看历史、回滚、分支与远程同步。
 disable-model-invocation: false
 ---
 
-# 5-版本管理 — Git 版本管理
+# 5-git — Git 版本管理
 
 处理 Git 保存、查看、回滚、分支和远程同步。
 

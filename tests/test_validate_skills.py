@@ -593,8 +593,8 @@ def test_claude_pointer_rejects_fat_routes_and_accepts_small_kernel(tmp_path: Pa
     manifest = """schema_version: 1
 repository_version: 1.0.0
 skills:
-  - name: 0-询问luohe
-    path: 0-询问luohe
+  - name: 0-router
+    path: 0-router
     category: router
     version: 1.0.0
     status: stable
@@ -605,10 +605,10 @@ skills:
     dependencies: []
 """
     (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
-    router = tmp_path / "0-询问luohe"
+    router = tmp_path / "0-router"
     router.mkdir()
     (router / "SKILL.md").write_text(
-        "---\nname: 0-询问luohe\ndescription: router test\ndisable-model-invocation: false\n---\n\n| x | `/1-规划` |\n",
+        "---\nname: 0-router\ndescription: router test\ndisable-model-invocation: false\n---\n\n| x | `/1-plan` |\n",
         encoding="utf-8",
     )
     claude = tmp_path / "CLAUDE.md"
@@ -635,7 +635,7 @@ skills:
 
     claude.write_text(
         "## 路由入口\n\n"
-        "完整路由见 `/0-询问luohe`。\n"
+        "完整路由见 `/0-router`。\n"
         "规模不明时先规划。\n",
         encoding="utf-8",
     )
@@ -732,7 +732,7 @@ def test_router_fixtures_have_structural_metadata_without_reclassifying():
             load_manifest(root / "skills-manifest.yaml"), root
         )["skills"]
     }
-    router = (root / "0-询问luohe" / "SKILL.md").read_text(encoding="utf-8")
+    router = (root / "0-router" / "SKILL.md").read_text(encoding="utf-8")
     prompt_files = sorted(
         path for path in fixtures.glob("*.md") if path.name != "README.md"
     )
@@ -1007,11 +1007,11 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
 
     by_id = {case["id"]: case for case in cases}
     required_boundaries = {
-        "plan-ambiguous-auth": ("1-规划", {"2-开发"}),
-        "review-without-upstream-evidence": ("3-检查", {"2-开发"}),
-        "issue-only": ("issue-reporting", {"4-调试"}),
+        "plan-ambiguous-auth": ("1-plan", {"2-implement"}),
+        "review-without-upstream-evidence": ("3-review", {"2-implement"}),
+        "issue-only": ("issue-reporting", {"4-debug"}),
         "memory-near-miss": ("direct", {"noteall"}),
-        "neat-freak": ("0--neat-freak", {"6-最后整理"}),
+        "neat-freak": ("0--neat-freak", {"6-sum"}),
         "dialectic-implicit-negative": ("direct", {"0--dialectic"}),
     }
     for case_id, (expected, forbidden) in required_boundaries.items():

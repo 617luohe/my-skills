@@ -1,7 +1,7 @@
 ---
 name: grilling
 layer: vocabulary
-description: [内部] 询问循环。由 /1-规划 加载以穷尽决策依赖，不进入模型技能表。
+description: [内部] 询问循环。由 /1-plan 加载以穷尽决策依赖，不进入模型技能表。
 disable-model-invocation: true
 ---
 
@@ -35,5 +35,5 @@ Do not act on it until I confirm we have reached a shared understanding.
 ## 与父工作流领域建模的分工
 
 - 本技能问**计划决策**：方案选择、边界、取舍（"要不要做 X？"）
-- `/1-规划` 的领域建模参考处理**领域术语语义**：术语歧义、领域边界（"account 指 Customer 还是 User？"）
+- `/1-plan` 的领域建模参考处理**领域术语语义**：术语歧义、领域边界（"account 指 Customer 还是 User？"）
 - 询问中发现术语歧义 → 交回父工作流处理，不在本技能内纠缠

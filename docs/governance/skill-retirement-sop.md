@@ -55,8 +55,8 @@ Manifest 中的技能名与 dependencies 使用 canonical name；迁移说明里
 
 - [ ] `README.md` 的技能清单：删除或标注 deprecated
 - [ ] `USAGE.md` 的索引表：删除或移至 deprecated 段
-- [ ] `CLAUDE.md`：保持 `/0-询问luohe` 指针，不加入技能级路由
-- [ ] `0-询问luohe/SKILL.md`：删除旧技能条目或改指向替代者
+- [ ] `CLAUDE.md`：保持 `/0-router` 指针，不加入技能级路由
+- [ ] `0-router/SKILL.md`：删除旧技能条目或改指向替代者
 - [ ] `CONTEXT.md`（如有）：删除对该技能的引用
 
 ### 5. 验证退役完整性
@@ -109,7 +109,7 @@ rg "old-skill-name" --glob "*.md" .
 - [ ] README: 删除或标注 deprecated
 - [ ] USAGE: 删除或移至 deprecated 段
 - [ ] CLAUDE.md: 仅保留路由指针，无技能级路由镜像
-- [ ] 0-询问luohe: 快速判断表清理
+- [ ] 0-router: 快速判断表清理
 - [ ] validator: 0 error/0 warning
 - [ ] 遗留引用检查: grep 无意外引用
 ```
@@ -135,7 +135,7 @@ rg "old-skill-name" --glob "*.md" .
 |------|------|
 | `multi-worker` | 主流程顺序开发；Cursor 内置多 agent |
 | `leader` | 对话直接描述任务 |
-| `0--explore` | 只读调查 `docs/analysis/` 或 `/1-规划` |
+| `0--explore` | 只读调查 `docs/analysis/` 或 `/1-plan` |
 | `0--tokenless` | CLAUDE.md「工作哲学·沟通」 |
 
 **执行**：manifest 删条目 → 删技能目录 → CHANGELOG [1.3.0] → 路由/CLAUDE/运行时/父仓库文档全量清理 → 父仓库 `docs/analysis/retired-skills-v1.3.0.md` 索引。

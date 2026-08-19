@@ -59,7 +59,7 @@ git status --short --branch
 | mypy | `uv add --dev mypy` |
 | pre-commit | `uv add --dev pre-commit` + 配置 + `uv run pre-commit install` |
 | 运行时依赖 | `uv add <package>` |
-| 推远程 | 交给 `/5-版本管理` |
+| 推远程 | 交给 `/5-git` |
 
 工具配置写进 `pyproject.toml` 的 `[tool.*]`。
 

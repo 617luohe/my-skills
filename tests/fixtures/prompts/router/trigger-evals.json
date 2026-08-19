@@ -5,43 +5,43 @@
     {
       "id": "plan-ambiguous-auth",
       "prompt": "给这个多租户 SaaS 加登录和权限，技术方案还没定，先把边界、接口和任务拆清楚。",
-      "expected": "1-规划",
-      "forbidden": ["2-开发"],
+      "expected": "1-plan",
+      "forbidden": ["2-implement"],
       "reason": "存在架构与权限取舍。"
     },
     {
       "id": "develop-fixed-contract",
       "prompt": "接口和验收标准都在 docs/plans/login/tasks.md，按 TDD 实现任务 T-03。",
-      "expected": "2-开发",
-      "forbidden": ["1-规划"],
+      "expected": "2-implement",
+      "forbidden": ["1-plan"],
       "reason": "方案已锁定且有行为变化。"
     },
     {
       "id": "direct-typo",
       "prompt": "把 README 第 12 行的错别字改掉并检查链接，其他内容不要动。",
       "expected": "direct",
-      "forbidden": ["1-规划", "2-开发"],
+      "forbidden": ["1-plan", "2-implement"],
       "reason": "明确、低影响、可逆。"
     },
     {
       "id": "review-without-upstream-evidence",
       "prompt": "审查当前分支相对 master 的 diff，对照 tasks.md 验收；上个开发者没有留下测试结果。",
-      "expected": "3-检查",
-      "forbidden": ["2-开发"],
+      "expected": "3-review",
+      "forbidden": ["2-implement"],
       "reason": "已有验证证据缺失不应阻断正式审查。"
     },
     {
       "id": "debug-intermittent",
       "prompt": "线上支付偶发 500，本地复现不了，先找根因再修。",
-      "expected": "4-调试",
-      "forbidden": ["2-开发"],
+      "expected": "4-debug",
+      "forbidden": ["2-implement"],
       "reason": "根因未知且难复现。"
     },
     {
       "id": "issue-only",
       "prompt": "只把登录失败记录成 GitHub issue，不排查不修；创建前给我看完整正文。",
       "expected": "issue-reporting",
-      "forbidden": ["4-调试"],
+      "forbidden": ["4-debug"],
       "reason": "用户明确只建单。"
     },
     {
@@ -62,20 +62,20 @@
       "id": "neat-freak",
       "prompt": "项目文档、CLAUDE 和 memory 对不上了，做一次全局减法和一致性校准。",
       "expected": "0--neat-freak",
-      "forbidden": ["6-最后整理"],
+      "forbidden": ["6-sum"],
       "reason": "目标是全局知识卫生，不是本次会话收尾。"
     },
     {
       "id": "session-handoff",
       "prompt": "今天先到这里，把这次改动、验证结果和下一步整理成可接手的交接。",
-      "expected": "6-最后整理",
+      "expected": "6-sum",
       "forbidden": ["0--neat-freak"],
       "reason": "只沉淀本次会话。"
     },
     {
       "id": "git-save",
       "prompt": "审查已经通过，请按仓库风格提交当前改动，但先不要 push。",
-      "expected": "5-版本管理",
+      "expected": "5-git",
       "forbidden": [],
       "reason": "明确授权本地提交。"
     },
@@ -102,9 +102,9 @@
     },
     {
       "id": "edit-skill",
-      "prompt": "优化 4-调试 的 SKILL.md 触发描述，并检查渐进披露是否合理。",
+      "prompt": "优化 4-debug 的 SKILL.md 触发描述，并检查渐进披露是否合理。",
       "expected": "writing-for-agents",
-      "forbidden": ["4-调试"],
+      "forbidden": ["4-debug"],
       "reason": "目标是编辑 agent skill。"
     },
     {
@@ -118,13 +118,13 @@
       "id": "credentials-wizard",
       "prompt": "带我在第三方控制台配置 CI secret；页面步骤需要我本人操作。",
       "expected": "wizard",
-      "forbidden": ["2-开发"],
+      "forbidden": ["2-implement"],
       "reason": "需要人机协作完成外部配置。"
     },
     {
       "id": "client-delivery",
       "prompt": "这个 Python 项目要分阶段给甲方展示优化成果，帮我安排交付节奏。",
-      "expected": "1-规划",
+      "expected": "1-plan",
       "forbidden": [],
       "reason": "明确是面向甲方的 Python 交付节奏。"
     },
@@ -132,28 +132,28 @@
       "id": "image-understanding",
       "prompt": "请读一下我刚附的报错截图，告诉我界面上写了什么。",
       "expected": "vision-skill",
-      "forbidden": ["4-调试"],
+      "forbidden": ["4-debug"],
       "reason": "先需要图片理解。"
     },
     {
       "id": "python-bootstrap",
       "prompt": "新建一个最小 Python 项目，只要 uv、基础目录和本地 git。",
-      "expected": "0-启动",
-      "forbidden": ["1-规划"],
+      "expected": "0-init",
+      "forbidden": ["1-plan"],
       "reason": "目标与初始化技能范围完全一致。"
     },
     {
       "id": "architecture-readonly",
       "prompt": "只读评估当前模块依赖方向，在聊天里给事实和风险，不写计划。",
       "expected": "direct",
-      "forbidden": ["1-规划"],
+      "forbidden": ["1-plan"],
       "reason": "一次性只读调查。"
     },
     {
       "id": "architecture-change",
       "prompt": "重构数据库层并更换公共接口，方案还没定，请先做设计和任务拆解。",
-      "expected": "1-规划",
-      "forbidden": ["2-开发"],
+      "expected": "1-plan",
+      "forbidden": ["2-implement"],
       "reason": "改变模块边界与公共 API。"
     }
   ]

@@ -31,8 +31,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0-启动
-    path: 0-启动
+  - name: 0-init
+    path: 0-init
     category: main-flow
     version: 3.0.0
     status: stable
@@ -41,8 +41,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 1-规划
-    path: 1-规划
+  - name: 1-plan
+    path: 1-plan
     category: main-flow
     version: 3.0.0
     status: stable
@@ -51,8 +51,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: [vocabulary/grilling]
-  - name: 2-开发
-    path: 2-开发
+  - name: 2-implement
+    path: 2-implement
     category: main-flow
     version: 3.0.0
     status: stable
@@ -61,8 +61,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: [vocabulary/tdd]
-  - name: 3-检查
-    path: 3-检查
+  - name: 3-review
+    path: 3-review
     category: main-flow
     version: 3.0.0
     status: stable
@@ -71,8 +71,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 4-调试
-    path: 4-调试
+  - name: 4-debug
+    path: 4-debug
     category: main-flow
     version: 3.0.0
     status: stable
@@ -81,8 +81,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: [vocabulary/tdd]
-  - name: 5-版本管理
-    path: 5-版本管理
+  - name: 5-git
+    path: 5-git
     category: main-flow
     version: 3.0.0
     status: stable
@@ -91,8 +91,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 6-最后整理
-    path: 6-最后整理
+  - name: 6-sum
+    path: 6-sum
     category: main-flow
     version: 3.0.0
     status: stable
@@ -141,8 +141,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0-询问luohe
-    path: 0-询问luohe
+  - name: 0-router
+    path: 0-router
     category: router
     version: 3.0.0
     status: stable

@@ -68,7 +68,7 @@ MANIFEST_DEPENDENCY_BLOCK_RE = re.compile(
 )
 
 # Naming convention patterns
-STAGE_SKILL_RE = re.compile(r"^[0-6]-[一-鿿]+$")  # N-中文
+STAGE_SKILL_RE = re.compile(r"^[0-6]-[a-z][a-z0-9-]*$")  # N-english-slug
 EXTENSION_SKILL_RE = re.compile(r"^0--[a-z][a-z0-9-]*$")  # 0--lowercase
 VOCABULARY_SKILL_RE = re.compile(
     r"^vocabulary/[a-z][a-z0-9-]*$"
@@ -76,7 +76,7 @@ VOCABULARY_SKILL_RE = re.compile(
 MY_NOTE_SKILL_RE = re.compile(
     r"^my-note/[a-z][a-z0-9-]*(-[a-z][a-z0-9-]*)*$"
 )  # my-note/lowercase-hyphenated
-ROUTER_SKILL = "0-询问luohe"
+ROUTER_SKILL = "0-router"
 
 
 def _slash_skill_references(text: str, runtime_names: set[str]) -> set[str]:
@@ -139,7 +139,7 @@ def _validate_claude_pointer(
         )
     route_heading = re.search(r"^## 路由入口\s*$", claude_text, re.MULTILINE)
     if route_heading is None:
-        # 路由入口非强制块：最小内核 CLAUDE.md 只含工作哲学 + 记忆约定，路由由 /0-询问luohe 独占
+        # 路由入口非强制块：最小内核 CLAUDE.md 只含工作哲学 + 记忆约定，路由由 /0-router 独占
         return
     next_heading = re.search(r"^## ", claude_text[route_heading.end() :], re.MULTILINE)
     section_end = (
@@ -171,7 +171,7 @@ def _validate_claude_pointer(
             _finding(
                 "claude-pointer",
                 claude_path,
-                "## 路由入口 must contain only the /0-询问luohe pointer",
+                "## 路由入口 must contain only the /0-router pointer",
                 root,
             )
         )
@@ -298,7 +298,7 @@ def _validate_naming(name: str) -> str | None:
         return None
     # Check for common naming violations
     if re.match(r"^[0-6]-", name) and not STAGE_SKILL_RE.match(name):
-        return f"stage skill must follow 'N-中文' format, got '{name}'"
+        return f"stage skill must follow 'N-english-slug' format (e.g. 1-plan), got '{name}'"
     if name.startswith("0--") and not EXTENSION_SKILL_RE.match(name):
         return f"extension skill must follow '0--lowercase' format, got '{name}'"
     if name.startswith("vocabulary/") and not VOCABULARY_SKILL_RE.match(name):
@@ -933,7 +933,7 @@ def _validate_document_authority(
     relative = path.resolve().relative_to(root.resolve()).as_posix()
     normalized = text.lower()
 
-    if relative == "1-规划/references/context-format.md":
+    if relative == "1-plan/references/context-format.md":
         forbidden = (
             "技术栈",
             "模块地图",
@@ -958,7 +958,7 @@ def _validate_document_authority(
             _finding(
                 "adr-template-owner",
                 path,
-                "ADR template must be owned by 1-规划/references/adr-format.md",
+                "ADR template must be owned by 1-plan/references/adr-format.md",
                 root,
             )
         )

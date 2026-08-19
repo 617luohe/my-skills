@@ -1,7 +1,7 @@
 # Skills 使用说明书（索引）
 
 > 本文件只做**导航索引**，每个技能的完整规则以其 `SKILL.md` 为唯一事实源，本文件不重复正文。
-> **路由**：完整规则只见 `/0-询问luohe`。
+> **路由**：完整规则只见 `/0-router`。
 > **名称**：文档链接使用 canonical source path；“触发”列使用 skills-manager 扁平部署后的 runtime slash name。
 
 ---
@@ -10,8 +10,8 @@
 
 | 技能       | 职责                                                               | 调用方                       | 文档                                     |
 | ---------- | ------------------------------------------------------------------ | ---------------------------- | ---------------------------------------- |
-| `grilling` | 内部询问循环，沿决策依赖图收敛共享理解；不进入模型技能表 | `/1-规划`                    | [SKILL.md](vocabulary/grilling/SKILL.md) |
-| `tdd`      | 内部 RED-GREEN-REFACTOR；不进入模型技能表              | `/2-开发`、`/4-调试`         | [SKILL.md](vocabulary/tdd/SKILL.md)      |
+| `grilling` | 内部询问循环，沿决策依赖图收敛共享理解；不进入模型技能表 | `/1-plan`                    | [SKILL.md](vocabulary/grilling/SKILL.md) |
+| `tdd`      | 内部 RED-GREEN-REFACTOR；不进入模型技能表              | `/2-implement`、`/4-debug`         | [SKILL.md](vocabulary/tdd/SKILL.md)      |
 
 ---
 
@@ -33,14 +33,14 @@
 | `0--claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
 | `0--dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0--dialectic`     | [SKILL.md](0--dialectic/SKILL.md)  |
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
-| `0-启动`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |
-| `0-询问luohe`   | **技能路由唯一事实源**                                            | `/0-询问luohe`               | [SKILL.md](0-询问luohe/SKILL.md)   |
-| `1-规划`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-规划`                    | [SKILL.md](1-规划/SKILL.md)        |
-| `2-开发`        | 宿主/语言中立实现；发现项目原生 test/type/lint/build              | `/2-开发`                    | [SKILL.md](2-开发/SKILL.md)        |
-| `3-检查`        | 只做正式 diff review，输出 PASS / PASS WITH WARNINGS / FAIL       | `/3-检查`                    | [SKILL.md](3-检查/SKILL.md)        |
-| `4-调试`        | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                    | `/4-调试`                    | [SKILL.md](4-调试/SKILL.md)        |
-| `5-版本管理`    | Git 版本控制（init/save/log/rollback/branch/remote/push）         | `/5-版本管理`                | [SKILL.md](5-版本管理/SKILL.md)    |
-| `6-最后整理`    | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接          | `/6-最后整理`                | [SKILL.md](6-最后整理/SKILL.md)    |
+| `0-init`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-init`                    | [SKILL.md](0-init/SKILL.md)        |
+| `0-router`   | **技能路由唯一事实源**                                            | `/0-router`               | [SKILL.md](0-router/SKILL.md)   |
+| `1-plan`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-plan`                    | [SKILL.md](1-plan/SKILL.md)        |
+| `2-implement`        | 宿主/语言中立实现；发现项目原生 test/type/lint/build              | `/2-implement`                    | [SKILL.md](2-implement/SKILL.md)        |
+| `3-review`        | 只做正式 diff review，输出 PASS / PASS WITH WARNINGS / FAIL       | `/3-review`                    | [SKILL.md](3-review/SKILL.md)        |
+| `4-debug`        | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                    | `/4-debug`                    | [SKILL.md](4-debug/SKILL.md)        |
+| `5-git`    | Git 版本控制（init/save/log/rollback/branch/remote/push）         | `/5-git`                | [SKILL.md](5-git/SKILL.md)    |
+| `6-sum`    | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接          | `/6-sum`                | [SKILL.md](6-sum/SKILL.md)    |
 
 ---
 

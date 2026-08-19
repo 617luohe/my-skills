@@ -6,10 +6,10 @@
 
 | 文件 | 用户说法 | 预期技能 |
 |------|----------|----------|
-| plan.md | 规划这个新功能 | `/1-规划` |
-| develop.md | 帮我实现这个模块 | `/2-开发` |
-| review.md | 检查一下这次改动 | `/3-检查` |
-| debug.md | 这个 bug 难复现，找根因 | `/4-调试` |
+| plan.md | 规划这个新功能 | `/1-plan` |
+| develop.md | 帮我实现这个模块 | `/2-implement` |
+| review.md | 检查一下这次改动 | `/3-review` |
+| debug.md | 这个 bug 难复现，找根因 | `/4-debug` |
 | issue.md | 明确只建单且创建前确认 | `/issue-reporting` |
 | architecture.md | 架构评估但不落盘 | 只读聊天调查 |
 | direct.md | 明确、低影响、可逆 | 直接做 + 验证 |

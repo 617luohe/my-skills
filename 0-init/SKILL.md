@@ -1,10 +1,10 @@
 ---
-name: 0-启动
+name: 0-init
 description: Python 项目最小初始化：项目结构 + 本地 git + uv 环境
 disable-model-invocation: false
 ---
 
-# 0-启动 — 新项目最小初始化
+# 0-init — 新项目最小初始化
 
 小项目开张只要三件事：**一个项目结构、一个本地 git、一个 uv 环境**。做完就能写代码。
 
@@ -33,7 +33,7 @@ disable-model-invocation: false
 | 类型检查          | `uv add --dev mypy`                                                                    |
 | 提交前门禁        | `uv add --dev pre-commit` + 写 `.pre-commit-config.yaml` + `uv run pre-commit install` |
 | 运行时依赖        | `uv add <package>`                                                                     |
-| 推远程            | 交给 `/5-版本管理`                                                                     |
+| 推远程            | 交给 `/5-git`                                                                     |
 
 ## 完成标准
 

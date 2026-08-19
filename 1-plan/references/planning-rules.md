@@ -15,5 +15,5 @@
 ## Document Authority
 
 - `CONTEXT.md` 只保存领域 glossary：术语、关系、避免或有歧义的词及少量场景。
-- 架构决策写入 `docs/adr/NNNN-title.md`，使用 `1-规划/references/adr-format.md`。
+- 架构决策写入 `docs/adr/NNNN-title.md`，使用 `1-plan/references/adr-format.md`。
 - 任务状态写入 `docs/plans/` 的任务清单、issue 或 `docs/handoff/`，不写入 `CONTEXT.md`。

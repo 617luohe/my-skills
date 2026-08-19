@@ -3,14 +3,14 @@
 个人 skills 开发目录。每个 skill 独立文件夹；改完 commit + push，由 skills-manager 同步到运行时（见下方「分发与部署」）。
 
 📖 **使用说明书**：[USAGE.md](USAGE.md) — 每个技能的场景描述 + 案例演示。
-🧭 **路由器**：`/0-询问luohe` — 不知道用哪个技能？直接问路由器。
+🧭 **路由器**：`/0-router` — 不知道用哪个技能？直接问路由器。
 
 ## 目录结构
 
 ```
 my-skills/
 ├── README.md / USAGE.md         — 索引与调用示例
-├── 0-询问luohe/                 — 技能路由器（唯一入口）
+├── 0-router/                 — 技能路由器（唯一入口）
 ├── vocabulary/                   — 可复用核心循环（被其他技能调用）
 │   ├── grilling/                — 询问循环
 │   └── tdd/                     — TDD 循环
@@ -18,7 +18,7 @@ my-skills/
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
 │   ├── index-keeper/            — 内部 Worker（索引维护）
 │   └── vault-publisher/         — 内部 Worker（所选 Vault 发布）
-├── 0-启动/ ~ 6-最后整理/        — 阶段 0~6 开发流程
+├── 0-init/ ~ 6-sum/        — 阶段 0~6 开发流程
 ├── 0--*/                        — 阶段 0 扩展能力
 └── scripts/                     — manifest 解析与受管技能部署脚本
 ```
@@ -29,9 +29,9 @@ my-skills/
 
 | 类型              | 命名格式              | 示例                                         | 说明                               |
 | ----------------- | --------------------- | -------------------------------------------- | ---------------------------------- |
-| **阶段技能**      | `N-中文名称`          | `0-启动`、`1-规划`、`2-开发`                 | N 为阶段编号 0-6                   |
+| **阶段技能**      | `N-中文名称`          | `0-init`、`1-plan`、`2-implement`                 | N 为阶段编号 0-6                   |
 | **扩展能力**      | `0--英文名称`         | `0--claude`、`0--dialectic`                 | 双连字符标识阶段 0 扩展            |
-| **路由器**        | `0-询问luohe`         | `0-询问luohe`                                | 唯一入口，独立前缀                 |
+| **路由器**        | `0-router`         | `0-router`                                | 唯一入口，独立前缀                 |
 | **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`                        | 可复用核心，不直接调用             |
 | **my-note 层**    | `my-note/英文名称`    | `my-note/noteall`、`my-note/vault-publisher` | 知识管理层，noteall 为唯一用户入口 |
 | **独立方法论**    | `英文或中文名称`      | `writing-for-agents`                         | 不属于主流程的独立技能             |
@@ -53,7 +53,7 @@ my-skills/
 
 按层级分组：
 
-- **阶段技能**：`0-询问luohe`、`0-启动`、`1-规划`、`2-开发`、`3-检查`、`4-调试`、`5-版本管理`、`6-最后整理`
+- **阶段技能**：`0-router`、`0-init`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
 - **扩展能力**：`0--claude`、`0--dialectic`、`0--neat-freak`
 - **独立方法论**：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
 - **vocabulary 层**：`grilling`、`tdd` 为 `invocation: user`，由父工作流加载，不进入模型技能表。

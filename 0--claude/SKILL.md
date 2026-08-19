@@ -8,7 +8,7 @@ disable-model-invocation: false
 
 luohe，我来处理项目的 CLAUDE.md。
 
-**职责**：CLAUDE.md 只常驻最小内核（工作哲学 + 记忆约定），不含路由表；完整技能路由由 `0-询问luohe/SKILL.md` 独占。
+**职责**：CLAUDE.md 只常驻最小内核（工作哲学 + 记忆约定），不含路由表；完整技能路由由 `0-router/SKILL.md` 独占。
 
 **唯一模板源**：`references/template.md`。改规则正文只改模板一处。
 
@@ -47,9 +47,9 @@ luohe，我来处理项目的 CLAUDE.md。
 
 ## 什么时候用
 
-- 新项目开张（通常接在 `/0-启动` 之后）
+- 新项目开张（通常接在 `/0-init` 之后）
 - 补齐缺失规则块，或从 Fat 版（含路由镜像表 / 旧版详细格式）收敛
 
 ## 完成后
 
-用户直接说需求；完整路由只见 `/0-询问luohe`。
+用户直接说需求；完整路由只见 `/0-router`。

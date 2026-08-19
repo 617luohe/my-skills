@@ -1,19 +1,19 @@
 ---
-name: 3-检查
+name: 3-review
 description: 按输入契约在正式审查、只建单和根因修复之间分流，并产出可追踪结果。
 disable-model-invocation: false
 ---
 
-# 3-检查 — 正式验收与问题建单
+# 3-review — 正式验收与问题建单
 
-根据输入契约，在 Review、Bug 报告和 `/4-调试` 之间做唯一分流。
+根据输入契约，在 Review、Bug 报告和 `/4-debug` 之间做唯一分流。
 
 ## 输入契约路由
 
 按优先级判断：
 
 1. **架构评估**：用户明确要求架构评估、代码腐烂评估或模块臃肿评估。
-2. **根因修复**：用户要求找根因、排查原因或立即修复 → 直接转 `/4-调试`。
+2. **根因修复**：用户要求找根因、排查原因或立即修复 → 直接转 `/4-debug`。
 3. **Review**：已给出 fixed point/base、spec/需求来源和 diff 审查意图。
 4. **Bug 报告**：用户明确要求只记录、建 issue 或只建单。
 5. **确实模糊**：只问一个问题，确认是审查、建单还是查根因。
@@ -26,7 +26,7 @@ disable-model-invocation: false
 2. 按 `references/review-rules.md` 的规则运行 Standards 与 Spec 审查。
 3. 输出正式裁决：**PASS**、**PASS WITH WARNINGS** 或 **FAIL**。
 4. 给出可追踪意见清单：ID、严重级别、定位与修复建议。
-5. FAIL 回传修复；PASS 或 PASS WITH WARNINGS 才能作为进入 `/5-版本管理` 的交接产物。
+5. FAIL 回传修复；PASS 或 PASS WITH WARNINGS 才能作为进入 `/5-git` 的交接产物。
 
 ## Bug 报告
 
@@ -41,13 +41,13 @@ disable-model-invocation: false
 
 1. 只读调查模块职责、依赖方向、边界和测试 seam。
 2. 输出 `docs/analysis/<topic>.md` 与 `docs/plans/<topic>/` 改造任务。
-3. 输出文档路径后停止，由用户决定是否进入 `/1-规划`。
+3. 输出文档路径后停止，由用户决定是否进入 `/1-plan`。
 
 ## 边界
 
-- `/3-检查` 只做正式审查、只建单或架构评估。
-- 根因定位与修复交给 `/4-调试`。
-- 版本提交与推送交给 `/5-版本管理`，且仍需用户授权。
+- `/3-review` 只做正式审查、只建单或架构评估。
+- 根因定位与修复交给 `/4-debug`。
+- 版本提交与推送交给 `/5-git`，且仍需用户授权。
 
 ## 完成标准
 
