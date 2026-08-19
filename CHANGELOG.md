@@ -4,6 +4,7 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+- **0--claude**：模板收敛为最小内核（工作哲学 + 记忆约定），删除称呼规则/路由入口/本项目配置块；治理校验放宽（`## 路由入口` 不再是强制块，仅存在时校验规范）。
 - **vocabulary/grilling、vocabulary/tdd**：`invocation: user` + `disable-model-invocation: true`，不再进入模型技能表；仍由 `/1-规划`、`/2-开发`、`/4-调试` 按需加载。
 
 ## [3.0.0] - 2026-08-18

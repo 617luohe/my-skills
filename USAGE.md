@@ -30,7 +30,7 @@
 
 | 技能            | 职责                                                              | 触发                         | 文档                               |
 | --------------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
-| `0--claude`     | 初始化/修复 CLAUDE.md（称呼 + 工作哲学 + 路由入口 + 项目配置） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
+| `0--claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
 | `0--dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0--dialectic`     | [SKILL.md](0--dialectic/SKILL.md)  |
 | `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
 | `0-启动`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-启动`                    | [SKILL.md](0-启动/SKILL.md)        |

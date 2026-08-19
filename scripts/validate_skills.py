@@ -139,14 +139,7 @@ def _validate_claude_pointer(
         )
     route_heading = re.search(r"^## 路由入口\s*$", claude_text, re.MULTILINE)
     if route_heading is None:
-        errors.append(
-            _finding(
-                "claude-pointer",
-                claude_path,
-                "CLAUDE.md must contain ## 路由入口",
-                root,
-            )
-        )
+        # 路由入口非强制块：最小内核 CLAUDE.md 只含工作哲学 + 记忆约定，路由由 /0-询问luohe 独占
         return
     next_heading = re.search(r"^## ", claude_text[route_heading.end() :], re.MULTILINE)
     section_end = (

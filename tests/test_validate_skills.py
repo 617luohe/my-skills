@@ -621,12 +621,10 @@ skills:
     )
     pointer = [e for e in report["errors"] if e["code"] == "claude-pointer"]
     assert any("Fat route headings" in e["message"] for e in pointer)
-    assert any("must contain ## 路由入口" in e["message"] for e in pointer)
 
     claude.write_text(
-        "## 称呼规则\n\n规则。\n\n"
-        "## 路由入口\n\n完整路由见 `/0-询问luohe`。\n\n"
-        "## 本项目配置\n\n配置。\n",
+        "## 工作哲学\n\n称呼：始终称呼我luohe。\n\n"
+        "## 记忆约定\n\n规则。\n",
         encoding="utf-8",
     )
     report = validate_repository(

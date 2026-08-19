@@ -69,7 +69,8 @@ my-skills 仓库通过 skills-manager 同步到 `~/.skills-manager/skills/`，
 
 CLAUDE.md 常驻内容必须小而稳定：
 
-- `## 路由入口` 只指向 `/0-询问luohe`。
+- 不含路由表；模板只保留工作哲学、记忆约定两个 H2。
+- 若保留 `## 路由入口` 指针，只指向 `/0-询问luohe`。
 - 不在 CLAUDE.md、README 或 USAGE 复制三路判定和场景路由表。
 - 修改路由只编辑 `0-询问luohe/SKILL.md`；导航文档只更新技能存在性与一句职责。
 
