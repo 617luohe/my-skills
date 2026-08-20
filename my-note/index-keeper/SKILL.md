@@ -1,7 +1,7 @@
 ---
 name: index-keeper
 layer: my-note
-description: [内部] 索引维护 Worker。自主维护一级文件夹与领域文件夹的 _INDEX.md：增量更新、缺失补全、健康检查。由 noteall 路由器调度。
+description: "[内部] 索引维护 Worker。自主维护一级文件夹与领域文件夹的 _INDEX.md：增量更新、缺失补全、健康检查。由 noteall 路由器调度。"
 disable-model-invocation: true
 ---
 
