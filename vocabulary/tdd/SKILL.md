@@ -1,7 +1,7 @@
 ---
 name: tdd
 layer: vocabulary
-description: [内部] RED-GREEN-REFACTOR。由 /2-implement、/4-debug 为行为变更加载，不进入模型技能表。
+description: "[内部] RED-GREEN-REFACTOR。由 /2-implement、/4-debug 为行为变更加载，不进入模型技能表。"
 disable-model-invocation: true
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: grilling
 layer: vocabulary
-description: [内部] 询问循环。由 /1-plan 加载以穷尽决策依赖，不进入模型技能表。
+description: "[内部] 询问循环。由 /1-plan 加载以穷尽决策依赖，不进入模型技能表。"
 disable-model-invocation: true
 ---
 
