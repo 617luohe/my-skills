@@ -50,6 +50,8 @@ disable-model-invocation: false
 
 将 PRD 拆成可独立执行的垂直切片，写 `docs/plans/<feature>/tasks.md`。每项包含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL 和 Depends On。
 
+**并行意识**：依据 `Depends On` 明确任务 DAG。对**无相互依赖**的垂直切片，标注为可并行；在拆分说明中显式写出并行的任务子集及其独立边界，便于后续 `/2-implement` 通过 subagent 或后台 task 并行推进，避免把互不依赖的切片排成串行。
+
 ## 最终确认
 
 阶段 5 完成后输出 PRD、任务清单、CONTEXT.md 更新情况和 ADR 情况，然后询问：**是否授权进入原型或开发？** 用户确认后才进入 `/2-implement`；指出问题则回到对应阶段。
