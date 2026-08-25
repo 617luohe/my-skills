@@ -56,6 +56,8 @@ disable-model-invocation: false
 | 4 自检清单 | 按 `references/sync-matrix.md` 的自检清单核对（尺寸/反膨胀 + 完整性/反漏改） |
 | 5 变更摘要 | 按 `references/sync-matrix.md` 的摘要模板输出记忆变更、文档变更、未处理项 |
 
+范围较大、调度收益明确且宿主提供独立只读上下文时，步骤 1 可基于同一快照按知识层并行盘点；否则沿原流程串行。每个文件仍返回「评估过/要改/不用改」，由主流程唯一汇总后进入步骤 2。实际修改继续按 docs/ → CLAUDE.md → memory 串行执行。
+
 **超尺寸是最高优先级。** 执行顺序：先精简（破膨胀）→ 再增量同步（补漏）。
 
 盘点细节、编辑原则、特殊情况见 `references/sync-matrix.md`。

@@ -32,7 +32,7 @@ disable-model-invocation: false
 | 独立 Review：已有 base/fixed point、spec/需求来源和 diff | `/3-review`（强制 Review，不问模式）                                                                                                                  |
 | 只建单：有问题现象且明确要记录/建 issue                  | `/issue-reporting`（查重 → 展示完整正文 → 确认后创建）                                                                                            |
 | 根因修复：要求排查原因或立即修复                         | `/4-debug`（传递已有现象/issue）                                                                                                                     |
-| 已有 tasks.md 且 ≥2 独立任务需并行开发                   | `/1-plan`（生成 tasks.md）→ `/2-implement`（顺序开发）→ `/3-review` → `/5-git`                                                                 |
+| 已有 tasks.md 且 ≥2 独立任务需并行开发                   | `/2-implement` → `/3-review` → `/5-git`                                                                                                             |
 | 想大规模多轮探索一个方向（模糊种子+预算+时长）           | `/1-plan`（先做只读调查与任务拆解，再按可验证步骤执行）                                                                                                       |
 | 新项目开张                                               | `/0-init`                                                                                                                                           |
 | 初始化 CLAUDE.md / 协作规则                              | `/0-claude`                                                                                                                                       |

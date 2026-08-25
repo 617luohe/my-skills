@@ -48,9 +48,9 @@ disable-model-invocation: false
 
 ### 阶段 5 — 拆解任务
 
-将 PRD 拆成可独立执行的垂直切片，写 `docs/plans/<feature>/tasks.md`。每项包含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL 和 Depends On。
+将 PRD 拆成可独立执行的垂直切片，写 `docs/plans/<feature>/tasks.md`。每项包含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL、Depends On 和 Write Set（唯一允许修改的文件或目录边界）。
 
-**并行意识**：依据 `Depends On` 明确任务 DAG。对**无相互依赖**的垂直切片，标注为可并行；在拆分说明中显式写出并行的任务子集及其独立边界，便于后续 `/2-implement` 通过 subagent 或后台 task 并行推进，避免把互不依赖的切片排成串行。
+**并行候选**：依据 `Depends On` 建立任务 DAG；无相互依赖只表示候选，不等于必须并行。候选任务的 Write Set 必须互斥；共享接口、资源或写入点必须固定并指定唯一 owner；HITL 决策作为所有受影响下游的依赖门。运行时调度与合流由 `/2-implement` 判定。
 
 ## 最终确认
 

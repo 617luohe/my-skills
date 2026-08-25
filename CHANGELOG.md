@@ -6,6 +6,7 @@ All notable changes to this skills repository will be documented in this file.
 
 - **0--claude**：模板收敛为最小内核（工作哲学 + 记忆约定），删除称呼规则/路由入口/本项目配置块；治理校验放宽（`## 路由入口` 不再是强制块，仅存在时校验规范）。
 - **vocabulary/grilling、vocabulary/tdd**：`invocation: user` + `disable-model-invocation: true`，不再进入模型技能表；仍由 `/1-plan`、`/2-implement`、`/4-debug` 按需加载。
+- **并行编排契约**：`1-plan` 产出 DAG 与 Write Set；`2-implement` 探测隔离能力，安全条件不足时逐级降级为顺序 fresh context 或主上下文串行，由主流程唯一合流并在最终合流态全量验证；Review 按风险与 spec 复杂度选择双轴并行，全局知识盘点和批量 Vault 分析仅在规模足够时并行只读调查。
 
 ## [3.0.0] - 2026-08-18
 
@@ -64,7 +65,7 @@ All notable changes to this skills repository will be documented in this file.
 
 ### Removed
 
-- **multi-worker**：并行 worktree 编排；替代：主流程顺序开发或 Cursor 内置多 agent
+- **multi-worker**：并行 worktree 编排；当时替代：主流程顺序开发或 Cursor 内置多 agent；后续演变见 Unreleased 的并行编排契约
 - **leader**：外部 agent 任务书；替代：直接在对话中描述任务
 - **0--explore**：预算驱动深潜探索；替代：只读调查 `docs/analysis/` 或 `/1-plan`
 - **0--tokenless**：超压缩沟通；替代：CLAUDE.md「工作哲学·沟通」简洁表达
