@@ -61,7 +61,7 @@
     {
       "id": "neat-freak",
       "prompt": "项目文档、CLAUDE 和 memory 对不上了，做一次全局减法和一致性校准。",
-      "expected": "0--neat-freak",
+      "expected": "0-neat-freak",
       "forbidden": ["6-sum"],
       "reason": "目标是全局知识卫生，不是本次会话收尾。"
     },
@@ -69,7 +69,7 @@
       "id": "session-handoff",
       "prompt": "今天先到这里，把这次改动、验证结果和下一步整理成可接手的交接。",
       "expected": "6-sum",
-      "forbidden": ["0--neat-freak"],
+      "forbidden": ["0-neat-freak"],
       "reason": "只沉淀本次会话。"
     },
     {
@@ -88,8 +88,8 @@
     },
     {
       "id": "dialectic-explicit",
-      "prompt": "/0--dialectic 从主要矛盾和阶段变化分析团队目前的战略选择。",
-      "expected": "0--dialectic",
+      "prompt": "/0-dialectic 从主要矛盾和阶段变化分析团队目前的战略选择。",
+      "expected": "0-dialectic",
       "forbidden": [],
       "reason": "战略技能只接受显式调用。"
     },
@@ -97,7 +97,7 @@
       "id": "dialectic-implicit-negative",
       "prompt": "我们下季度应该先做企业版还是移动端？先给我一个简短判断。",
       "expected": "direct",
-      "forbidden": ["0--dialectic"],
+      "forbidden": ["0-dialectic"],
       "reason": "没有显式调用 user-only 战略技能。"
     },
     {
@@ -110,7 +110,7 @@
     {
       "id": "init-claude",
       "prompt": "给新仓库初始化一份小内核 CLAUDE.md，只保留协作规则和路由指针。",
-      "expected": "0--claude",
+      "expected": "0-claude",
       "forbidden": ["writing-for-agents"],
       "reason": "目标是初始化协作规则文件。"
     },

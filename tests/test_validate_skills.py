@@ -714,9 +714,9 @@ def test_repository_contract_marks_dialectic_user_only():
     root = Path(__file__).resolve().parents[1]
     result = contract(load_manifest(root / "skills-manifest.yaml"), root)
     dialectic = next(
-        skill for skill in result["skills"] if skill["name"] == "0--dialectic"
+        skill for skill in result["skills"] if skill["name"] == "0-dialectic"
     )
-    assert dialectic["deployment_name"] == "0--dialectic"
+    assert dialectic["deployment_name"] == "0-dialectic"
     assert dialectic["invocation"] == "user"
     assert dialectic["status"] == "stable"
 
@@ -1011,8 +1011,8 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         "review-without-upstream-evidence": ("3-review", {"2-implement"}),
         "issue-only": ("issue-reporting", {"4-debug"}),
         "memory-near-miss": ("direct", {"noteall"}),
-        "neat-freak": ("0--neat-freak", {"6-sum"}),
-        "dialectic-implicit-negative": ("direct", {"0--dialectic"}),
+        "neat-freak": ("0-neat-freak", {"6-sum"}),
+        "dialectic-implicit-negative": ("direct", {"0-dialectic"}),
     }
     for case_id, (expected, forbidden) in required_boundaries.items():
         assert by_id[case_id]["expected"] == expected

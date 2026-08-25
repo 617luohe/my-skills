@@ -30,9 +30,9 @@
 
 | 技能            | 职责                                                              | 触发                         | 文档                               |
 | --------------- | ----------------------------------------------------------------- | ---------------------------- | ---------------------------------- |
-| `0--claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定） | `/0--claude`                 | [SKILL.md](0--claude/SKILL.md)     |
-| `0--dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0--dialectic`     | [SKILL.md](0--dialectic/SKILL.md)  |
-| `0--neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0--neat-freak`             | [SKILL.md](0--neat-freak/SKILL.md) |
+| `0-claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定） | `/0-claude`                 | [SKILL.md](0-claude/SKILL.md)     |
+| `0-dialectic`  | 战略问题的矛盾分析与阶段策略；仅用户显式调用                   | 用户显式 `/0-dialectic`     | [SKILL.md](0-dialectic/SKILL.md)  |
+| `0-neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0-neat-freak`             | [SKILL.md](0-neat-freak/SKILL.md) |
 | `0-init`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-init`                    | [SKILL.md](0-init/SKILL.md)        |
 | `0-router`   | **技能路由唯一事实源**                                            | `/0-router`               | [SKILL.md](0-router/SKILL.md)   |
 | `1-plan`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-plan`                    | [SKILL.md](1-plan/SKILL.md)        |

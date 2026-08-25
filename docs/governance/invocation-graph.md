@@ -25,6 +25,6 @@ my-note/noteall ──> my-note/index-keeper + my-note/vault-publisher
 
 ## 调用策略
 
-- `0--dialectic`：user-only。
+- `0-dialectic`：user-only。
 - `issue-reporting`：仅在用户明确要求建单时触发；远程创建前展示完整内容并确认。
 - `vocabulary/grilling` 与 `vocabulary/tdd`：`invocation: user`，仅由父工作流加载，不进入模型技能表。

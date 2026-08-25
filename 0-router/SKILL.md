@@ -35,10 +35,10 @@ disable-model-invocation: false
 | 已有 tasks.md 且 ≥2 独立任务需并行开发                   | `/1-plan`（生成 tasks.md）→ `/2-implement`（顺序开发）→ `/3-review` → `/5-git`                                                                 |
 | 想大规模多轮探索一个方向（模糊种子+预算+时长）           | `/1-plan`（先做只读调查与任务拆解，再按可验证步骤执行）                                                                                                       |
 | 新项目开张                                               | `/0-init`                                                                                                                                           |
-| 初始化 CLAUDE.md / 协作规则                              | `/0--claude`                                                                                                                                       |
+| 初始化 CLAUDE.md / 协作规则                              | `/0-claude`                                                                                                                                       |
 | 收尾、沉淀、交接                                         | `/6-sum`                                                                                                                                      |
-| 文档和代码不一致 / 记忆膨胀 / 知识库乱了                 | `/0--neat-freak`                                                                                                                                   |
-| 复杂问题拿不准方向                                       | `/0--dialectic`                                                                                                                                    |
+| 文档和代码不一致 / 记忆膨胀 / 知识库乱了                 | `/0-neat-freak`                                                                                                                                   |
+| 复杂问题拿不准方向                                       | `/0-dialectic`                                                                                                                                    |
 | 新建或修改技能 / 优化触发词                              | `/writing-for-agents`                                                                                                                              |
 | 仅人能做的配置或迁移                                     | `/wizard`                                                                                                                                          |
 | 图片、截图、照片理解                                     | `/vision-skill`                                                                                                                                    |

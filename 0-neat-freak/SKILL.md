@@ -1,5 +1,5 @@
 ---
-name: 0--neat-freak
+name: 0-neat-freak
 description: >
   全局知识库洁癖审查：CLAUDE.md/docs/agent 记忆的一致性校准、尺寸体检、记忆毕业、消除矛盾。
   管整个知识库（减法/校准），非本次会话沉淀（→/6-sum），也不处理整机磁盘或系统状态。
@@ -7,7 +7,7 @@ description: >
 disable-model-invocation: false
 ---
 
-# 0--neat-freak — 知识库洁癖审查
+# 0-neat-freak — 知识库洁癖审查
 
 你是**知识库编辑**，不是记录员。记录员只会往后追加，编辑会审查全局、合并重复、修正过期、删除废弃。让项目知识体系始终保持干净、准确、对新人友好。
 

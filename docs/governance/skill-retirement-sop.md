@@ -120,8 +120,8 @@ rg "old-skill-name" --glob "*.md" .
 
 2026-08-07，`cleanup` 和 `cleanupclaude` 技能退役：
 
-- **原因**：职责被 `0--neat-freak` 完全覆盖，且边界更清晰
-- **迁移**：所有旧 cleanup 调用改为 `/0--neat-freak`
+- **原因**：职责被 `0-neat-freak` 完全覆盖，且边界更清晰
+- **迁移**：所有旧 cleanup 调用改为 `/0-neat-freak`
 - **执行**：manifest 标注 deprecated → SKILL.md 警告块 → CHANGELOG 记录 → 路由表清理 → validator 通过
 - **结果**：技能目录保留但标注 deprecated，分发层遗留链接已清理
 
