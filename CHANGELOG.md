@@ -43,6 +43,13 @@ All notable changes to this skills repository will be documented in this file.
 - `2-implement`、`4-debug` 收敛为「输入 → 调用纪律源 → 交接」薄编排壳。
 - 纪律单源到 `/tdd` 与 `references/diagnosis-loop.md`；canonical 依赖显式引用。
 
+### 表达与实现简化（mattpock 风格第二轮）
+
+- `5-git` 常见任务 / 流程合并，`0-init` 核心规则合入流程，`0--claude` 删「何时使用 / 完成后」，`6-sum` 核心规则合入步骤。
+- `tdd` 去「编码准则」重复、MUST 规则合并（74→43 行）。
+- `0--dialectic` 现代映射披露到 `references/modern-mapping.md`（62→40 行）。
+- `0--neat-freak` 三层知识 / 毕业细节指向 `references/sync-matrix.md`（61→48 行）。
+
 
 
 ## [3.0.0] - 2026-08-18
