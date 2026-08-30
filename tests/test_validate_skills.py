@@ -714,9 +714,9 @@ def test_repository_contract_marks_dialectic_user_only():
     root = Path(__file__).resolve().parents[1]
     result = contract(load_manifest(root / "skills-manifest.yaml"), root)
     dialectic = next(
-        skill for skill in result["skills"] if skill["name"] == "0--dialectic"
+        skill for skill in result["skills"] if skill["name"] == "0-dialectic"
     )
-    assert dialectic["deployment_name"] == "0--dialectic"
+    assert dialectic["deployment_name"] == "0-dialectic"
     assert dialectic["invocation"] == "user"
     assert dialectic["status"] == "stable"
 
@@ -1011,8 +1011,8 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         "review-without-upstream-evidence": ("3-review", {"2-implement"}),
         "issue-only": ("issue-reporting", {"4-debug"}),
         "memory-near-miss": ("direct", {"noteall"}),
-        "neat-freak": ("0--neat-freak", {"6-sum"}),
-        "dialectic-implicit-negative": ("direct", {"0--dialectic"}),
+        "neat-freak": ("0-neat-freak", {"6-sum"}),
+        "dialectic-implicit-negative": ("direct", {"0-dialectic"}),
     }
     for case_id, (expected, forbidden) in required_boundaries.items():
         assert by_id[case_id]["expected"] == expected
@@ -1039,3 +1039,50 @@ def test_noteall_locks_one_selected_vault_across_pipeline_docs():
     assert all("{selected_vault}" in text for text in texts)
     assert "{vault_path}" not in joined
     assert "{vault}" not in joined
+
+
+def test_parallel_orchestration_contract_markers():
+    root = Path(__file__).resolve().parents[1]
+    router = (root / "0-router" / "SKILL.md").read_text(encoding="utf-8")
+    plan = (root / "1-plan" / "SKILL.md").read_text(encoding="utf-8")
+    implement = (root / "2-implement" / "SKILL.md").read_text(encoding="utf-8")
+    review = (root / "3-review" / "references" / "review-rules.md").read_text(
+        encoding="utf-8"
+    )
+    neat_freak = (root / "0-neat-freak" / "SKILL.md").read_text(encoding="utf-8")
+    maintain = (
+        root / "my-note" / "noteall" / "references" / "maintain.md"
+    ).read_text(encoding="utf-8")
+
+    assert "（顺序开发）" not in router
+    for marker in ("Write Set", "无相互依赖只表示候选", "唯一 owner", "HITL"):
+        assert marker in plan
+    for marker in (
+        "同一冻结基点",
+        "隔离可写上下文",
+        "可回传变更包",
+        "依赖已验收",
+        "Write Set 互斥",
+        "唯一 owner",
+        "HITL 无未决影响",
+        "运行资源可隔离",
+        "顺序 fresh context",
+        "主上下文顺序执行",
+        "唯一合流",
+        "冲突即停止",
+        "最终合流态",
+    ):
+        assert marker in implement
+    for host_specific in ("后台 subagent", "并行 task", "worktree", "Cursor", "Codex"):
+        assert host_specific not in implement
+    for marker in ("独立只读上下文", "同一证据包", "主流程唯一汇总"):
+        assert marker in review
+    assert "docs/ → CLAUDE.md → memory 串行执行" in neat_freak
+    for marker in (
+        "HITL 确认",
+        "共享 INDEX/MOC",
+        "移动/重命名",
+        "断链修复",
+        "Publish 保持串行",
+    ):
+        assert marker in maintain

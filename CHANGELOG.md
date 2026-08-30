@@ -8,7 +8,7 @@ All notable changes to this skills repository will be documented in this file.
 
 ### 语言优化（P0 / P10 / P11 / P12）
 
-- **description 措辞**：触发词按分支收敛（`noteall` 15 词 → 4 分支）；description 内否定式「非触发」改写为正向 scope（`0--dialectic`、`issue-reporting`、`0--neat-freak`）；`vision-skill` 删除冗余 `when_to_use` 字段与正文「触发」节，触发只留 description 一处。
+- **description 措辞**：触发词按分支收敛（`noteall` 15 词 → 4 分支）；description 内否定式「非触发」改写为正向 scope（`0-dialectic`、`issue-reporting`、`0-neat-freak`）；`vision-skill` 删除冗余 `when_to_use` 字段与正文「触发」节，触发只留 description 一处。
 - **正文否定句分级**：默认已遵守的 no-op 删除或改正向（`不编造根因`、`不猜图`、`不写进 CLAUDE.md`、`不主动推销` 等）；硬 guardrail（`git add .`、脱敏、冲突停止）保留。
 - **摘要缓存消除**：`4-debug` 复述的 6 阶段纪律 4 条改为指向 `references/diagnosis-loop.md`。
 
@@ -45,10 +45,15 @@ All notable changes to this skills repository will be documented in this file.
 
 ### 表达与实现简化（mattpock 风格第二轮）
 
-- `5-git` 常见任务 / 流程合并，`0-init` 核心规则合入流程，`0--claude` 删「何时使用 / 完成后」，`6-sum` 核心规则合入步骤。
+- `5-git` 常见任务 / 流程合并，`0-init` 核心规则合入流程，`0-claude` 删「何时使用 / 完成后」，`6-sum` 核心规则合入步骤。
 - `tdd` 去「编码准则」重复、MUST 规则合并（74→43 行）。
-- `0--dialectic` 现代映射披露到 `references/modern-mapping.md`（62→40 行）。
-- `0--neat-freak` 三层知识 / 毕业细节指向 `references/sync-matrix.md`（61→48 行）。
+- `0-dialectic` 现代映射披露到 `references/modern-mapping.md`（62→40 行）。
+- `0-neat-freak` 三层知识 / 毕业细节指向 `references/sync-matrix.md`（61→48 行）。
+
+### 远端合并（并行编排契约 + 扩展技能重命名）
+
+- **并行编排契约**：`1-plan` 产出 DAG 与 Write Set；`2-implement` 探测隔离能力，安全条件不足时逐级降级为顺序 fresh context 或主上下文串行，由主流程唯一合流并在最终合流态全量验证；Review 按风险与 spec 复杂度选择双轴并行，全局知识盘点和批量 Vault 分析仅在规模足够时并行只读调查。
+- **扩展技能重命名**：`0--*` → `0-*`（`0-claude`/`0-dialectic`/`0-neat-freak`），消除 opencode 对连续 `--` 命名的兼容风险；validator 扩展技能判定改为显式名单。
 
 
 
@@ -109,7 +114,7 @@ All notable changes to this skills repository will be documented in this file.
 
 ### Removed
 
-- **multi-worker**：并行 worktree 编排；替代：主流程顺序开发或 Cursor 内置多 agent
+- **multi-worker**：并行 worktree 编排；当时替代：主流程顺序开发或 Cursor 内置多 agent；后续演变见 Unreleased 的并行编排契约
 - **leader**：外部 agent 任务书；替代：直接在对话中描述任务
 - **0--explore**：预算驱动深潜探索；替代：只读调查 `docs/analysis/` 或 `/1-plan`
 - **0--tokenless**：超压缩沟通；替代：CLAUDE.md「工作哲学·沟通」简洁表达

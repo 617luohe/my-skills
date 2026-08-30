@@ -24,7 +24,7 @@ disable-model-invocation: false
 规模定了之后，走同一条线，只在三个点上分叉：
 
 1. **方案定不定？** 定了进 `/2-implement`；没定走 `/1-plan`（用 `/grilling` 追问，产出 PRD 与任务清单）。方案需要实际验证（状态机/算法/UI）时，`/1-plan` 内建 throwaway prototype，结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留证。
-2. **做没做完？** `/2-implement` 按 `/tdd` 红-绿-重构做完，自检后带未提交改动交 `/3-review`。
+2. **做没做完？** `/2-implement` 按 `/tdd` 红-绿-重构做完，自检后带未提交改动交 `/3-review`。tasks.md 里 ≥2 个无依赖切片、且宿主可独立只读并行时，可并行 `/2-implement` 切片，各自交 `/3-review`，最后由主流程汇总进 `/5-git`。
 3. **审没审过？** `/3-review` 裁决 PASS 才交 `/5-git` 收尾；`/6-sum` 在需要沉淀会话产出时收尾。
 
 ## On-ramps（产生工作后汇入主流程）
@@ -38,9 +38,9 @@ disable-model-invocation: false
 ## 独立支线
 
 - **新项目开张** → `/0-init`（结构 + git + uv）。
-- **初始化或修复 CLAUDE.md** → `/0--claude`。
-- **文档/记忆/知识库一致性校准（减法）** → `/0--neat-freak`。
-- **战略决策与复盘的矛盾分析** → `/0--dialectic`（显式调用；普通拿不准方向走本表）。
+- **初始化或修复 CLAUDE.md** → `/0-claude`。
+- **文档/记忆/知识库一致性校准（减法）** → `/0-neat-freak`。
+- **战略决策与复盘的矛盾分析** → `/0-dialectic`（显式调用；普通拿不准方向走本表）。
 - **新建或修改技能 / 优化触发词 / 写 CLAUDE.md** → `/writing-for-agents`。
 - **仅人能做：配置基础设施 / 凭据 / CI secrets / 迁移 cutover** → `/wizard`。
 - **图片 / 截图 / 照片理解** → `/vision-skill`。

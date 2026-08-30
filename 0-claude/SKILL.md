@@ -1,10 +1,10 @@
 ---
-name: 0--claude
+name: 0-claude
 description: 初始化或修复 CLAUDE.md 小内核（工作哲学、记忆约定）。触发：新项目协作规则、初始化 CLAUDE、补齐规则块。
 disable-model-invocation: false
 ---
 
-# 0--claude — CLAUDE.md 初始化器
+# 0-claude — CLAUDE.md 初始化器
 
 luohe，我来处理项目的 CLAUDE.md。
 

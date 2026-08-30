@@ -28,6 +28,6 @@
 ## 与其它技能的关系
 
 - **skill-creator**（已部署）— 外层迭代循环：草稿 → 评测 → 改写。本技能管内层写作质量，两者接力
-- **`0--claude`** — 生成 CLAUDE.md 时参考本技能原则
-- **`0--neat-freak`** — 校准知识库文档时应用 pruning 原则
+- **`0-claude`** — 生成 CLAUDE.md 时参考本技能原则
+- **`0-neat-freak`** — 校准知识库文档时应用 pruning 原则
 - 新建技能时：先走本技能写，再用 skill-creator 评测迭代

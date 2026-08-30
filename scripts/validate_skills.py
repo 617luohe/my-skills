@@ -69,7 +69,12 @@ MANIFEST_DEPENDENCY_BLOCK_RE = re.compile(
 
 # Naming convention patterns
 STAGE_SKILL_RE = re.compile(r"^[0-6]-[a-z][a-z0-9-]*$")  # N-english-slug
-EXTENSION_SKILL_RE = re.compile(r"^0--[a-z][a-z0-9-]*$")  # 0--lowercase
+# 扩展技能：0- 开头 + 英文名称，但与阶段0(stage,如0-init/0-router)前缀相同，无法靠正则区分，
+# 因此用显式名单界定扩展技能，避免与 STAGE_SKILL_RE 冲突。
+EXTENSION_SKILL_NAMES = frozenset(
+    {"0-claude", "0-dialectic", "0-neat-freak"}
+)
+EXTENSION_SKILL_RE = re.compile(r"^0-[a-z][a-z0-9-]*$")  # 0-lowercase
 VOCABULARY_SKILL_RE = re.compile(
     r"^vocabulary/[a-z][a-z0-9-]*$"
 )  # vocabulary/lowercase
@@ -99,7 +104,7 @@ def _slash_skill_references(text: str, runtime_names: set[str]) -> set[str]:
 def _expected_category(name: str) -> str:
     if name == ROUTER_SKILL:
         return "router"
-    if name.startswith("0--"):
+    if name in EXTENSION_SKILL_NAMES:
         return "extension"
     if STAGE_SKILL_RE.match(name):
         return "main-flow"
@@ -285,22 +290,25 @@ def _validate_naming(name: str) -> str | None:
     """
     if name == ROUTER_SKILL:
         return None
+    # 扩展技能用显式名单判定（0- 前缀与 stage0 冲突，不能靠正则区分）
+    if name in EXTENSION_SKILL_NAMES:
+        return None if EXTENSION_SKILL_RE.match(name) else (
+            f"extension skill must follow '0-lowercase' format, got '{name}'"
+        )
     if STAGE_SKILL_RE.match(name):
-        return None
-    if EXTENSION_SKILL_RE.match(name):
         return None
     if VOCABULARY_SKILL_RE.match(name):
         return None
     if MY_NOTE_SKILL_RE.match(name):
         return None
-    # Allow standalone methodology skills (e.g., writing-for-agents, 0--dialectic with uppercase)
+    # Allow standalone methodology skills (e.g., writing-for-agents)
     if "/" not in name and not name[0].isdigit():
         return None
     # Check for common naming violations
     if re.match(r"^[0-6]-", name) and not STAGE_SKILL_RE.match(name):
         return f"stage skill must follow 'N-english-slug' format (e.g. 1-plan), got '{name}'"
-    if name.startswith("0--") and not EXTENSION_SKILL_RE.match(name):
-        return f"extension skill must follow '0--lowercase' format, got '{name}'"
+    if name.startswith("0-") and not EXTENSION_SKILL_RE.match(name) and name not in EXTENSION_SKILL_NAMES:
+        return f"skill name '{name}' does not match any naming convention"
     if name.startswith("vocabulary/") and not VOCABULARY_SKILL_RE.match(name):
         return (
             f"vocabulary skill must follow 'vocabulary/lowercase' format, got '{name}'"

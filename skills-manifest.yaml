@@ -1,8 +1,8 @@
 schema_version: 1
 repository_version: 3.0.0
 skills:
-  - name: 0--claude
-    path: 0--claude
+  - name: 0-claude
+    path: 0-claude
     category: extension
     version: 3.0.0
     status: stable
@@ -11,8 +11,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0--dialectic
-    path: 0--dialectic
+  - name: 0-dialectic
+    path: 0-dialectic
     category: extension
     version: 3.0.0
     status: stable
@@ -21,8 +21,8 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0--neat-freak
-    path: 0--neat-freak
+  - name: 0-neat-freak
+    path: 0-neat-freak
     category: extension
     version: 3.0.0
     status: stable

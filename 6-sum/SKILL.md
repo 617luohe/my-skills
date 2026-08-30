@@ -2,13 +2,13 @@
 name: 6-sum
 description: >
   收尾沉淀本次会话产出：修改总结、memory、临时文件整理和交接。
-  只管本次会话；全局知识库减法与校准交给 /0--neat-freak。触发：收尾、沉淀、会话结束。
+  只管本次会话；全局知识库减法与校准交给 /0-neat-freak。触发：收尾、沉淀、会话结束。
 disable-model-invocation: false
 ---
 
 # 6-sum — 会话收尾与沉淀
 
-只处理本次会话产出：总结、memory、临时文件和交接。全局知识库审查由 `/0--neat-freak` 承担。
+只处理本次会话产出：总结、memory、临时文件和交接。全局知识库审查由 `/0-neat-freak` 承担。
 
 ## 步骤
 
@@ -23,4 +23,4 @@ disable-model-invocation: false
 
 - 本次会话总结完成；值得保留的经验或决策已写入 memory。
 - 本次产生的临时文件已清理或明确保留原因。
-- 需要交接时已产出 handoff 文档；需要全局校准时已提示转 `/0--neat-freak`。
+- 需要交接时已产出 handoff 文档；需要全局校准时已提示转 `/0-neat-freak`。
