@@ -51,15 +51,18 @@ my-skills/
 
 **名称契约**：manifest 的 `name`、`path`、`dependencies` 使用 canonical name（如 `vocabulary/tdd`）；skills-manager 按末段扁平部署，运行时 slash 调用必须使用 contract 的 `deployment_name`（如 `/tdd`、`/noteall`）。
 
-按层级分组：
+按调用方式分两组（与 manifest `invocation` 字段一致，详见 [USAGE.md](USAGE.md)）：
 
-- **阶段技能**：`0-router`、`0-init`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
-- **扩展能力**：`0--claude`、`0--dialectic`、`0--neat-freak`
-- **独立方法论**：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
-- **vocabulary 层**：`grilling`、`tdd` 为 `invocation: user`，由父工作流加载，不进入模型技能表。
-- **my-note 层**：`noteall` 唯一入口；`vault-publisher`、`index-keeper` 内部 Worker（由 noteall 调度）
+**User-invoked**（仅用户显式输入可及，不进入模型技能表）：`0--dialectic`、`vocabulary/grilling`、`vocabulary/tdd`、`my-note/index-keeper`、`my-note/vault-publisher`
 
-`0--dialectic`、`grilling`、`tdd` 为 `invocation: user`。
+**Model-invoked**（模型按 description 自动触发，用户亦可显式输入）：
+
+- 阶段技能：`0-router`、`0-init`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
+- 扩展能力：`0--claude`、`0--neat-freak`
+- 独立方法论：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
+- my-note 层：`noteall` 唯一入口
+
+`grilling`、`tdd` 由父工作流加载；`vault-publisher`、`index-keeper` 由 `noteall` 调度。
 
 技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
