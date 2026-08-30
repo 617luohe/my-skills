@@ -4,6 +4,12 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 语言优化（对照 mattpock/skills）
+
+- **description 措辞**：触发词按分支收敛（`noteall` 15 词 → 4 分支）；description 内否定式「非触发」改写为正向 scope（`0--dialectic`、`issue-reporting`、`0--neat-freak`）；`vision-skill` 删除冗余 `when_to_use` 字段与正文「触发」节，触发只留 description 一处。
+- **正文否定句分级**：默认已遵守的 no-op 删除或改正向（`不编造根因`、`不猜图`、`不写进 CLAUDE.md`、`不主动推销` 等）；硬 guardrail（`git add .`、脱敏、冲突停止）保留。
+- **摘要缓存消除**：`4-debug` 复述的 6 阶段纪律 4 条改为指向 `references/diagnosis-loop.md`。
+
 - **0--claude**：模板收敛为最小内核（工作哲学 + 记忆约定），删除称呼规则/路由入口/本项目配置块；治理校验放宽（`## 路由入口` 不再是强制块，仅存在时校验规范）。
 - **vocabulary/grilling、vocabulary/tdd**：`invocation: user` + `disable-model-invocation: true`，不再进入模型技能表；仍由 `/1-plan`、`/2-implement`、`/4-debug` 按需加载。
 

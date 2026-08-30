@@ -1,8 +1,8 @@
 ---
 name: 0--dialectic
 description: >
-  仅由用户显式调用 /0--dialectic：用六步矛盾分析框架处理战略决策与复盘。
-  普通“拿不准方向”不自动触发。
+  显式调用 /0--dialectic：用六步矛盾分析框架处理战略决策与复盘。
+  普通"拿不准方向"走 /0-router 常规路径。
 disable-model-invocation: true
 ---
 

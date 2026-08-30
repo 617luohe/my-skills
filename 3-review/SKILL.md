@@ -31,7 +31,7 @@ disable-model-invocation: false
 ## Bug 报告
 
 1. 先探测唯一 tracker：GitHub、GitLab、Jira 或无远程 tracker。
-2. 采集现象、预期、实际结果、复现性和必要日志；不编造根因。
+2. 采集现象、预期、实际结果、复现性和必要日志；根因留给 `/4-debug` 定位。
 3. 在同一 tracker 内只读查重；若已存在同类 issue，输出链接后停止。
 4. 查重未命中时，先展示标题、完整正文和目标 tracker。
 5. 只有用户明确确认后才创建 issue；失败时如实停止，不跨平台回退。

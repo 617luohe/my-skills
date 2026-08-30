@@ -21,7 +21,7 @@ disable-model-invocation: false
 luohe，订单支付接口偶尔返回 500，帮我调试
 ```
 
-自动进入 `references/diagnosis-loop.md` 六阶段循环。核心纪律以该技能必守门禁为准：先建立可比较观测信号、用工具验证不靠猜、一次只改一个变量、修复必带回归测试、展示先脱敏。
+自动进入 `references/diagnosis-loop.md` 六阶段循环。每阶段的必守门禁以该文件为准。
 
 ## 与其他技能的关系
 

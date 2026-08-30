@@ -3,7 +3,6 @@ name: vision-skill
 description: >
   通过 OpenCode Go 视觉 API 描述图片、截图和图片 URL。
   触发：用户附图、给图片路径或 URL、要求看图/读图，或消息中出现 [Image #N] / [Unsupported Image]。
-when_to_use: 用户附带图片(png/jpg/gif/webp/bmp)、图片路径或 URL、要求描述/看懂截图/照片、消息中出现 [Image #N] 或 [Unsupported Image]
 allowed-tools: Bash(python *)
 ---
 
@@ -13,9 +12,9 @@ allowed-tools: Bash(python *)
 
 ## 强制规则
 
-1. 不猜图；只以脚本输出为准。
-2. 不直接读取二进制图片。
-3. 图片理解一律走脚本；失败就如实报错。
+1. 以脚本输出为唯一事实源，图片理解一律走脚本。
+2. 图片内容交给脚本解析，模型只转述脚本返回的描述。
+3. 失败就如实报错。
 
 ## 执行
 
@@ -42,14 +41,6 @@ python "${CLAUDE_SKILL_DIR}/scripts/vision_describe.py" <图片路径或URL>
 - **`VISION_MODEL`**：默认 `minimax-m3`（成本优先）
 - **`VISION_API_URL`**：默认 `https://opencode.ai/zen/go/v1`
 
-## 触发
-
-1. 用户附带图片文件、图片路径或图片 URL
-2. 消息中出现 `[Image #N]` / `[Unsupported Image]` 占位符
-3. 用户要求"描述 / 看懂 / 读取 / 看看这张图、截图、照片"
-
-纯文本、代码、文档内容不触发本技能。
-
 ## 错误处理
 
 - 无 key / 网络失败 / 图片过大：把 stderr 的错误信息原样报告用户。
@@ -58,5 +49,5 @@ python "${CLAUDE_SKILL_DIR}/scripts/vision_describe.py" <图片路径或URL>
 ## 完成标准
 
 - 已定位真实图片路径或 URL 并调用脚本。
-- 回答只基于脚本输出，不猜测图片内容。
+- 回答只基于脚本输出。
 - 脚本失败时已原样报告错误。

@@ -3,8 +3,8 @@ name: noteall
 layer: my-note
 description: >
   知识库唯一入口。接收本机路径、URL、自由文本或处理要求，整理进选定的 Obsidian Vault 并自动提交推送，
-  编排 Intake→Curate→Publish 三阶段。触发（知识库强信号词）：note、笔记、知识库、Obsidian、Vault、
-  收录、归档、索引、MOC、会议纪要、日记、阅读、路径/URL 收录、批量整理、写文章。
+  编排 Intake→Curate→Publish 三阶段。触发：收录内容（路径/URL/文本）、记一笔、整理或维护既有笔记、
+  把会议/日记/文章定型。
 disable-model-invocation: false
 ---
 
