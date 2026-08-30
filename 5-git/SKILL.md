@@ -8,36 +8,26 @@ disable-model-invocation: false
 
 处理 Git 保存、查看、回滚、分支和远程同步。
 
-## 核心规则
-
-1. 保存、提交、推送都要用户明确授权。
-2. 危险操作先确认：`reset --hard`、`push --force`、`branch -D`。
-3. 回滚默认用 `git revert`，不用 `reset`。
-4. 优先暂存具体文件，不用 `git add .`。
-5. 首次推送用当前分支名设置上游，不硬编码 `main`。
-
-## 常见任务
-
-- 初始化仓库：`git init`
-- 保存版本：`git add <具体文件>` → `git commit`
-- 查看历史：`git log --oneline --graph`
-- 查看变更：`git diff`
-- 安全回滚：`git revert <commit>`
-- 分支管理：创建 / 切换 / 删除已合并分支
-- 连接远程：`git remote add origin <url>`
-- 首次推送：`git push -u origin $(git branch --show-current)`
-- 后续同步：`git push` / `git pull`
-
 ## 流程
 
-1. 先确认目标：初始化、查看、提交、回滚、分支还是远程同步。
-2. 先读当前仓库状态，再执行对应 Git 操作。
-3. 涉及提交或推送时，只处理用户明确要求的内容。
-4. 涉及远程时，先确认 remote 和当前分支。
-5. 涉及危险操作时，再次确认影响范围后执行。
+1. 确认目标：初始化、查看、提交、回滚、分支还是远程同步；先读当前 `git status` 再动手。
+2. **授权**：保存、提交、推送都要用户明确授权，只处理用户明确要求的内容。
+3. **暂存**：优先 `git add <具体文件>`，不用 `git add .`。
+4. **回滚**：默认 `git revert <commit>`，不用 `reset`。
+5. **危险操作**（`reset --hard`、`push --force`、`branch -D`）：先确认影响范围再执行。
+6. **首次推送**：`git push -u origin $(git branch --show-current)`，不硬编码 `main`。
+
+## 常见任务速查
+
+- 初始化：`git init`
+- 保存：`git add <具体文件>` → `git commit`
+- 历史：`git log --oneline --graph`
+- 变更：`git diff`
+- 回滚：`git revert <commit>`
+- 分支：创建 / 切换 / 删除已合并分支
+- 远程：`git remote add origin <url>`；首次 `git push -u origin $(git branch --show-current)`；后续 `git push` / `git pull`
 
 ## 完成标准
 
-- Git 操作成功完成，且无错误退出码。
-- 若执行了提交或推送，范围与目标和用户授权一致。
-- 操作后 `git status` 处于预期状态。
+- Git 操作成功、无错误退出码，`git status` 处于预期状态。
+- 提交或推送的范围、目标与用户授权一致。
