@@ -4,14 +4,46 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
-### 语言优化（对照 mattpock/skills）
+对照 mattpock/skills 参考体系（`main=6654f6b`）逐项优化，忠实其写作规范与第一性原理。
+
+### 语言优化（P0 / P10 / P11 / P12）
 
 - **description 措辞**：触发词按分支收敛（`noteall` 15 词 → 4 分支）；description 内否定式「非触发」改写为正向 scope（`0--dialectic`、`issue-reporting`、`0--neat-freak`）；`vision-skill` 删除冗余 `when_to_use` 字段与正文「触发」节，触发只留 description 一处。
 - **正文否定句分级**：默认已遵守的 no-op 删除或改正向（`不编造根因`、`不猜图`、`不写进 CLAUDE.md`、`不主动推销` 等）；硬 guardrail（`git add .`、脱敏、冲突停止）保留。
 - **摘要缓存消除**：`4-debug` 复述的 6 阶段纪律 4 条改为指向 `references/diagnosis-loop.md`。
 
-- **0--claude**：模板收敛为最小内核（工作哲学 + 记忆约定），删除称呼规则/路由入口/本项目配置块；治理校验放宽（`## 路由入口` 不再是强制块，仅存在时校验规范）。
-- **vocabulary/grilling、vocabulary/tdd**：由 `invocation: user` 改为 `invocation: model`（参考 mattpock 语义——model-invocation 只增加 agent 可达性），description 去否定短语改为正向「Use when」，`openai.yaml` 允许隐式调用；仍由 `/1-plan`、`/2-implement`、`/4-debug` 按需加载。
+### writing-for-agents 忠实同步（P1）
+
+- 主文 = 参考 `SKILL.md` 全译，10 杠杆定位句同义（含 two loads、variance bug、co-location、negation、no-op、cache、sediment）。
+- 新增 `SKILL-MECHANICS.md`（调用方式 / 拆分 / router 技能）。
+- 我方定制（触发 / 写作流程 / 完成条件 / 关系）逐出为 `SKILL-WORKFLOW.md` disclosed reference。
+
+### grilling 回收 sub-agent 不阻塞（P2）
+
+- 事实派 sub-agent 查、不阻塞本轮，仅下游问题等待。
+- 删除自创「逐步模式」节，由 rounds + frontier 天然覆盖逐轮需求。
+
+### 路由重构（P3 / P5）
+
+- `0-router` 叙述式重写：规模先行（S/M/L/XL）为入口，主干 idea→ship + on-ramps + 独立支线。
+- `3-review` 收敛为纯 Review / 架构评估；「只建单 / 根因修复 / 架构评估」的判路由单点到 `0-router`，消除双路由。
+
+### README / USAGE 按调用方式重组（P4）
+
+- `USAGE.md` 索引按 User-invoked / Model-invoked 分两组，与 manifest `invocation` 一致；`README.md` 调用分类同步。
+- 每个活跃技能保留唯一索引行且名链接 `SKILL.md`。
+
+### vocabulary 改 model-invoked（P6）
+
+- `vocabulary/grilling`、`vocabulary/tdd`：`invocation: user` → `model`，`disable-model-invocation: false`，`openai.yaml` 允许隐式调用（参考语义：model-invocation 只增加 agent 可达性）。
+- description 去否定短语，改为正向「Use when」。
+
+### 阶段技能瘦身（P7 / P8 / P9）
+
+- `2-implement`、`4-debug` 收敛为「输入 → 调用纪律源 → 交接」薄编排壳。
+- 纪律单源到 `/tdd` 与 `references/diagnosis-loop.md`；canonical 依赖显式引用。
+
+
 
 ## [3.0.0] - 2026-08-18
 
