@@ -12,8 +12,6 @@
 | 技能               | 职责                                                              | 触发                        | 文档                                        |
 | ------------------ | ----------------------------------------------------------------- | --------------------------- | ------------------------------------------- |
 | `0--dialectic`     | 战略问题的矛盾分析与阶段策略；仅用户显式调用                      | 用户显式 `/0--dialectic`    | [SKILL.md](0--dialectic/SKILL.md)           |
-| `grilling`         | 内部询问循环，沿决策依赖图收敛共享理解                            | 由 `/1-plan` 加载           | [SKILL.md](vocabulary/grilling/SKILL.md)    |
-| `tdd`              | 内部 RED-GREEN-REFACTOR                                           | 由 `/2-implement`、`/4-debug` 加载 | [SKILL.md](vocabulary/tdd/SKILL.md) |
 | `vault-publisher`  | 所选 Vault 受控发布 Worker（校验 → 同步 → 只暂存 owned paths → commit/push） | 被 `noteall` 调度     | [SKILL.md](my-note/vault-publisher/SKILL.md) |
 | `index-keeper`     | 索引维护 Worker（增量更新 `_INDEX.md`、缺失补全、健康检查）       | 被 `noteall` 调度           | [SKILL.md](my-note/index-keeper/SKILL.md)   |
 
@@ -34,6 +32,13 @@
 | `4-debug`       | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                    | `/4-debug`              | [SKILL.md](4-debug/SKILL.md)     |
 | `5-git`         | Git 版本控制（init/save/log/rollback/branch/remote/push）         | `/5-git`                | [SKILL.md](5-git/SKILL.md)       |
 | `6-sum`         | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接          | `/6-sum`                | [SKILL.md](6-sum/SKILL.md)       |
+
+### Vocabulary 层（可复用纪律，模型可自动取用）
+
+| 技能       | 职责                                                              | 触发                                    | 文档                                     |
+| ---------- | ----------------------------------------------------------------- | --------------------------------------- | ---------------------------------------- |
+| `grilling` | 对计划、决策或想法穷尽追问，沿决策依赖图收敛共享理解              | `/grilling` 或"追问/grill"意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/grilling/SKILL.md) |
+| `tdd`      | RED-GREEN-REFACTOR：先写失败测试再写最少实现                      | `/tdd` 或 test-first 意图；`/2-implement`、`/4-debug` 也加载 | [SKILL.md](vocabulary/tdd/SKILL.md) |
 
 ### 独立方法论（不绑定开发阶段，跨场景通用）
 

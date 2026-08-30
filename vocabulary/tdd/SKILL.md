@@ -1,8 +1,8 @@
 ---
 name: tdd
 layer: vocabulary
-description: "[内部] RED-GREEN-REFACTOR。由 /2-implement、/4-debug 为行为变更加载，不进入模型技能表。"
-disable-model-invocation: true
+description: 测试驱动开发：先写失败测试再写最少实现。用户想 test-first 构建功能或修 bug、提到"red-green-refactor"或要集成测试时用。
+disable-model-invocation: false
 ---
 
 # TDD — 测试驱动开发

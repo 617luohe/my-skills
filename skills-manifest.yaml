@@ -156,7 +156,7 @@ skills:
     category: vocabulary
     version: 3.0.0
     status: stable
-    invocation: user
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -167,7 +167,7 @@ skills:
     category: vocabulary
     version: 3.0.0
     status: stable
-    invocation: user
+    invocation: model
     layer: vocabulary
     hosts: [claude, cursor, codex]
     distribution: synchronized

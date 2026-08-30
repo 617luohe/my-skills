@@ -1,8 +1,8 @@
 ---
 name: grilling
 layer: vocabulary
-description: "[内部] 询问循环。由 /1-plan 加载以穷尽决策依赖，不进入模型技能表。"
-disable-model-invocation: true
+description: 对计划、决策或想法穷尽追问，直到达成共享理解。用户想压测思路或使用任何"追问/grill"意图时用。
+disable-model-invocation: false
 ---
 
 # Grilling — 询问循环

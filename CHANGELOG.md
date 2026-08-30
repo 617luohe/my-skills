@@ -11,7 +11,7 @@ All notable changes to this skills repository will be documented in this file.
 - **摘要缓存消除**：`4-debug` 复述的 6 阶段纪律 4 条改为指向 `references/diagnosis-loop.md`。
 
 - **0--claude**：模板收敛为最小内核（工作哲学 + 记忆约定），删除称呼规则/路由入口/本项目配置块；治理校验放宽（`## 路由入口` 不再是强制块，仅存在时校验规范）。
-- **vocabulary/grilling、vocabulary/tdd**：`invocation: user` + `disable-model-invocation: true`，不再进入模型技能表；仍由 `/1-plan`、`/2-implement`、`/4-debug` 按需加载。
+- **vocabulary/grilling、vocabulary/tdd**：由 `invocation: user` 改为 `invocation: model`（参考 mattpock 语义——model-invocation 只增加 agent 可达性），description 去否定短语改为正向「Use when」，`openai.yaml` 允许隐式调用；仍由 `/1-plan`、`/2-implement`、`/4-debug` 按需加载。
 
 ## [3.0.0] - 2026-08-18
 
