@@ -989,7 +989,7 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
     cases = dataset["cases"]
 
     assert dataset["schema_version"] == 1
-    assert len(cases) >= 22
+    assert len(cases) >= 20
     assert len({case["id"] for case in cases}) == len(cases)
     for case in cases:
         assert case["prompt"].strip()
@@ -1009,7 +1009,6 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
     required_boundaries = {
         "plan-ambiguous-auth": ("1-plan", {"2-implement"}),
         "review-without-upstream-evidence": ("3-review", {"2-implement"}),
-        "issue-only": ("issue-reporting", {"4-debug"}),
         "memory-near-miss": ("direct", {"noteall"}),
         "neat-freak": ("0-neat-freak", {"6-sum"}),
         "dialectic-implicit-negative": ("direct", {"0-dialectic"}),

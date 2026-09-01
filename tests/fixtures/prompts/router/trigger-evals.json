@@ -38,13 +38,6 @@
       "reason": "根因未知且难复现。"
     },
     {
-      "id": "issue-only",
-      "prompt": "只把登录失败记录成 GitHub issue，不排查不修；创建前给我看完整正文。",
-      "expected": "issue-reporting",
-      "forbidden": ["4-debug"],
-      "reason": "用户明确只建单。"
-    },
-    {
       "id": "noteall-strong-signal",
       "prompt": "把这篇论文 URL 收录进 Obsidian Vault，整理成阅读笔记并更新索引。",
       "expected": "noteall",
@@ -134,13 +127,6 @@
       "expected": "vision-skill",
       "forbidden": ["4-debug"],
       "reason": "先需要图片理解。"
-    },
-    {
-      "id": "python-bootstrap",
-      "prompt": "新建一个最小 Python 项目，只要 uv、基础目录和本地 git。",
-      "expected": "0-init",
-      "forbidden": ["1-plan"],
-      "reason": "目标与初始化技能范围完全一致。"
     },
     {
       "id": "architecture-readonly",

@@ -10,7 +10,6 @@
 | develop.md | 帮我实现这个模块 | `/2-implement` |
 | review.md | 检查一下这次改动 | `/3-review` |
 | debug.md | 这个 bug 难复现，找根因 | `/4-debug` |
-| issue.md | 明确只建单且创建前确认 | `/issue-reporting` |
 | architecture.md | 架构评估但不落盘 | 只读聊天调查 |
 | direct.md | 明确、低影响、可逆 | 直接做 + 验证 |
 | noteall.md | 把这篇 PDF 收录进知识库 | `/noteall` |

@@ -28,7 +28,6 @@ disable-model-invocation: false
 
 - 根因定位与修复由 `/4-debug` 承接。
 - 版本提交与推送由 `/5-git` 承接，且仍需用户授权。
-- 只建单由 `/issue-reporting` 承接。
 
 ## 完成标准
 

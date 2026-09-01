@@ -18,7 +18,7 @@ my-skills/
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
 │   ├── index-keeper/            — 内部 Worker（索引维护）
 │   └── vault-publisher/         — 内部 Worker（所选 Vault 发布）
-├── 0-init/ ~ 6-sum/        — 阶段 0~6 开发流程
+├── 1-plan/ ~ 6-sum/        — 阶段 1~6 开发流程
 ├── 0-*/                        — 阶段 0 扩展能力
 └── scripts/                     — manifest 解析与受管技能部署脚本
 ```
@@ -29,7 +29,7 @@ my-skills/
 
 | 类型              | 命名格式              | 示例                                         | 说明                               |
 | ----------------- | --------------------- | -------------------------------------------- | ---------------------------------- |
-| **阶段技能**      | `N-中文名称`          | `0-init`、`1-plan`、`2-implement`                 | N 为阶段编号 0-6                   |
+| **阶段技能**      | `N-中文名称`          | `1-plan`、`2-implement`                 | N 为阶段编号 1-6                   |
 | **扩展能力**      | `0-英文名称`         | `0-claude`、`0-dialectic`                 | 阶段 0 扩展（显式名单）            |
 | **路由器**        | `0-router`         | `0-router`                                | 唯一入口，独立前缀                 |
 | **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`                        | 可复用核心，不直接调用             |
@@ -38,7 +38,7 @@ my-skills/
 
 **命名约束**：
 
-- 阶段技能必须以 `N-` 开头（N=0-6），后接中文名称
+- 阶段技能必须以 `N-` 开头（N=1-6），后接中文名称
 - 扩展能力为 `0-` 开头 + 英文名称，属非阶段技能（见下方显式名单，避免与阶段编号冲突）
 - vocabulary 层必须位于 `vocabulary/` 子目录下，使用英文名称
 - 禁止在非阶段技能中使用 `N-` 格式（避免与阶段编号冲突）
@@ -57,9 +57,9 @@ my-skills/
 
 **Model-invoked**（模型按 description 自动触发，用户亦可显式输入）：
 
-- 阶段技能：`0-router`、`0-init`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
+- 阶段技能：`0-router`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
 - 扩展能力：`0-claude`、`0-neat-freak`
-- 独立方法论：`issue-reporting`、`writing-for-agents`、`wizard`、`vision-skill`
+- 独立方法论：`writing-for-agents`、`wizard`、`vision-skill`
 - my-note 层：`noteall` 唯一入口
 
 `grilling`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）；`vault-publisher`、`index-keeper` 由 `noteall` 调度。

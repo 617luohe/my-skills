@@ -24,7 +24,6 @@
 | 技能            | 职责                                                              | 触发                    | 文档                             |
 | --------------- | ----------------------------------------------------------------- | ----------------------- | -------------------------------- |
 | `0-router`      | **技能路由唯一事实源**                                            | `/0-router`             | [SKILL.md](0-router/SKILL.md)    |
-| `0-init`        | 仅初始化 Python + uv：项目结构、本地 git、uv 环境                 | `/0-init`               | [SKILL.md](0-init/SKILL.md)      |
 | `0-claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定）                      | `/0-claude`            | [SKILL.md](0-claude/SKILL.md)   |
 | `1-plan`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-plan`               | [SKILL.md](1-plan/SKILL.md)      |
 | `2-implement`   | 宿主/语言中立实现；发现项目原生 test/type/lint/build              | `/2-implement`          | [SKILL.md](2-implement/SKILL.md) |
@@ -44,7 +43,6 @@
 
 | 技能                 | 职责                                                                                            | 触发                  | 文档                                    |
 | -------------------- | ----------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------- |
-| `issue-reporting`    | 用户明确要求建单时查重、展示完整草稿并经确认后创建单个远程 issue                              | `/issue-reporting`    | [SKILL.md](issue-reporting/SKILL.md)    |
 | `writing-for-agents` | 写给 agent 的文档写作规范，写/改技能时由模型自动调起                                          | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
 | `vision-skill`       | 图片描述：为纯文本模型经 OpenCode Go 视觉 API 描述图片/截图/URL                                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |

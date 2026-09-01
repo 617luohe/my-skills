@@ -69,7 +69,7 @@ MANIFEST_DEPENDENCY_BLOCK_RE = re.compile(
 
 # Naming convention patterns
 STAGE_SKILL_RE = re.compile(r"^[0-6]-[a-z][a-z0-9-]*$")  # N-english-slug
-# 扩展技能：0- 开头 + 英文名称，但与阶段0(stage,如0-init/0-router)前缀相同，无法靠正则区分，
+# 扩展技能：0- 开头 + 英文名称，但与阶段0(stage,如0-router)前缀相同，无法靠正则区分，
 # 因此用显式名单界定扩展技能，避免与 STAGE_SKILL_RE 冲突。
 EXTENSION_SKILL_NAMES = frozenset(
     {"0-claude", "0-dialectic", "0-neat-freak"}

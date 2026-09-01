@@ -31,16 +31,6 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
-  - name: 0-init
-    path: 0-init
-    category: main-flow
-    version: 3.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
   - name: 1-plan
     path: 1-plan
     category: main-flow
@@ -103,16 +93,6 @@ skills:
     dependencies: []
   - name: writing-for-agents
     path: writing-for-agents
-    category: standalone
-    version: 3.0.0
-    status: stable
-    invocation: model
-    hosts: [claude, cursor, codex]
-    distribution: synchronized
-    sync: true
-    dependencies: []
-  - name: issue-reporting
-    path: issue-reporting
     category: standalone
     version: 3.0.0
     status: stable

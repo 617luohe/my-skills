@@ -1,6 +1,0 @@
-interface:
-  display_name: "Issue Reporting"
-  short_description: "Draft, deduplicate, and safely create one issue"
-
-policy:
-  allow_implicit_invocation: true

@@ -53,7 +53,6 @@ agent 自己做得完的步骤，agent 应该自己做；wizard 只承接需要�
 
 ## 与其它技能的关系
 
-- **`0-init`** — 脚手架后配 secrets 时可调
 - **`2-implement`** — 执行中撞到仅人步骤时自动调起
 - **`1-plan`** — 一次性迁移任务标 `[HITL]` 并注明用 wizard
 - **`6-sum`** — 清理 ephemeral wizard 脚本

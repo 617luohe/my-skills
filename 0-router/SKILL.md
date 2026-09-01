@@ -30,14 +30,12 @@ disable-model-invocation: false
 ## On-ramps（产生工作后汇入主流程）
 
 - **Bug 难复现、性能突然下降** → `/4-debug`（复现 → 假设 → 修复+回归），修完走主流程第 3 点交审。
-- **只建单、不排查不修** → `/issue-reporting`（查重 → 展示 → 确认 → 创建）。
 - **只读调查 / 接手陌生项目 / 调查与架构边界** → 先做一次性只读调查写 `docs/analysis/<topic>.md` 项目地图与停止条件，按结果进 `/1-plan`、`/3-review` 或 `/4-debug`；只要聊天结论、不写文档时直接回答。
 - **代码越来越乱、模块太臃肿** → `/3-review`（明确"架构评估"意图）→ `docs/analysis/<topic>.md` seam 评估 + `docs/plans/<topic>/` 改造任务，由你决定进不进 `/1-plan`。
 - **知识收录 / 笔记 / 整理 Vault** → `/noteall`（知识库唯一入口）。
 
 ## 独立支线
 
-- **新项目开张** → `/0-init`（结构 + git + uv）。
 - **初始化或修复 CLAUDE.md** → `/0-claude`。
 - **文档/记忆/知识库一致性校准（减法）** → `/0-neat-freak`。
 - **战略决策与复盘的矛盾分析** → `/0-dialectic`（显式调用；普通拿不准方向走本表）。
