@@ -954,7 +954,7 @@ def _validate_document_authority(
         return
     normalized = text.lower()
 
-    if relative == "1-plan/references/context-format.md":
+    if relative == "vocabulary/domain-modeling/CONTEXT-FORMAT.md":
         forbidden = (
             "技术栈",
             "模块地图",
@@ -979,7 +979,7 @@ def _validate_document_authority(
             _finding(
                 "adr-template-owner",
                 path,
-                "ADR template must be owned by 1-plan/references/adr-format.md",
+                "ADR template is owned by vocabulary/domain-modeling/ADR-FORMAT.md",
                 root,
             )
         )

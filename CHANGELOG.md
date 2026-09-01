@@ -4,6 +4,15 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 编排层随核心层校准（格式权威与纪律残留清零）
+
+核心层严格对齐后，编排层同步消除与核心层不一致的残留：
+
+- **格式权威移交核心层**：删除 `1-plan/references/adr-format.md` 与 `context-format.md`（四段式 ADR 模板与核心层极简 ADR 冲突）；`1-plan` 阶段 2、`references/domain-modeling.md`、`references/planning-rules.md` 的格式指针一律指向 `vocabulary/domain-modeling/ADR-FORMAT.md` 与 `CONTEXT-FORMAT.md`。
+- **validator 治理规则更新**：`context-authority` 检查目标从 `1-plan/references/context-format.md` 改为核心层 `vocabulary/domain-modeling/CONTEXT-FORMAT.md`；`adr-template-owner` 报错文案改为核心层权威。
+- **4-debug 纪律残留清零**：`references/diagnosis-loop.md` 从 53 行内嵌六阶段纪律改为纯指针（六阶段单源在 `vocabulary/diagnosing-bugs`），仅保留编排层独有的交接守卫。
+- **3-review 纪律残留清零**：`references/review-rules.md` 删除与核心层 `code-review` 重复的「定位 spec/standards、双轴边界」，只保留编排层独有的风险路由、输入契约增强（staged/unstaged/未跟踪文件）、裁决与完成条件。
+
 ### 双层架构定型：核心复刻 mattpocock + 外层编排路由
 
 对照 mattpocock/skills 参考体系（`main=6654f6b`）逐项优化，忠实其写作规范与第一性原理。

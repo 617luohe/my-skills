@@ -35,7 +35,7 @@ Call the Skill tool with "grill-me" 建立决策依赖图并推进 frontier。�
 
 ### 阶段 2 — 领域术语与 ADR
 
-Call the Skill tool with "domain-modeling" 挑战术语、锐化模糊词、就地更新 `CONTEXT.md`，并按其三项门禁提议 ADR。格式见 `references/context-format.md` 与 `references/adr-format.md`。
+Call the Skill tool with "domain-modeling" 挑战术语、锐化模糊词、就地更新 `CONTEXT.md`，并按其三项门禁提议 ADR。格式见该技能的 `CONTEXT-FORMAT.md` 与 `ADR-FORMAT.md`（核心层唯一格式源）。
 
 ### 阶段 3 — 接口设计与原型验证
 
@@ -75,5 +75,3 @@ Call the Skill tool with "to-tickets" 把 PRD 拆成 tracer-bullet 垂直切片�
 - `to-spec`（canonical `vocabulary/to-spec`）：对话转 PRD
 - `to-tickets`（canonical `vocabulary/to-tickets`）：PRD 拆任务
 - `references/planning-rules.md`：frontier 与文档权威边界
-- `references/context-format.md`：CONTEXT.md 格式
-- `references/adr-format.md`：ADR 格式

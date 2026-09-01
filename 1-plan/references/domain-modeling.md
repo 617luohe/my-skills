@@ -5,8 +5,8 @@
 ## Pointer
 
 - **领域建模纪律** → `vocabulary/domain-modeling`（canonical `vocabulary/domain-modeling`）
-- **CONTEXT.md 格式** → [context-format.md](context-format.md)
-- **ADR 格式** → [adr-format.md](adr-format.md)
+- **CONTEXT.md 格式** → `vocabulary/domain-modeling/CONTEXT-FORMAT.md`（核心层唯一格式源）
+- **ADR 格式** → `vocabulary/domain-modeling/ADR-FORMAT.md`（核心层唯一格式源）
 
 ## 编排层边界（1-plan 独有的守卫）
 
