@@ -1,5 +1,3 @@
 interface:
   display_name: "Knowledge Reconciliation"
   short_description: "Reconcile docs and memory with cross-platform file tools"
-policy:
-  allow_implicit_invocation: true

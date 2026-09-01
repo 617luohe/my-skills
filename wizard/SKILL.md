@@ -1,7 +1,6 @@
 ---
 name: wizard
 description: 生成交互式 bash 向导，带人走完只有人能做的步骤。触发：配置基础设施、凭据、CI secrets、迁移或 cutover。
-disable-model-invocation: false
 ---
 
 # Wizard — 交互式向导

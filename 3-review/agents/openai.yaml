@@ -1,6 +1,3 @@
 interface:
   display_name: "Formal Diff Review"
   short_description: "Review a fixed diff against standards and spec"
-
-policy:
-  allow_implicit_invocation: true

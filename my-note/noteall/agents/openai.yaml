@@ -1,5 +1,3 @@
 interface:
   display_name: "Noteall"
   short_description: "My-note knowledge management router"
-policy:
-  allow_implicit_invocation: true

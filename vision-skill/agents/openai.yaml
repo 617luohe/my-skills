@@ -1,5 +1,3 @@
 interface:
   display_name: "Vision Skill"
   short_description: "Describe images via OpenCode Go vision API for text-only models"
-policy:
-  allow_implicit_invocation: true

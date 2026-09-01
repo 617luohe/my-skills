@@ -37,6 +37,13 @@
 | 技能       | 职责                                                              | 触发                                    | 文档                                     |
 | ---------- | ----------------------------------------------------------------- | --------------------------------------- | ---------------------------------------- |
 | `grilling` | 对计划、决策或想法穷尽追问，沿决策依赖图收敛共享理解              | `/grilling` 或"追问/grill"意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/grilling/SKILL.md) |
+| `grill-me` | grilling 的用户入口：对松散念头追问到可拍板，不写文件              | `/grill-me` 或理清念头意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/grill-me/SKILL.md) |
+| `domain-modeling` | 构建并锐化项目领域模型：挑战术语、更新 CONTEXT.md、ADR 门禁 | `/domain-modeling` 或术语/ADR 意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/domain-modeling/SKILL.md) |
+| `prototype` | throwaway prototype 回答设计问题：LOGIC（状态机/逻辑）或 UI（变体切换）分支 | `/prototype` 或"验证一下这个想法/长什么样"意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/prototype/SKILL.md) |
+| `to-spec`  | 把当前对话综合成 `docs/plans/<feature>/PRD.md`，不追问            | `/to-spec` 或已想清方案意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/to-spec/SKILL.md) |
+| `to-tickets` | 把 PRD/spec 拆成 tracer-bullet 垂直切片 ticket，写 tasks.md      | `/to-tickets` 或拆任务意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/to-tickets/SKILL.md) |
+| `code-review` | 双轴审查：Standards（编码规范）+ Spec（需求符合），Fowler 味道基线，并行 sub-agent | `/code-review` 或 review 意图；`/3-review` 也加载 | [SKILL.md](vocabulary/code-review/SKILL.md) |
+| `diagnosing-bugs` | 六阶段诊断循环：反馈环→最小化→假设→插桩→修复+回归→清理 | `/diagnosing-bugs` 或 diagnose/debug 意图；`/4-debug` 也加载 | [SKILL.md](vocabulary/diagnosing-bugs/SKILL.md) |
 | `tdd`      | RED-GREEN-REFACTOR：先写失败测试再写最少实现                      | `/tdd` 或 test-first 意图；`/2-implement`、`/4-debug` 也加载 | [SKILL.md](vocabulary/tdd/SKILL.md) |
 
 ### 独立方法论（不绑定开发阶段，跨场景通用）

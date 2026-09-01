@@ -1,6 +1,3 @@
 interface:
   display_name: "Grilling"
   short_description: "Relentlessly interview the user about a plan or decision until you reach a shared understanding"
-
-policy:
-  allow_implicit_invocation: true

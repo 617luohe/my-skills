@@ -1,34 +1,29 @@
 ---
 name: grilling
 layer: vocabulary
-description: 对计划、决策或想法穷尽追问，直到达成共享理解。用户想压测思路或使用任何"追问/grill"意图时用。
-disable-model-invocation: false
+description: 对计划、决策或想法穷尽追问用户。用户想压测自己的思考、或使用任何 'grill' 触发短语时用。
 ---
 
-# Grilling — 询问循环
+穷尽追问用户，直到你达成共享理解。把这个映射成**设计树**：每个决策分出挂在它下面的那些决策。
 
-Interview me relentlessly about every aspect of this until we reach a shared understanding. Walk down each branch of the decision tree, resolving dependencies one-by-one. For each question, provide your recommended answer.
+按**回合**推进这棵树。**frontier** 是每个前置已被settle的决策：你现在就能问、且不必靠猜还没听到的答案的那些问题。一个回合问完整个 frontier：编号每个问题并给出你的推荐答案。然后等用户的答案再进下一回合。
 
-**批量询问**
+一个回合的格式如下：
 
-- Group independent questions in the same frontier (当前可回答的决策集合)
-- Ask them together in one turn, numbered with recommended answers
-- If answering one would change another's premise, keep them in separate rounds
+```
+❓ **Q1** - **<问题标题>**: <问题正文，可能是多个段落，含多个选项>
 
-If a _fact_ can be found by exploring the environment (filesystem, tools, etc.), dispatch a sub-agent to find it rather than asking me; do not block on it — only the questions downstream of it wait, the rest of the frontier stays open. The _decisions_, though, are mine — put each one to me and wait for my answer.
+➡️ <你的推荐答案>
 
-Do not act on it until I confirm we have reached a shared understanding.
+---
 
-## 完成标准（退出条件）
+❓ **Q2** - **<问题标题>**: <问题正文，可能是多个段落，含多个选项>
 
-达成共享理解 = 全部满足，缺一继续问：
+➡️ <你的推荐答案>
+```
 
-1. **决策树已穷尽** — 当前层级的独立决策点都已拿到我的明确答复；已答过的问题按新答案更新，不重复旧结论。
-2. **歧义已清零** — 待澄清的前提/边界冲突已全部摆上桌（领域术语歧义交父工作流，见下方分工）。
-3. **我明确确认** — 我说理解一致；或连续一轮无新决策提出且我未提出异议。
+每一回合用户给的答案重塑这棵树：已settle的决策把 frontier 向外推，解锁依赖它们的那些问题。重算 frontier，问下一回合。答案依赖本回合仍开着的问题的，属于*后*一个回合，而非这一个。
 
-## 与父工作流领域建模的分工
+找*事实*是你的活，从不是用户的。frontier 某问题需要来自环境（文件系统、工具等）的事实时，派一个 sub-agent 去找；别问用户任何你自己能查的东西。别阻塞在它上面：正在进行的探索是一个未settle的前置，所以只有它下游的问题等 sub-agent 报告；现在就问 frontier 的其余部分。*决策*是用户的：逐个摆给他们并等待。
 
-- 本技能问**计划决策**：方案选择、边界、取舍（"要不要做 X？"）
-- `/1-plan` 的领域建模参考处理**领域术语语义**：术语歧义、领域边界（"account 指 Customer 还是 User？"）
-- 询问中发现术语歧义 → 交回父工作流处理，在本技能内只指出、由父工作流收尾。
+frontier 为空时 session 完成：设计树每个分支都走过，没有仍被默然假设的东西。在用户确认你们已达成共享理解之前，不要对它动手。

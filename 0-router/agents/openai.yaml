@@ -1,6 +1,3 @@
 interface:
   display_name: "Ask Luohe"
   short_description: "Route work by ambiguity, impact, and reversibility"
-
-policy:
-  allow_implicit_invocation: true

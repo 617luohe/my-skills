@@ -1,5 +1,3 @@
 interface:
   display_name: "Planning"
   short_description: "Plan requirements, interfaces, and tasks"
-policy:
-  allow_implicit_invocation: true

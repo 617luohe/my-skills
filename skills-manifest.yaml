@@ -40,7 +40,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: [vocabulary/grilling]
+    dependencies: [vocabulary/grill-me, vocabulary/domain-modeling, vocabulary/prototype, vocabulary/to-spec, vocabulary/to-tickets]
   - name: 2-implement
     path: 2-implement
     category: main-flow
@@ -60,7 +60,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/code-review]
   - name: 4-debug
     path: 4-debug
     category: main-flow
@@ -70,7 +70,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: [vocabulary/tdd]
+    dependencies: [vocabulary/tdd, vocabulary/diagnosing-bugs]
   - name: 5-git
     path: 5-git
     category: main-flow
@@ -121,6 +121,28 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: vocabulary/grill-me
+    path: vocabulary/grill-me
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/to-spec
+    path: vocabulary/to-spec
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: 0-router
     path: 0-router
     category: router
@@ -144,6 +166,61 @@ skills:
     dependencies: []
   - name: vocabulary/tdd
     path: vocabulary/tdd
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/domain-modeling
+    path: vocabulary/domain-modeling
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/prototype
+    path: vocabulary/prototype
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/to-tickets
+    path: vocabulary/to-tickets
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/code-review
+    path: vocabulary/code-review
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: vocabulary/diagnosing-bugs
+    path: vocabulary/diagnosing-bugs
     category: vocabulary
     version: 3.0.0
     status: stable

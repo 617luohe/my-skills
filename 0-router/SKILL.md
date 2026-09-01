@@ -1,7 +1,6 @@
 ---
 name: 0-router
 description: 技能路由网关：复杂或规模不明时先加载，按规模与信号选路径。触发：路由、选路径、不知道用哪个技能、拿不准用哪个。
-disable-model-invocation: false
 ---
 
 # 0-router — 技能路由器
@@ -23,7 +22,7 @@ disable-model-invocation: false
 
 规模定了之后，走同一条线，只在三个点上分叉：
 
-1. **方案定不定？** 定了进 `/2-implement`；没定走 `/1-plan`（用 `/grilling` 追问，产出 PRD 与任务清单）。方案需要实际验证（状态机/算法/UI）时，`/1-plan` 内建 throwaway prototype，结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留证。
+1. **方案定不定？** 定了进 `/2-implement`；没定走 `/1-plan`（它按方案确定程度内部分流：念头未定 → grill-me 追问；已想清只差成文 → to-spec 产出 PRD；需领域建模/接口设计 → 五阶段纵深规划，产出 PRD 与任务清单）。方案需要实际验证（状态机/算法/UI）时，`/1-plan` 内建 throwaway prototype，结论回写 `docs/plans/<topic>/`，原型提交 `prototype/<topic>` 分支留证。
 2. **做没做完？** `/2-implement` 按 `/tdd` 红-绿-重构做完，自检后带未提交改动交 `/3-review`。tasks.md 里 ≥2 个无依赖切片、且宿主可独立只读并行时，可并行 `/2-implement` 切片，各自交 `/3-review`，最后由主流程汇总进 `/5-git`。
 3. **审没审过？** `/3-review` 裁决 PASS 才交 `/5-git` 收尾；`/6-sum` 在需要沉淀会话产出时收尾。
 

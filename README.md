@@ -32,7 +32,7 @@ my-skills/
 | **阶段技能**      | `N-中文名称`          | `1-plan`、`2-implement`                 | N 为阶段编号 1-6                   |
 | **扩展能力**      | `0-英文名称`         | `0-claude`、`0-dialectic`                 | 阶段 0 扩展（显式名单）            |
 | **路由器**        | `0-router`         | `0-router`                                | 唯一入口，独立前缀                 |
-| **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`                        | 可复用核心，不直接调用             |
+| **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`、`vocabulary/tdd`        | 核心层：复刻 mattpocock，模型可自动取用，父工作流调度 |
 | **my-note 层**    | `my-note/英文名称`    | `my-note/noteall`、`my-note/vault-publisher` | 知识管理层，noteall 为唯一用户入口 |
 | **独立方法论**    | `英文或中文名称`      | `writing-for-agents`                         | 不属于主流程的独立技能             |
 
@@ -45,7 +45,24 @@ my-skills/
 
 ## 调用分类
 
-**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认 `disable-model-invocation: false` + `allow_implicit_invocation: true`。
+> ### 架构原则：核心复刻 mattpocock，外层编排路由
+>
+> 本库采用**两层结构**，这是不可轻易改动的根基：
+>
+> - **核心层（`vocabulary/`）**：可复用的最小纪律，**复刻 mattpocock/skills 原版实现**（`references/skills/`）。核心只做一件事、说一种语言，跨工作流复用。
+> - **编排层（`N-*` 阶段技能）**：外壳，只做**路由、分支与串联**，把每一步 `Call the Skill tool` 到对应核心，本身不内嵌纪律。
+>
+> **规则：核心层不要轻易改动。** 它是与上游 `mattpocock/skills` 对齐的锚点；改核心前先问"上游改了吗？我们为什么偏离？"——没有强理由就在编排层适配，不动核心。需要偏离时，把偏离记进 `CHANGELOG.md` 并写明理由。
+>
+> | 编排层 | 路由到的核心层 | mattpocock 原版 |
+> | --- | --- | --- |
+> | `1-plan` | `grill-me` → `grilling`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets` | grill-me / domain-modeling / prototype / to-spec / to-tickets |
+> | `2-implement` | `tdd` | implement / tdd |
+> | `3-review` | `code-review` | code-review |
+> | `4-debug` | `diagnosing-bugs`、`tdd` | diagnosing-bugs / tdd |
+> | `6-sum` | （收尾编排，无核心） | handoff 等 |
+
+**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认省略 `disable-model-invocation` 与 `policy` 块（model-reachable）；user-invoked 显式 `disable-model-invocation: true` + `policy.allow_implicit_invocation: false`。
 
 **hosts 语义**：`hosts` 表示 skills-manager 的分发目标，不等于各宿主已通过完整行为认证；技能应在正文声明环境要求，并在执行前探测所需能力。
 
@@ -62,7 +79,7 @@ my-skills/
 - 独立方法论：`writing-for-agents`、`wizard`、`vision-skill`
 - my-note 层：`noteall` 唯一入口
 
-`grilling`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）；`vault-publisher`、`index-keeper` 由 `noteall` 调度。
+`grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`code-review`、`diagnosing-bugs`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）；`vault-publisher`、`index-keeper` 由 `noteall` 调度。
 
 技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](../docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 

@@ -4,7 +4,45 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
-对照 mattpock/skills 参考体系（`main=6654f6b`）逐项优化，忠实其写作规范与第一性原理。
+### 双层架构定型：核心复刻 mattpocock + 外层编排路由
+
+对照 mattpocock/skills 参考体系（`main=6654f6b`）逐项优化，忠实其写作规范与第一性原理。
+
+#### 架构原则（写入 README）
+
+- 制定并记录**两层结构**：核心层（`vocabulary/`）复刻 mattpocock 原版实现、只做一件事；编排层（`N-*` 阶段技能）只做路由、分支与串联，`Call the Skill tool` 到核心，不内嵌纪律。
+- **核心层不要轻易改动**：它是与上游对齐的锚点，偏离需强理由并记入 CHANGELOG。
+
+#### 核心层（vocabulary，复刻 mattpocock）
+
+- `grilling`（已有）、`tdd`（已有，已补 seam/mocking 核心）
+- 新增 `grill-me`：追问入口，Call the Skill tool with "grilling"。
+- 新增 `to-spec`：对话转 spec，不追问、只综合已知内容。
+- 新增 `domain-modeling`：术语挑战、就地更新 CONTEXT.md、三项 ADR 门禁。
+- 新增 `prototype`：throwaway prototype，LOGIC（单文件 HTML 状态机）/ UI（`?variant=` 变体切换）分支 + 六条通用规则。
+- 新增 `to-tickets`：tracer-bullet 垂直切片、blocking edges、expand–contract 宽重构例外。
+- 新增 `code-review`：双轴审查（Standards + Spec）、Fowler 味道基线、并行 sub-agent、汇总不重排。
+- 新增 `diagnosing-bugs`：六阶段诊断循环（反馈环 → 复现最小化 → 假设 → 插桩 → 修复+回归 → 清理）。
+
+#### 编排层（N-* 阶段技能瘦身）
+
+- `1-plan` 退化为编排壳：三种深度分流 + 五阶段串联，阶段 1→grill-me、阶段 2→domain-modeling、阶段 3→prototype、阶段 4→to-spec、阶段 5→to-tickets；`references/domain-modeling.md`、`references/planning-rules.md` 改为只留指针。
+- `3-review` 退化为编排壳：只做风险路由（单 reviewer / 双轴并行 / 双轴串行）+ 裁决；双轴纪律下沉 `code-review`。
+- `4-debug` 退化为编排壳：六阶段纪律下沉 `diagnosing-bugs`，回归测试调 `tdd`。
+- `2-implement` 已是薄壳（TDD 纪律在 `tdd`），仅统一引用措辞。
+- `0-router` 主流程收敛回单一入口（`/1-plan` 内部分流）。
+
+#### 索引同步
+
+- `skills-manifest.yaml`：九个 vocabulary 技能全部 `invocation: model`；编排层依赖各自核心。
+- `USAGE.md`、`README.md`、`invocation-graph.md` 同步登记。
+
+#### 核心层严格对齐（逐段核对）
+
+- 九个 vocabulary 核心逐段对照 `mattpocock/skills` 原版（`skills/engineering/`、`skills/productivity/`）重译：逻辑、范围、约束、反模式、完成条件与模板逐条保留，仅做中文翻译与三处显式标注的体系适配（issue tracker → `docs/plans/<feature>/`、frontmatter 加 `layer: vocabulary`、`disable-model-invocation` 语义按当前宿主约定）。
+- 文件布局对齐原版：`domain-modeling` 附 `ADR-FORMAT.md` + `CONTEXT-FORMAT.md`（极简 ADR 单段模板，替换原有四段式）；`tdd` 附 `tests.md` + `mocking.md`；`prototype` 附 `LOGIC.md` + `UI.md`。
+- 行数逐文件核对：grill-me/grilling/tdd/domain-modeling/prototype/code-review/diagnosing-bugs 均 ±1 行；to-spec/to-tickets 因中文排版与装饰标签转换略短，正文逻辑无损失。
+
 
 ### 0-claude 工作哲学对齐 Karpathy 四原则
 

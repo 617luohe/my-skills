@@ -3,7 +3,6 @@ name: 6-sum
 description: >
   收尾沉淀本次会话产出：修改总结、memory、临时文件整理和交接。
   只管本次会话；全局知识库减法与校准交给 /0-neat-freak。触发：收尾、沉淀、会话结束。
-disable-model-invocation: false
 ---
 
 # 6-sum — 会话收尾与沉淀
