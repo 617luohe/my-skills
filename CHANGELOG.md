@@ -6,6 +6,12 @@ All notable changes to this skills repository will be documented in this file.
 
 对照 mattpock/skills 参考体系（`main=6654f6b`）逐项优化，忠实其写作规范与第一性原理。
 
+### 0-claude 工作哲学对齐 Karpathy 四原则
+
+- `0-claude` 模板 `references/template.md` 工作哲学由精简五条重构为 Karpathy 四原则完整结构（参考 [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)）：① 编码前思考 ② 简洁优先 ③ 精准修改 ④ 目标驱动执行。
+- 保留「称呼：luohe」定制；补齐参考仓库的导语引用、**权衡**声明、各原则「检验标准 / 转换示例」与 `working-if` 收尾。
+- 父仓库 `CLAUDE.md` 与模板同步落地；`SKILL.md` 检测表说明同步为「称呼 + Karpathy 四原则完整结构 + 权衡 + working-if 收尾」。
+
 ### 语言优化（P0 / P10 / P11 / P12）
 
 - **description 措辞**：触发词按分支收敛（`noteall` 15 词 → 4 分支）；description 内否定式「非触发」改写为正向 scope（`0-dialectic`、`issue-reporting`、`0-neat-freak`）；`vision-skill` 删除冗余 `when_to_use` 字段与正文「触发」节，触发只留 description 一处。
