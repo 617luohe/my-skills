@@ -966,6 +966,36 @@ def test_invocation_graph_indexes_each_manifest_dependency_edge(tmp_path: Path):
     ]
 
 
+def test_invocation_graph_prefers_parent_project_governance_docs(tmp_path: Path):
+    root = tmp_path / "project" / "my-skills"
+    _write_governance_repo(
+        root,
+        [
+            {"name": "main", "dependencies": ["dep"]},
+            {"name": "dep"},
+        ],
+    )
+    local_graph = root / "docs" / "governance" / "invocation-graph.md"
+    local_graph.parent.mkdir(parents=True)
+    local_graph.write_text("# Stale local graph\n", encoding="utf-8")
+    parent_graph = root.parent / "docs" / "governance" / "invocation-graph.md"
+    parent_graph.parent.mkdir(parents=True)
+    parent_graph.write_text(
+        "# Invocation graph\n\n"
+        "The manifest canonical dependencies are:\n\n"
+        "```text\n"
+        "main -> dep\n"
+        "```\n",
+        encoding="utf-8",
+    )
+
+    report = validate_repository(root)
+
+    assert not [
+        error for error in report["errors"] if error["code"] == "invocation-graph"
+    ]
+
+
 def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
     from skill_manifest import contract, load_manifest
 

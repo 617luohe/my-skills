@@ -64,7 +64,7 @@ my-skills/
 
 `grilling`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）；`vault-publisher`、`index-keeper` 由 `noteall` 调度。
 
-技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
+技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](../docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 分发与部署
 

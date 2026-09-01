@@ -759,10 +759,18 @@ def _manifest_dependency_edges(text: str) -> set[tuple[str, str]]:
     return edges
 
 
+def _governance_path(root: Path, filename: str) -> Path:
+    """Locate governance docs in the parent project, with standalone fallback."""
+    parent_path = root.parent / "docs" / "governance" / filename
+    if parent_path.is_file():
+        return parent_path
+    return root / "docs" / "governance" / filename
+
+
 def _validate_invocation_graph(
     skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
 ) -> None:
-    graph_path = root / "docs" / "governance" / "invocation-graph.md"
+    graph_path = _governance_path(root, "invocation-graph.md")
     if not graph_path.is_file():
         return
 
@@ -938,7 +946,12 @@ def _validate_document_authority(
     path: Path, text: str, root: Path, errors: list[dict[str, str]]
 ) -> None:
     """Enforce the repository's CONTEXT, ADR, and task-status boundaries."""
-    relative = path.resolve().relative_to(root.resolve()).as_posix()
+    try:
+        relative = path.resolve().relative_to(root.resolve()).as_posix()
+    except ValueError:
+        # Parent-project governance docs are validated for links and skill
+        # references, but repository-local authority rules do not apply.
+        return
     normalized = text.lower()
 
     if relative == "1-plan/references/context-format.md":
@@ -1087,7 +1100,9 @@ def validate_repository(
             warnings,
         )
     navigation_docs = [root / "README.md", root / "USAGE.md", root / "CONTEXT.md"]
-    governance_root = root / "docs" / "governance"
+    governance_root = root.parent / "docs" / "governance"
+    if not governance_root.is_dir():
+        governance_root = root / "docs" / "governance"
     if governance_root.is_dir():
         navigation_docs.extend(sorted(governance_root.rglob("*.md")))
     for markdown in navigation_docs:
