@@ -42,6 +42,7 @@
 | `prototype` | throwaway prototype 回答设计问题：LOGIC（状态机/逻辑）或 UI（变体切换）分支 | `/prototype` 或"验证一下这个想法/长什么样"意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/prototype/SKILL.md) |
 | `to-spec`  | 把当前对话综合成 `docs/plans/<feature>/PRD.md`，不追问            | `/to-spec` 或已想清方案意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/to-spec/SKILL.md) |
 | `to-tickets` | 把 PRD/spec 拆成 tracer-bullet 垂直切片 ticket，写 tasks.md      | `/to-tickets` 或拆任务意图；`/1-plan` 也加载 | [SKILL.md](vocabulary/to-tickets/SKILL.md) |
+| `codebase-design` | 深模块设计共享词汇：module/interface/depth/seam/adapter + delete-test 等原则，供 tdd 等取词汇 | `/codebase-design` 或模块接口/seam/depth 意图；`/tdd` 需要接口词汇时加载 | [SKILL.md](vocabulary/codebase-design/SKILL.md) |
 | `code-review` | 双轴审查：Standards（编码规范）+ Spec（需求符合），Fowler 味道基线，并行 sub-agent | `/code-review` 或 review 意图；`/3-review` 也加载 | [SKILL.md](vocabulary/code-review/SKILL.md) |
 | `diagnosing-bugs` | 六阶段诊断循环：反馈环→最小化→假设→插桩→修复+回归→清理 | `/diagnosing-bugs` 或 diagnose/debug 意图；`/4-debug` 也加载 | [SKILL.md](vocabulary/diagnosing-bugs/SKILL.md) |
 | `tdd`      | RED-GREEN-REFACTOR：先写失败测试再写最少实现                      | `/tdd` 或 test-first 意图；`/2-implement`、`/4-debug` 也加载 | [SKILL.md](vocabulary/tdd/SKILL.md) |

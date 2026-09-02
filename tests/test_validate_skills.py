@@ -1084,29 +1084,28 @@ def test_parallel_orchestration_contract_markers():
     ).read_text(encoding="utf-8")
 
     assert "（顺序开发）" not in router
-    for marker in ("Write Set", "无相互依赖只表示候选", "唯一 owner", "HITL"):
+    # 2-implement 对齐原版 implement：纯串行编排，只保留串行语义与切分边界
+    for marker in ("Write Set", "Depends On", "AFK/HITL", "HITL"):
         assert marker in plan
     for marker in (
-        "同一冻结基点",
-        "隔离可写上下文",
-        "可回传变更包",
-        "依赖已验收",
-        "Write Set 互斥",
-        "唯一 owner",
-        "HITL 无未决影响",
-        "运行资源可隔离",
-        "顺序 fresh context",
-        "主上下文顺序执行",
-        "唯一合流",
-        "冲突即停止",
-        "最终合流态",
+        "串行",
+        "拓扑顺序",
+        "Call the Skill tool with \"tdd\"",
+        "全量",
+        "Write Set",
+        "AFK/HITL",
+        "Call the Skill tool with \"3-review\"",
+        "Call the Skill tool with \"5-git\"",
+        "未提交",
+        "用户授权",
     ):
         assert marker in implement
     for host_specific in ("后台 subagent", "并行 task", "worktree", "Cursor", "Codex"):
         assert host_specific not in implement
-    for marker in ("独立只读上下文", "同一证据包", "主流程唯一汇总"):
+    for marker in ("独立只读上下文", "主流程唯一汇总"):
         assert marker in review
-    assert "docs/ → CLAUDE.md → memory 串行执行" in neat_freak
+    assert "docs/rules/memory" in neat_freak
+    assert "CLAUDE.md/AGENTS.md" in neat_freak
     for marker in (
         "HITL 确认",
         "共享 INDEX/MOC",

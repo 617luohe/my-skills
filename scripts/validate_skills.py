@@ -53,7 +53,7 @@ SKILL_REF_EXCLUSIONS = frozenset(
         "Cleanup-Image",
     }
 )
-HOST_COMMAND_ALLOWLIST = frozenset({"loop", "changelog"})
+HOST_COMMAND_ALLOWLIST = frozenset({"loop", "changelog", "memories"})  # 官方宿主命令（loop/changelog/memories），非技能引用
 FAT_ROUTE_HEADING_RE = re.compile(
     r"^##\s+(?:工作流路由|支撑层)(?:\s|[（(]|$)", re.MULTILINE
 )

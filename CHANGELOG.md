@@ -4,6 +4,20 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+
+### 存量失败修复 + 纯串行编排契约同步
+
+- **validator 白名单修复 `/memories`**：`HOST_COMMAND_ALLOWLIST` 加入 `memories`（Codex 官方记忆命令，非技能引用），消除 0-neat-freak 与 agent-paths 的 2 个存量 `skill-reference` error。
+- **`test_parallel_orchestration_contract_markers` 契约同步**：随 `2-implement` 纯串行化，2-implement 断言改为串行契约（拓扑顺序、逐片 tdd、全量门禁、交 3-review/5-git、未提交 + 用户授权），不再断言并行编排措辞；review/neat-freak 断言对齐当前 `review-rules.md` 与 khazix 化后的 `0-neat-freak`（见上）。
+
+### 核心层断链补全 + 编排层对齐原版
+
+- **新增 `codebase-design`**（补全 tdd 引用的深模块词汇核心）：复刻原版 `engineering/codebase-design`，含 SKILL.md（module/interface/depth/seam/adapter/leverage/locality 词汇、deep-vs-shallow、删除测试、接口即测试面、一个/两个 adapter、测试设计三原则、Relationships、Rejected framings）+ `DEEPENING.md`（四类依赖与加深策略、seam 纪律、replace-don't-layer）+ `DESIGN-IT-TWICE.md`（并行 sub-agent 设计接口模式）+ `agents/openai.yaml`。manifest、USAGE.md 登记。
+- **补全 `hitl-loop.template.sh`**：`vocabulary/diagnosing-bugs` 正文引用的 HITL 驱动脚本落地于 `scripts/`（`step`/`capture` 帮助函数，原版逐字）。
+- **`2-implement` 对齐原版 implement**：改为**纯串行**编排，移除条件式并行调度；流程对齐原版 implement（理解 → /tdd 逐片 → 全量门禁 → /3-review 审查 → 提交到当前分支），提交动作交由 /5-git 承接并需用户授权。
+- **`6-sum` 补齐脱敏纪律**：交接步骤与 handoff 模板补「脱敏」（摘除 API key/密码/令牌/PII，规范内容用路径引用不贴正文），对齐原版 handoff。
+
+
 ### 编排层随核心层校准（格式权威与纪律残留清零）
 
 核心层严格对齐后，编排层同步消除与核心层不一致的残留：

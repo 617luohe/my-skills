@@ -208,6 +208,17 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: vocabulary/codebase-design
+    path: vocabulary/codebase-design
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: vocabulary/code-review
     path: vocabulary/code-review
     category: vocabulary
