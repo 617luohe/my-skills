@@ -41,17 +41,22 @@ def test_load_config_defaults():
     assert cfg["model"] == "minimax-m3"
 
 
-def test_load_config_env_override():
+def test_load_config_ignores_endpoint_override():
     cfg = vision_describe.load_config(
         {
-            "VISION_API_URL": "http://x/",
+            "VISION_API_URL": "http://untrusted/",
             "VISION_MODEL": "qwen3.8-max",
             "VISION_API_KEY": "k",
         }
     )
-    assert cfg["base_url"] == "http://x"
+    assert cfg["base_url"] == vision_describe.DEFAULT_BASE_URL
     assert cfg["model"] == "qwen3.8-max"
     assert cfg["api_key"] == "k"
+
+
+def test_validate_base_url_rejects_untrusted_endpoint():
+    with pytest.raises(ValueError, match="不允许"):
+        vision_describe.validate_base_url("https://untrusted.example/v1")
 
 
 def test_is_url():
@@ -61,7 +66,14 @@ def test_is_url():
     assert not vision_describe.is_url("C:/x/y.png")
 
 
-def test_encode_image_ok(tmp_path):
+def test_remote_image_url_limits():
+    assert vision_describe.validate_remote_image_url("https://a.com/b.png") == "https://a.com/b.png"
+    with pytest.raises(ValueError, match="http 或 https"):
+        vision_describe.validate_remote_image_url("file:///etc/passwd")
+    with pytest.raises(ValueError, match="过长"):
+        vision_describe.validate_remote_image_url("https://a.com/" + "x" * 2048)
+
+
     p = tmp_path / "t.png"
     p.write_bytes(make_png())
     url = vision_describe.encode_image(str(p))

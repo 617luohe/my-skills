@@ -5,9 +5,10 @@
 纯文本模型（如 DeepSeek）不直接看图，只读本脚本输出的 description。
 
 配置（环境变量，均可选，未设时用默认）：
-  VISION_API_URL    OpenAI 兼容 base_url，默认 https://opencode.ai/zen/go/v1
   VISION_API_KEY    优先于 cc-switch 数据库；未设则尝试从 ~/.cc-switch/cc-switch.db 读
   VISION_MODEL      视觉模型，默认 minimax-m3
+
+API endpoint 固定为受信任 allowlist；不接受环境变量或命令行覆盖。
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ import urllib.request
 from pathlib import Path
 
 DEFAULT_BASE_URL = "https://opencode.ai/zen/go/v1"
+ALLOWED_BASE_URLS = {DEFAULT_BASE_URL}
 DEFAULT_MODEL = "minimax-m3"
 MODEL_NAMES = {
     "minimax-m3": "MiniMax M3（视觉，成本低）",
@@ -78,17 +80,32 @@ def read_cc_switch_key() -> str | None:
 
 
 def load_config(env: dict[str, str]) -> dict[str, str]:
-    """解析配置：环境变量 > 默认值；key 最后兜底 cc-switch。"""
+    """解析配置：固定 endpoint，key 最后兜底 cc-switch。"""
     api_key = env.get("VISION_API_KEY") or read_cc_switch_key()
     return {
-        "base_url": env.get("VISION_API_URL", DEFAULT_BASE_URL).rstrip("/"),
+        "base_url": DEFAULT_BASE_URL,
         "api_key": api_key,
         "model": env.get("VISION_MODEL", DEFAULT_MODEL),
     }
 
 
+def validate_base_url(base_url: str) -> str:
+    normalized = base_url.rstrip("/")
+    if normalized not in ALLOWED_BASE_URLS:
+        raise ValueError("不允许的视觉 API endpoint")
+    return normalized
+
+
 def is_url(value: str) -> bool:
     return value.lower().startswith(("http://", "https://"))
+
+
+def validate_remote_image_url(value: str) -> str:
+    if len(value) > 2048:
+        raise ValueError("图片 URL 过长（最大 2048 字符）")
+    if not is_url(value):
+        raise ValueError("图片 URL 只允许 http 或 https")
+    return value
 
 
 def encode_image(path: str) -> str:
@@ -126,6 +143,7 @@ def describe(
     thinking: bool,
 ) -> tuple[str, dict]:
     """调用视觉 API 返回 (描述文本, 用量信息)。images 为 data URL 或 http(s) URL。"""
+    base_url = validate_base_url(base_url)
     if not api_key:
         raise RuntimeError(
             "未找到 API key：请设置环境变量 VISION_API_KEY，或在 cc-switch 中配置 OpenCode Go"
@@ -153,14 +171,13 @@ def describe(
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             data = json.loads(resp.read().decode())
     except urllib.error.HTTPError as exc:
-        detail = exc.read().decode(errors="replace")[:300]
-        raise RuntimeError(f"API 请求失败 HTTP {exc.code}: {detail}") from exc
+        raise RuntimeError(f"API 请求失败 HTTP {exc.code}") from exc
     except urllib.error.URLError as exc:
-        raise RuntimeError(f"网络请求失败: {exc.reason}") from exc
+        raise RuntimeError("网络请求失败") from exc
 
     choices = data.get("choices") or []
     if not choices:
-        raise RuntimeError(f"API 返回空结果: {str(data)[:200]}")
+        raise RuntimeError("API 返回空结果")
     message = choices[0].get("message") or {}
     content_text = message.get("content") or ""
     if not content_text:
@@ -195,7 +212,6 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--list-models", action="store_true", help="列出 OpenCode Go 可用模型"
     )
-    parser.add_argument("--api-url", help="覆盖 OpenAI 兼容 base_url")
     parser.add_argument("--api-key", help="覆盖 API key（默认环境变量或 cc-switch）")
     return parser.parse_args(argv)
 
@@ -217,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
 
-    base_url = args.api_url or cfg["base_url"]
+    base_url = cfg["base_url"]
     api_key = args.api_key or cfg["api_key"]
     model = args.model or cfg["model"]
     prompt = args.prompt or DEFAULT_PROMPT
@@ -225,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         images = []
         for media in args.media:
-            images.append(media if is_url(media) else encode_image(media))
+            images.append(validate_remote_image_url(media) if is_url(media) else encode_image(media))
         description, meta = describe(
             images,
             prompt,

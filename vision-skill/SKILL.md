@@ -39,7 +39,7 @@ python "${CLAUDE_SKILL_DIR}/scripts/vision_describe.py" <图片路径或URL>
 
 - **API key**：默认自动从 cc-switch 数据库读取（OpenCode Go 套餐）；也可设环境变量 `VISION_API_KEY` 覆盖
 - **`VISION_MODEL`**：默认 `minimax-m3`（成本优先）
-- **`VISION_API_URL`**：默认 `https://opencode.ai/zen/go/v1`
+- **API endpoint**：固定为受信任的 `https://opencode.ai/zen/go/v1`；脚本不接受环境变量或命令行覆盖，避免将凭据发送到错误服务
 
 ## 错误处理
 
