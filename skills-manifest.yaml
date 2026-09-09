@@ -131,7 +131,7 @@ skills:
     hosts: [claude, cursor, codex]
     distribution: synchronized
     sync: true
-    dependencies: []
+    dependencies: [vocabulary/grilling]
   - name: vocabulary/to-spec
     path: vocabulary/to-spec
     category: vocabulary
