@@ -162,6 +162,8 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
                 raise ValueError(f"skill {name}: deprecated invocation must be user")
             if skill["sync"] is not False:
                 raise ValueError(f"skill {name}: deprecated skills must set sync false")
+            if skill["distribution"] != "excluded":
+                raise ValueError(f"skill {name}: deprecated skills must use excluded distribution")
         if skill["invocation"] not in ("user", "model"):
             raise ValueError(f"skill {name}: invocation must be user or model")
         if skill["hosts"] != ["claude", "cursor", "codex"]:
@@ -205,6 +207,11 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
             if skill["sync"] is not False or skill["invocation"] != "model":
                 raise ValueError(
                     f"skill {name}: host-provided skills must set sync false and invocation model"
+                )
+        elif skill["distribution"] == "excluded":
+            if skill["sync"] is not False or skill["status"] != "deprecated":
+                raise ValueError(
+                    f"skill {name}: excluded skills must be deprecated with sync false"
                 )
         else:
             raise ValueError(f"skill {name}: unsupported distribution")

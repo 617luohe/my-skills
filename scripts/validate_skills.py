@@ -489,7 +489,18 @@ def _validate_manifest(
                     root,
                 )
             )
-        elif distribution not in ("synchronized", "host-provided"):
+        elif distribution == "excluded" and (
+            skill["sync"] is not False or skill["status"] != "deprecated"
+        ):
+            errors.append(
+                _finding(
+                    "manifest",
+                    root / "skills-manifest.yaml",
+                    f"{name}: excluded requires deprecated status and sync false",
+                    root,
+                )
+            )
+        elif distribution not in ("synchronized", "host-provided", "excluded"):
             errors.append(
                 _finding(
                     "manifest",
