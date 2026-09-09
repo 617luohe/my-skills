@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from validate_skills import _full_description, validate_repository
+from validate_skills import _full_description, _validate_name, validate_repository
 
 MANIFEST = """schema_version: 1
 repository_version: 1.0.0
@@ -157,7 +157,11 @@ def repo(tmp_path: Path):
     return tmp_path
 
 
-def test_full_description_supports_folded_block_scalar_chomping():
+def test_stage_skill_name_requires_english_slug():
+    assert _validate_name("1-plan") is None
+    assert "N-english-slug" in (_validate_name("1-规划") or "")
+
+
     assert _full_description(
         [
             "description: >-",
