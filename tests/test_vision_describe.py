@@ -66,7 +66,7 @@ def test_is_url():
     assert not vision_describe.is_url("C:/x/y.png")
 
 
-def test_remote_image_url_limits():
+def test_remote_image_url_limits(tmp_path):
     assert vision_describe.validate_remote_image_url("https://a.com/b.png") == "https://a.com/b.png"
     with pytest.raises(ValueError, match="http 或 https"):
         vision_describe.validate_remote_image_url("file:///etc/passwd")

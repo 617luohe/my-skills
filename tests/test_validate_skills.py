@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from validate_skills import _full_description, _validate_name, validate_repository
+from validate_skills import _full_description, _validate_naming, validate_repository
 
 MANIFEST = """schema_version: 1
 repository_version: 1.0.0
@@ -158,10 +158,11 @@ def repo(tmp_path: Path):
 
 
 def test_stage_skill_name_requires_english_slug():
-    assert _validate_name("1-plan") is None
-    assert "N-english-slug" in (_validate_name("1-规划") or "")
+    assert _validate_naming("1-plan") is None
+    assert "N-english-slug" in (_validate_naming("1-规划") or "")
 
 
+def test_full_description_supports_folded_block_scalar_chomping():
     assert _full_description(
         [
             "description: >-",
@@ -445,7 +446,7 @@ def test_deprecated_publication_is_user_only_with_note(tmp_path: Path):
     manifest = manifest.replace("    distribution: synchronized", "    distribution: excluded", 1)
     (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
     published = publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
-    assert published["skills"] == []
+    assert [skill["name"] for skill in published["skills"]] == ["bad"]
 
 
 def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path):
@@ -498,6 +499,8 @@ def test_contract_cli_emits_active_skill_lock_data(
         "    invocation: user",
         1,
     )
+    manifest = manifest.replace("    distribution: synchronized", "    distribution: excluded", 1)
+    manifest = manifest.replace("    sync: true", "    sync: false", 1)
     manifest = manifest.replace(
         "    status: stable\n    invocation: model",
         "    status: experimental\n    invocation: user",
