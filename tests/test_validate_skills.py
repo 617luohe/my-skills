@@ -1052,6 +1052,12 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         assert case["reason"].strip()
         assert case["expected"] == "direct" or case["expected"] in runtime_names
         assert isinstance(case["forbidden"], list)
+        assert case["clarification"] in {"none", "required"}
+        assert case["allowed_side_effect"] in {
+            "none",
+            "commit-only",
+            "network-request",
+        }
         assert case["expected"] not in case["forbidden"]
         assert set(case["forbidden"]) <= runtime_names
 
@@ -1067,6 +1073,9 @@ def test_router_trigger_eval_set_has_valid_routes_and_near_misses():
         "review-without-upstream-evidence": ("3-review", {"2-implement"}),
         "memory-near-miss": ("direct", {"noteall"}),
         "neat-freak": ("0-neat-freak", {"6-sum"}),
+        "session-handoff": ("6-sum", {"0-neat-freak"}),
+        "credentials-wizard": ("wizard", {"2-implement"}),
+        "image-understanding": ("vision-skill", {"4-debug"}),
         "dialectic-implicit-negative": ("direct", {"0-dialectic"}),
     }
     for case_id, (expected, forbidden) in required_boundaries.items():
