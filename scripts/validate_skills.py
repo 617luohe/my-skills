@@ -248,7 +248,8 @@ def _full_description(lines: list[str]) -> str:
             continue
         key, separator, value = stripped.partition(":")
         if separator and key.strip() == "description":
-            if value.strip() == ">":
+            marker = value.strip()
+            if marker in {">", ">-", ">+", "|", "|-", "|+"}:
                 in_desc = True
             else:
                 return value.strip().strip("\"'")

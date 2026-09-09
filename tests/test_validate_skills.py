@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from validate_skills import validate_repository
+from validate_skills import _full_description, validate_repository
 
 MANIFEST = """schema_version: 1
 repository_version: 1.0.0
@@ -155,6 +155,28 @@ def repo(tmp_path: Path):
         BAD_AGENTS, encoding="utf-8"
     )
     return tmp_path
+
+
+def test_full_description_supports_folded_block_scalar_chomping():
+    assert _full_description(
+        [
+            "description: >-",
+            "  first line",
+            "  second line",
+            "name: next",
+        ]
+    ) == "first line second line"
+
+
+def test_full_description_supports_literal_block_scalar():
+    assert _full_description(
+        [
+            "description: |-",
+            "  first line",
+            "  second line",
+            "name: next",
+        ]
+    ) == "first line second line"
 
 
 def test_good_skill_passes_block_scalar_and_path_exclusion(repo: Path):
