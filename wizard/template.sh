@@ -28,6 +28,27 @@ ENV_FILE="${ENV_FILE:-.env}"
 WRITTEN_ENV=()    # KEYs written to ENV_FILE this run
 WRITTEN_SECRET=() # secret NAMEs set this run
 SKIPPED=()        # things we couldn't do (e.g. gh missing)
+WIZARD_STATUS="complete"
+WIZARD_DONE=0
+
+_valid_key() {
+  [[ "$1" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]]
+}
+
+_cancel() {
+  WIZARD_STATUS="cancelled"
+  printf '\n%sWizard cancelled; saved values were kept.%s\n' "$YELLOW" "$RESET" >&2
+  exit 130
+}
+
+_on_exit() {
+  local code=$?
+  (( WIZARD_DONE )) && return 0
+  if (( code != 0 )); then
+    printf '\n%sWizard stopped (%s); saved values were kept.%s\n' "$YELLOW" "$code" "$RESET" >&2
+  fi
+}
+trap _on_exit EXIT
 
 # _clear — wipe the terminal so only the current step is on screen. No-op when
 # output isn't a terminal, so piped logs stay readable.
@@ -78,19 +99,20 @@ open_url() {
 # pause "msg" — wait for the human to confirm they've done the manual part.
 pause() {
   printf '  %s%s%s ' "$DIM" "${1:-Press Enter to continue}" "$RESET"
-  read -r _ || true
+  read -r _ || _cancel
 }
 
 # confirm "question" — y/N gate; returns success on yes.
 confirm() {
   local reply=""
   printf '  %s? %s [y/N] ' "$YELLOW" "$1"
-  read -r reply || true
+  read -r reply || _cancel
   [[ "$reply" =~ ^[Yy] ]]
 }
 
 # _existing KEY — current value of KEY in ENV_FILE, if any.
 _existing() {
+  _valid_key "$1" || return 2
   [[ -f "$ENV_FILE" ]] || return 1
   local line; line=$(grep -E "^${1}=" "$ENV_FILE" | tail -n1) || return 1
   printf '%s' "${line#*=}"
@@ -100,29 +122,39 @@ _existing() {
 # a default on re-runs (Enter keeps it). Visible input (non-secret).
 ask() {
   local key="$1" prompt="$2" current input
+  _valid_key "$key" || { warn "invalid environment key: $key"; return 2; }
   current=$(_existing "$key" || true)
   if [[ -n "$current" ]]; then
     printf '  %s%s%s %s[Enter keeps current]%s ' "$BOLD" "$prompt" "$RESET" "$DIM" "$RESET"
   else
     printf '  %s%s%s ' "$BOLD" "$prompt" "$RESET"
   fi
-  read -r input || true
+  read -r input || _cancel
   [[ -z "$input" && -n "$current" ]] && input="$current"
+  if [[ -z "$input" ]]; then
+    warn "required value for $key is empty"
+    return 2
+  fi
   printf -v "$key" '%s' "$input"
 }
 
 # ask_secret KEY "Prompt" — like ask, but input is hidden.
 ask_secret() {
   local key="$1" prompt="$2" current input
+  _valid_key "$key" || { warn "invalid environment key: $key"; return 2; }
   current=$(_existing "$key" || true)
   if [[ -n "$current" ]]; then
     printf '  %s%s%s %s[Enter keeps current]%s ' "$BOLD" "$prompt" "$RESET" "$DIM" "$RESET"
   else
     printf '  %s%s%s ' "$BOLD" "$prompt" "$RESET"
   fi
-  read -rs input || true
+  read -rs input || _cancel
   printf '\n'
   [[ -z "$input" && -n "$current" ]] && input="$current"
+  if [[ -z "$input" ]]; then
+    warn "required secret for $key is empty"
+    return 2
+  fi
   printf -v "$key" '%s' "$input"
 }
 
@@ -130,9 +162,10 @@ ask_secret() {
 # any existing line). Idempotent.
 write_env() {
   local key="$1" value="$2" tmp
+  _valid_key "$key" || { warn "invalid environment key: $key"; return 2; }
   touch "$ENV_FILE"
   tmp=$(mktemp)
-  grep -vE "^${key}=" "$ENV_FILE" > "$tmp" || true
+  awk -v key="$key" 'index($0, key "=") != 1 { print }' "$ENV_FILE" > "$tmp"
   printf '%s=%s\n' "$key" "$value" >> "$tmp"
   mv "$tmp" "$ENV_FILE"
   WRITTEN_ENV+=("$key")
@@ -143,6 +176,12 @@ write_env() {
 # to a warning (and records it) if gh is unavailable or unauthenticated.
 set_secret() {
   local name="$1" value="$2"
+  if [[ -z "$value" ]]; then
+    warn "refusing to set empty GitHub secret $name"
+    SKIPPED+=("GitHub secret $name (empty value)")
+    WIZARD_STATUS="partial"
+    return 0
+  fi
   if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
     if printf '%s' "$value" | gh secret set "$name" >/dev/null 2>&1; then
       WRITTEN_SECRET+=("$name")
@@ -151,6 +190,7 @@ set_secret() {
     fi
   fi
   SKIPPED+=("GitHub secret $name (set it manually: gh secret set $name)")
+  WIZARD_STATUS="partial"
   warn "skipped GitHub secret $name — gh not ready; set it later"
 }
 
@@ -164,13 +204,17 @@ set_var() {
     fi
   fi
   SKIPPED+=("GitHub variable $name")
+  WIZARD_STATUS="partial"
   warn "skipped GitHub variable $name — gh not ready; set it later"
 }
 
 # finish — clear, then a closing summary of everything configured.
 finish() {
   _clear
-  printf '\n%s%s  ✓ Setup complete%s\n' "$BOLD" "$GREEN" "$RESET"
+  if (( ${#SKIPPED[@]} )); then WIZARD_STATUS="partial"; fi
+  local title="✓ Setup complete"
+  [[ "$WIZARD_STATUS" == "partial" ]] && title="⚠ Setup partial"
+  printf '\n%s%s  %s%s\n' "$BOLD" "$YELLOW" "$title" "$RESET"
   (( ${#WRITTEN_ENV[@]} ))    && note "wrote ${#WRITTEN_ENV[@]} value(s) to $ENV_FILE: ${WRITTEN_ENV[*]}"
   (( ${#WRITTEN_SECRET[@]} )) && note "set ${#WRITTEN_SECRET[@]} GitHub secret(s): ${WRITTEN_SECRET[*]}"
   if (( ${#SKIPPED[@]} )); then
@@ -178,6 +222,8 @@ finish() {
     for s in "${SKIPPED[@]}"; do note "  - $s"; done
   fi
   printf '\n'
+  WIZARD_DONE=1
+  [[ "$WIZARD_STATUS" == "partial" ]] && exit 2
 }
 
 # ──────────────────────────────────────────────────────────────────────────
