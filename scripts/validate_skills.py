@@ -441,6 +441,15 @@ def _validate_manifest(
                         root,
                     )
                 )
+            if skill.get("sync") is not False:
+                errors.append(
+                    _finding(
+                        "manifest",
+                        root / "skills-manifest.yaml",
+                        f"{name}: deprecated status requires sync false",
+                        root,
+                    )
+                )
         if skill["invocation"] not in ("user", "model"):
             errors.append(
                 _finding(

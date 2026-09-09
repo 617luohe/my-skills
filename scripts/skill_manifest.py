@@ -160,6 +160,8 @@ def publication(manifest: dict[str, Any], root: Path) -> dict[str, Any]:
                 raise ValueError(f"skill {name}: deprecated requires deprecated_note")
             if skill["invocation"] != "user":
                 raise ValueError(f"skill {name}: deprecated invocation must be user")
+            if skill["sync"] is not False:
+                raise ValueError(f"skill {name}: deprecated skills must set sync false")
         if skill["invocation"] not in ("user", "model"):
             raise ValueError(f"skill {name}: invocation must be user or model")
         if skill["hosts"] != ["claude", "cursor", "codex"]:

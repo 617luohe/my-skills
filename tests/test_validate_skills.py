@@ -438,9 +438,13 @@ def test_deprecated_publication_is_user_only_with_note(tmp_path: Path):
 
     manifest = manifest.replace("    invocation: model", "    invocation: user", 1)
     (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
+    with pytest.raises(ValueError, match="deprecated.*sync false"):
+        publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
+
+    manifest = manifest.replace("    sync: true", "    sync: false", 1)
+    (tmp_path / "skills-manifest.yaml").write_text(manifest, encoding="utf-8")
     published = publication(load_manifest(tmp_path / "skills-manifest.yaml"), tmp_path)
-    assert published["skills"][0]["status"] == "deprecated"
-    assert published["skills"][0]["deprecated_note"] == "use /good"
+    assert published["skills"] == []
 
 
 def test_publication_flattens_nested_names_and_rejects_collisions(tmp_path: Path):

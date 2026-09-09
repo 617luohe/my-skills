@@ -88,7 +88,7 @@ my-skills/
 技能单一事实源 + **skills-manager** 同步分发：
 
 1. **权威源（唯一编辑处）**：本仓库（独立 git，`origin: 617luohe/my-skills`）——所有技能在此修改
-2. **运行时生效**：改权威源 → commit + push → skills-manager 从远端拉取 → 符号链接生效到 `~/.claude/skills/` 及项目 `.claude/.cursor/.codex/skills/`（存在延迟窗口）
+2. **运行时生效**：仅 `status: stable` 或 `experimental` 且 `sync: true` 的条目进入 contract；`deprecated` 必须 `sync: false`，保留源码和迁移说明但不分发。改权威源 → commit + push → skills-manager 从远端拉取 contract → 符号链接生效到 `~/.claude/skills/` 及项目 `.claude/.cursor/.codex/skills/`（存在延迟窗口）
 3. **治理验证**：`skills-manifest.yaml` 为清单事实源；`scripts/validate_skills.py` 按运行时 deployment name 校验 slash 引用；`scripts/skill_manifest.py contract` 输出 active skill 的 canonical name、deployment_name、hosts、invocation 与 status
 
 > 分发由 skills-manager 负责；本仓库治理脚本**不校验**宿主部署目录。
