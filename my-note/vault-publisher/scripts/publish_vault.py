@@ -51,9 +51,24 @@ def run_git(vault: Path, *args: str) -> subprocess.CompletedProcess[str]:
     )
 
 
-def _norm(vault: Path, p: str) -> str:
-    full = Path(p) if Path(p).is_absolute() else Path(vault) / p
-    return os.path.normcase(str(full.resolve()))
+def _relative_owned(vault: Path, paths: list[str]) -> tuple[set[str], list[str]]:
+    """Return normalized vault-relative owned paths and reject escapes."""
+    root = vault.resolve()
+    relative: list[str] = []
+    for path in paths:
+        full = Path(path) if Path(path).is_absolute() else root / path
+        resolved = full.resolve()
+        try:
+            rel = resolved.relative_to(root).as_posix()
+        except ValueError:
+            die(f"owned path escapes vault: {path}", EXIT_PRECONDITION)
+        relative.append(rel)
+    return {os.path.normcase(path) for path in relative}, relative
+
+
+def _is_owned(path: str, owned: set[str]) -> bool:
+    normalized = os.path.normcase(path.replace("\\", "/")).strip("/")
+    return any(normalized == item or normalized.startswith(item.rstrip("/") + "/") for item in owned)
 
 
 def _rev(vault: Path, *ref: str) -> str | None:
@@ -74,9 +89,9 @@ def validate_vault(vault: Path) -> None:
 
 
 def require_clean_worktree(vault: Path, owned_paths: list[str]) -> None:
-    owned_abs = {_norm(vault, p) for p in owned_paths}
+    owned, _ = _relative_owned(vault, owned_paths)
     # core.quotepath=false: porcelain must emit raw UTF-8 paths, not C-escaped
-    # ones ("\xe5..." octal sequences), or Chinese paths fail owned-path matching.
+    # ones ("\\xe5..." octal sequences), or Chinese paths fail owned-path matching.
     r = run_git(
         vault,
         "-c",
@@ -93,7 +108,7 @@ def require_clean_worktree(vault: Path, owned_paths: list[str]) -> None:
         path_part = line[3:].strip().strip('"')
         if " -> " in path_part:
             path_part = path_part.split(" -> ", 1)[1].strip('"')
-        if _norm(vault, path_part) not in owned_abs:
+        if not _is_owned(path_part, owned):
             die(f"unowned changes present, stopping: {line.strip()}", EXIT_PRECONDITION)
 
 
@@ -145,35 +160,78 @@ def warn_quality_issues(vault: Path, owned_paths: list[str]) -> None:
         )
 
 
+def _upstream_ref(vault: Path) -> str | None:
+    """Return the current branch's configured upstream ref."""
+    branch = run_git(vault, "symbolic-ref", "--quiet", "--short", "HEAD")
+    if branch.returncode != 0 or not branch.stdout.strip():
+        return None
+    upstream = run_git(
+        vault,
+        "rev-parse",
+        "--abbrev-ref",
+        "--symbolic-full-name",
+        "@{upstream}",
+    )
+    if upstream.returncode != 0 or not upstream.stdout.strip():
+        return None
+    return upstream.stdout.strip()
+
+
 def sync_remote(vault: Path) -> None:
-    fetch = run_git(vault, "fetch", "origin")
+    upstream = _upstream_ref(vault)
+    if upstream is None:
+        die("current branch has no upstream; stopping before remote sync", EXIT_PRECONDITION)
+    remote, branch = upstream.split("/", 1)
+    fetch = run_git(vault, "fetch", remote)
     if fetch.returncode != 0:
         sys.stderr.write("publish_vault: warning: fetch failed, skipping remote sync\n")
         return
-    origin = _rev(vault, "origin/master")
+    origin = _rev(vault, upstream)
     head = _rev(vault, "HEAD")
     if origin is None or origin == head:
         return
-    base = run_git(vault, "merge-base", "HEAD", "origin/master")
+    base = run_git(vault, "merge-base", "HEAD", upstream)
     if base.returncode != 0:
         return
     base = base.stdout.strip()
     if base == origin:
         # Local is ahead: retry the pending push first.
-        push = run_git(vault, "push")
+        push = run_git(vault, "push", remote, branch)
         if push.returncode != 0:
             sys.stderr.write(push.stdout + push.stderr)
             die("push failed; pending commits kept locally", EXIT_PUSH_FAILED)
         return
-    merge = run_git(vault, "merge", "origin/master", "--no-edit")
+    merge = run_git(vault, "merge", upstream, "--no-edit")
     if merge.returncode != 0:
         sys.stderr.write(merge.stdout + merge.stderr)
         die("merge conflict; stopped without auto-resolving", EXIT_CONFLICT)
     # Merge produced a local commit; sync it upstream so it is never left unpushed.
-    push = run_git(vault, "push")
+    push = run_git(vault, "push", remote, branch)
     if push.returncode != 0:
         sys.stderr.write(push.stdout + push.stderr)
         die("push failed; merge commit kept locally", EXIT_PUSH_FAILED)
+
+
+def _staged_paths(vault: Path) -> list[str]:
+    r = run_git(
+        vault,
+        "-c",
+        "core.quotepath=false",
+        "diff",
+        "--cached",
+        "--name-only",
+        "-z",
+    )
+    if r.returncode != 0:
+        die("git staged-path check failed", EXIT_PRECONDITION)
+    return [path for path in r.stdout.split("\0") if path]
+
+
+def require_staged_owned(vault: Path, owned_paths: list[str]) -> None:
+    owned, _ = _relative_owned(vault, owned_paths)
+    for path in _staged_paths(vault):
+        if not _is_owned(path, owned):
+            die(f"unowned staged path, stopping: {path}", EXIT_PRECONDITION)
 
 
 def publish(vault: Path, owned_paths: list[str], message: str) -> int:
@@ -182,6 +240,7 @@ def publish(vault: Path, owned_paths: list[str], message: str) -> int:
         if add.returncode != 0:
             sys.stderr.write(add.stdout + add.stderr)
             die("failed to stage owned paths", EXIT_PRECONDITION)
+    require_staged_owned(vault, owned_paths)
     staged = run_git(vault, "diff", "--cached", "--quiet")
     if staged.returncode == 0:
         print("no changes to commit")

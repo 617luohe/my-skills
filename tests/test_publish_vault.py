@@ -124,6 +124,38 @@ def test_dirty_worktree_stops(vault_pair):
     assert not origin_has(origin, "new.md")
 
 
+def test_publish_uses_non_master_upstream(vault_pair):
+    vault, origin = vault_pair
+    assert git(vault, "checkout", "-b", "main").returncode == 0
+    assert git(vault, "push", "-u", "origin", "main").returncode == 0
+    (vault / "main.md").write_text("main", encoding="utf-8")
+    res = run_script(vault, ["main.md"], "notes(resource): publish main")
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+    assert git(vault, "ls-tree", "-r", "--name-only", "origin/main").stdout.find("main.md") >= 0
+
+
+def test_unowned_staged_path_stops(vault_pair):
+    vault, origin = vault_pair
+    (vault / "unowned.md").write_text("unowned", encoding="utf-8")
+    assert git(vault, "add", "unowned.md").returncode == 0
+    (vault / "owned.md").write_text("owned", encoding="utf-8")
+    res = run_script(vault, ["owned.md"], "notes(resource): reject staged")
+    assert res.returncode == EXIT_PRECONDITION, res.stdout + res.stderr
+    assert not origin_has(origin, "unowned.md")
+    assert not origin_has(origin, "owned.md")
+
+
+def test_missing_upstream_stops_before_commit(vault_pair):
+    vault, origin = vault_pair
+    assert git(vault, "branch", "--unset-upstream").returncode == 0
+    (vault / "new.md").write_text("hello", encoding="utf-8")
+    res = run_script(vault, ["new.md"], "notes(resource): no upstream")
+    assert res.returncode == EXIT_PRECONDITION, res.stdout + res.stderr
+    assert git(vault, "rev-parse", "HEAD").stdout.strip() == git(
+        vault, "rev-parse", "origin/master"
+    ).stdout.strip()
+
+
 def test_remote_ahead_fast_forwards(vault_pair):
     vault, origin = vault_pair
     git(vault, "checkout", "-b", "temp")
