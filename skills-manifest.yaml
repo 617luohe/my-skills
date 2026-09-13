@@ -121,6 +121,16 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: voice-input
+    path: voice-input
+    category: standalone
+    version: 3.0.0
+    status: stable
+    invocation: user
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
   - name: vocabulary/grill-me
     path: vocabulary/grill-me
     category: vocabulary

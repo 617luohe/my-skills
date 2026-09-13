@@ -54,6 +54,7 @@
 | `writing-for-agents` | 写给 agent 的文档写作规范，写/改技能时由模型自动调起                                          | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
 | `vision-skill`       | 图片描述：为纯文本模型经 OpenCode Go 视觉 API 描述图片/截图/URL                                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |
+| `voice-input`        | 语音输入会话模式：先整理语音转写稿，再按原意执行后续任务                                      | `/voice-input`        | [SKILL.md](voice-input/SKILL.md)       |
 | `0-neat-freak`      | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0-neat-freak`      | [SKILL.md](0-neat-freak/SKILL.md)      |
 
 ### My-Note 层（知识管理）

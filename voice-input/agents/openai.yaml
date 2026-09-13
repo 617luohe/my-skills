@@ -1,0 +1,5 @@
+interface:
+  display_name: "Voice Input"
+  short_description: "Clean up voice-transcribed input before handling the task"
+policy:
+  allow_implicit_invocation: false
