@@ -36,8 +36,8 @@ wizard 是 bash 脚本，一步步带人走完手动流程：自动开 URL、说
 
 ### 4. Verify + 交付
 
-- `bash -n <script>`；有 shellcheck 就跑
-- `chmod +x <script>`
+- `bash -n <script>`；有 shellcheck 就跑（Windows 用 Git Bash 或 WSL，不要用 PowerShell 跑 `.sh`）
+- `chmod +x <script>`（Git Bash/WSL；纯 Windows 可省略，用 `bash script.sh` 调用）
 - **不端到端自己跑**（会开浏览器 + 等人输入）——静态跟踪：每个值从步骤 1 捕获且落到步骤 1 说的位置；每个 `set_secret` 名与 CI 里 `secrets.*` 严格同名
 - 告诉用户怎么跑。可重复的 setup 路径才 commit 并从 README 链接（下个人跑脚本，不问 AI）
 

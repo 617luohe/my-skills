@@ -114,6 +114,13 @@ pip install -e ".[dev]"
 python -m pytest -q
 ```
 
+### Windows 备注
+
+- 治理与测试用本机 Python 即可（PowerShell / cmd）；仓库已含 Windows CI。
+- `*.sh`（`wizard`、`0-neat-freak` 盘点、HITL 模板）必须 LF；`.gitattributes` 已锁定。在 Windows 上跑这些脚本用 **Git Bash** 或 **WSL**，不要用 PowerShell 直接执行。
+- `noteall` 默认 Vault 见 `my-note/noteall/references/config.yaml`（当前为 Windows 路径）。
+- 分发仍走 skills-manager → `~/.skills-manager/skills/` → 各宿主 junction；本仓库不校验部署目录。
+
 ## 技能生命周期
 
 | 阶段     | 动作                                                                   | 校验                                                                     |
