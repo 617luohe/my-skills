@@ -81,7 +81,7 @@ my-skills/
 
 `grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`codebase-design`、`code-review`、`diagnosing-bugs`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）。
 
-技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](../docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
+技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见父仓库治理文档 `docs/governance/invocation-graph.md`（不随本仓分发）；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 分发与部署
 

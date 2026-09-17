@@ -1214,6 +1214,34 @@ def test_personal_absolute_path_in_distributed_content_is_rejected(tmp_path: Pat
     ]
 
 
+def test_markdown_link_escaping_repository_root_is_rejected(tmp_path: Path):
+    """A standalone checkout (CI) cannot resolve links into the parent repository."""
+    _write_governance_repo(tmp_path, [{"name": "noteall"}])
+    (tmp_path / "README.md").write_text(
+        "调用依赖见 [invocation-graph.md](../docs/governance/invocation-graph.md)。\n",
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "markdown-link"
+    ]
+
+    assert [error["path"] for error in errors] == ["README.md"]
+    assert "escapes the repository root" in errors[0]["message"]
+
+    (tmp_path / "README.md").write_text(
+        "调用依赖见父仓库治理文档 `docs/governance/invocation-graph.md`。\n",
+        encoding="utf-8",
+    )
+    assert not [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "markdown-link"
+    ]
+
+
 def test_usage_group_must_match_manifest_invocation(tmp_path: Path):
     _write_governance_repo(
         tmp_path,

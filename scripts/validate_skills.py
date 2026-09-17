@@ -1262,6 +1262,15 @@ def _validate_markdown(
 ) -> None:
     text = path.read_text(encoding="utf-8-sig")
     _validate_document_authority(path, text, root, errors)
+    try:
+        path.resolve().relative_to(root)
+    except ValueError:
+        # Parent-repo governance docs are scanned too; their own links resolve
+        # against the parent root, so the self-containment rule below applies
+        # only to files shipped from this repository.
+        inside_root = False
+    else:
+        inside_root = True
     for banned in BANNED_SKILLS:
         if banned in text:
             errors.append(
@@ -1281,7 +1290,23 @@ def _validate_markdown(
         if not target or target.startswith(("http://", "https://", "mailto:", "#")):
             continue
         local = target.split("#", 1)[0]
-        if local and not (path.parent / local).resolve().exists():
+        if not local:
+            continue
+        resolved = (path.parent / local).resolve()
+        if inside_root:
+            try:
+                resolved.relative_to(root)
+            except ValueError:
+                errors.append(
+                    _finding(
+                        "markdown-link",
+                        path,
+                        f"local link escapes the repository root: {target}",
+                        root,
+                    )
+                )
+                continue
+        if not resolved.exists():
             errors.append(
                 _finding("markdown-link", path, f"broken local link: {target}", root)
             )
