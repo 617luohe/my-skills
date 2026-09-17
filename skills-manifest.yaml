@@ -256,7 +256,7 @@ skills:
     category: my-note
     version: 3.0.0
     status: stable
-    invocation: user
+    invocation: model
     layer: my-note
     hosts: [claude, cursor, codex]
     distribution: synchronized
@@ -278,7 +278,7 @@ skills:
     category: my-note
     version: 3.0.0
     status: stable
-    invocation: user
+    invocation: model
     layer: my-note
     hosts: [claude, cursor, codex]
     distribution: synchronized

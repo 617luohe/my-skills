@@ -1,13 +1,12 @@
 ---
 name: vault-publisher
 layer: my-note
-description: "[内部] noteall 所选 Vault 的发布阶段。校验、受控暂存、commit、sync、push。仅由 noteall 编排调度，不可独立触发。"
-disable-model-invocation: true
+description: "[内部 Worker] noteall 所选 Vault 的发布阶段：校验、受控暂存、commit、sync、push。触发条件：noteall 流水线进入 Publish 阶段时加载；无 selected Vault 与 owned paths 上下文时不执行。"
 ---
 
 # vault-publisher — 受控 Vault 发布（内部 Worker）
 
-承担 noteall 流水线的 Publish 阶段：把本次流水线拥有的改动受控提交并同步到本次所选 Vault 远端。只接受 noteall 调度，不接收用户直接调用。
+承担 noteall 流水线的 Publish 阶段：把本次流水线拥有的改动受控提交并同步到本次所选 Vault 远端。由 noteall 在 Publish 阶段加载，用户普通请求不构成触发条件。
 
 ## 职责
 
@@ -43,7 +42,7 @@ python my-note/vault-publisher/scripts/publish_vault.py \
 
 ## MUST 规则
 
-1. **仅由 noteall 编排调度。** 不独立触发、不向用户暴露。
+1. **调用来源为 noteall 的 Publish 阶段。** 缺 selected Vault 或 owned paths 上下文时不执行；用户普通请求不构成触发条件。
 2. **只暂存 owned paths。** 不用 `git add .`。
 3. **无实际变更不创建空提交。**
 4. **冲突不自动解决。** 停止并报告。

@@ -1,5 +1,3 @@
 interface:
   display_name: "Index Keeper"
   short_description: "Maintain _INDEX.md files (internal worker)"
-policy:
-  allow_implicit_invocation: false

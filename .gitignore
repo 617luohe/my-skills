@@ -14,3 +14,5 @@ __pycache__/
 /.laoyoutiao/
 
 /.reasonix/
+
+my-note/noteall/references/config.local.yaml

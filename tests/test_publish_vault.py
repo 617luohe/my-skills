@@ -32,8 +32,14 @@ EXIT_QUALITY = 5
 
 
 def git(repo: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    # 非 ASCII 仓库路径（本机 E:\workplace\skills工程）下 git 输出含中文，
+    # 必须显式按 UTF-8 解码，否则父进程 locale（GBK）会在读取线程里炸。
     return subprocess.run(
-        ["git", "-C", str(repo), *args], capture_output=True, text=True
+        ["git", "-C", str(repo), *args],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
 
 
@@ -331,3 +337,31 @@ def test_gate_blocks_missing_required_field(vault_pair):
     assert res.returncode == EXIT_QUALITY, res.stdout + res.stderr
     assert "missing field(s) confidence" in res.stderr
     assert not origin_has(origin, "7-Sources/缺字段.md")
+
+
+def test_publish_under_non_ascii_worktree_path(tmp_path: Path):
+    # 本机实际工作路径含中文（E:\workplace\skills工程）：vault 与 origin 都放在
+    # 非 ASCII 目录下时，预检、受控暂存与 push 仍必须可用。
+    base = tmp_path / "技能工程"
+    base.mkdir()
+    origin = base / "远端仓库.git"
+    vault = base / "知识库"
+    subprocess.run(
+        ["git", "init", "--bare", str(origin)], check=True, capture_output=True
+    )
+    subprocess.run(["git", "init", str(vault)], check=True, capture_output=True)
+    git(vault, "config", "user.email", "t@t.io")
+    git(vault, "config", "user.name", "t")
+    (vault / ".obsidian").mkdir()
+    (vault / "a.md").write_text("a", encoding="utf-8")
+    git(vault, "add", ".")
+    assert git(vault, "commit", "-m", "init").returncode == 0
+    git(vault, "remote", "add", "origin", str(origin))
+    assert git(vault, "push", "-u", "origin", "master").returncode == 0
+
+    (vault / "7-Sources").mkdir()
+    (vault / "7-Sources" / "好笔记.md").write_text(_GOOD_7S, encoding="utf-8")
+    res = run_script(vault, ["7-Sources/好笔记.md"], "notes(source): ingest good")
+
+    assert res.returncode == EXIT_OK, res.stdout + res.stderr
+    assert origin_has(origin, "7-Sources/好笔记.md")

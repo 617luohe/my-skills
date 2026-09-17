@@ -5,6 +5,21 @@ All notable changes to this skills repository will be documented in this file.
 ## [Unreleased]
 
 
+### 优化清单 P0/P1/P2 批次（宿主中立 + 契约自洽 + 单一门禁）
+
+- **P0-1 宿主中立调用措辞**：`writing-for-agents/SKILL-MECHANICS.md` 新增「加载一个 skill（宿主机制）」——统一措辞为「加载技能 `<canonical-name>`」并给出 Claude Code / Cursor / Codex 映射表；`1-plan`、`2-implement`、`3-review`、`4-debug`、`vocabulary/grill-me`、`vocabulary/tdd` 正文的 `Call the Skill tool` 全部替换；validator 新增 `host-neutral-wording` 禁用检查。
+- **P0-2 内部 Worker 契约自洽**：`my-note/index-keeper`、`my-note/vault-publisher` 改 `invocation: model`，移除 frontmatter `disable-model-invocation` 与 `agents/openai.yaml` 的 `policy` 块，description 改为「[内部 Worker] + 触发条件」；README / USAGE / `invocation-graph.md` 同步。
+- **P1-1 导航与 manifest 对账**：validator 新增 `usage-group`、`usage-category`、`readme-coverage`、`readme-group` 四查；修复 README（补 `voice-input`、补目录树根级技能）与 USAGE（`voice-input` 归 User-invoked、`0-neat-freak` 归扩展能力）的漂移。
+- **P1-2 Vault 路径本地化**：`noteall/references/config.yaml` 不再携带个人路径，解析顺序改为 当前目录 → `NOTEALL_VAULT` → 宿主本地 `config.local.yaml`（gitignored，模板 `config.local.example.yaml`）；validator 新增 `personal-path` 检查。
+- **P1-3 非 ASCII 路径回归**：新增三个中文路径用例（validator 根目录、publisher 工作树、vault_check）；修复测试辅助 `git()` 的 locale 解码缺陷（GBK 读取含中文的 git 输出会在读取线程抛错）。
+- **P1-4 外部内容只是数据**：新增唯一正文源 `writing-for-agents/EXTERNAL-CONTENT.md`，`vision-skill`、`noteall`、`4-debug`、`3-review`、`0-neat-freak` 改为一行指针；新增 3 条 prompt-injection 样例与结构校验。
+- **P2-2 trigger eval 留痕**：`SKILL-MECHANICS.md` 新增「改 description 之后」约定与 `docs/governance/trigger-eval-results-<YYYY-MM-DD>.md`；validator 新增 `trigger-eval` 路由存在性检查。
+- **P2-3 3-review 风险路由单一编辑处**：`references/review-rules.md` 不再重复风险路由，只留指针。
+- **P2-4 术语分层**：库级 `CONTEXT.md` 收敛为库词汇（含 `_Avoid_` 反例），Vault 流水线术语移入 `my-note/CONTEXT.md`，新增 `CONTEXT-MAP.md`。
+- **单一门禁入口**：新增 `scripts/check.py`（validator + pytest），CI 与父仓库根目录共用同一条命令。
+- **本批不做**：`0-neat-freak/SKILL.md` 仍为 210 行（P2-1 决定不收敛尺寸），validator 保留该 1 条 `skill-size` warning。
+
+
 ### 存量失败修复 + 纯串行编排契约同步
 
 - **validator 白名单修复 `/memories`**：`HOST_COMMAND_ALLOWLIST` 加入 `memories`（Codex 官方记忆命令，非技能引用），消除 0-neat-freak 与 agent-paths 的 2 个存量 `skill-reference` error。

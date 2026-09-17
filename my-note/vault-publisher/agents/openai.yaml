@@ -1,5 +1,3 @@
 interface:
   display_name: "Vault Publisher"
   short_description: "Fixed-vault git publish (internal worker)"
-policy:
-  allow_implicit_invocation: false

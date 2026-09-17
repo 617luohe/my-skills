@@ -66,6 +66,24 @@ MANIFEST_DEPENDENCY_BLOCK_RE = re.compile(
     r"\s*```[^\n]*\n(.*?)^```",
     re.IGNORECASE | re.MULTILINE | re.DOTALL,
 )
+HOST_SPECIFIC_INVOCATION_RE = re.compile(r"Call the Skill tool")
+HOST_NEUTRAL_EXEMPT_FILES = frozenset({"CHANGELOG.md"})
+PERSONAL_PATH_SCAN_SUFFIXES = (".md", ".yaml", ".yml", ".sh", ".json")
+PERSONAL_PATH_EXEMPT_FILES = frozenset({"CHANGELOG.md"})
+ABSOLUTE_USER_PATH_RE = re.compile(
+    r"[A-Za-z]:\\Users\\[^\\\s\"'`|)\]},]+|/home/[A-Za-z0-9._-]+/"
+)
+TRIGGER_EVAL_RELATIVE_PATH = "tests/fixtures/prompts/router/trigger-evals.json"
+USAGE_USER_GROUP = "user-invoked"
+USAGE_MODEL_GROUP = "model-invoked"
+# USAGE 章节关键词 → 该章节允许的 manifest category；未命中的章节不校验分类。
+USAGE_SECTION_CATEGORIES = {
+    "主流程": {"main-flow", "router"},
+    "vocabulary": {"vocabulary"},
+    "独立": {"standalone"},
+    "my-note": {"my-note"},
+    "扩展": {"extension"},
+}
 
 # Naming convention patterns
 STAGE_SKILL_RE = re.compile(r"^[0-6]-[a-z][a-z0-9-]*$")  # N-english-slug
@@ -689,6 +707,235 @@ def _validate_dependencies(
             visit(name)
 
 
+def _skill_link_entries(text: str) -> list[tuple[str, str, str]]:
+    """Return (link target, enclosing H2 group, innermost heading) per doc link."""
+    group = ""
+    heading = ""
+    entries: list[tuple[str, str, str]] = []
+    for line in text.splitlines():
+        if line.startswith("## "):
+            group = line[3:].strip()
+            heading = group
+            continue
+        if line.startswith("### "):
+            heading = line[4:].strip()
+            continue
+        for raw_target in LINK_RE.findall(line):
+            target = raw_target.strip().strip("<>")
+            if " " in target and not raw_target.strip().startswith("<"):
+                target = target.split(maxsplit=1)[0].strip('"')
+            entries.append((target.strip('"'), group, heading))
+    return entries
+
+
+def _validate_invocation_groups(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    """USAGE grouping and category labels must follow the manifest."""
+    usage = root / "USAGE.md"
+    if not usage.is_file():
+        return
+    entries = _skill_link_entries(usage.read_text(encoding="utf-8-sig"))
+    if not any(entry[1] for entry in entries):
+        return  # not a grouped index; nothing to reconcile
+    for skill in skills:
+        name = skill.get("name")
+        if (
+            not isinstance(name, str)
+            or skill.get("status") == "deprecated"
+            or skill.get("distribution") != "synchronized"
+        ):
+            continue
+        target = f"{skill.get('path')}/SKILL.md"
+        match = next((entry for entry in entries if entry[0] == target), None)
+        if match is None:
+            continue  # _validate_usage_index already reports the missing entry
+        _, group, heading = match
+        wanted = (
+            USAGE_USER_GROUP if skill.get("invocation") == "user" else USAGE_MODEL_GROUP
+        )
+        if wanted not in group.lower():
+            errors.append(
+                _finding(
+                    "usage-group",
+                    usage,
+                    f"{name}: manifest invocation is {skill.get('invocation')!r} but USAGE lists it under {group!r}",
+                    root,
+                )
+            )
+        category = str(skill.get("category"))
+        allowed: set[str] | None = None
+        for keyword, categories in USAGE_SECTION_CATEGORIES.items():
+            if keyword.lower() in heading.lower():
+                allowed = categories
+                break
+        if allowed is not None and category not in allowed:
+            errors.append(
+                _finding(
+                    "usage-category",
+                    usage,
+                    f"{name}: manifest category is {category!r} but USAGE lists it under {heading!r}",
+                    root,
+                )
+            )
+
+def _validate_readme_groups(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    """README must name every active skill and keep the user-invoked list exact."""
+    readme = root / "README.md"
+    if not readme.is_file():
+        return
+    text = readme.read_text(encoding="utf-8-sig")
+    if "**User-invoked**" not in text:
+        return  # different doc semantics; nothing to reconcile
+    active = [
+        skill
+        for skill in skills
+        if isinstance(skill.get("name"), str)
+        and skill.get("status") != "deprecated"
+        and skill.get("distribution") == "synchronized"
+    ]
+    for skill in active:
+        name = str(skill["name"])
+        if name in text or name.rsplit("/", 1)[-1] in text:
+            continue
+        errors.append(
+            _finding(
+                "readme-coverage",
+                readme,
+                f"{name}: active skill is not named in README",
+                root,
+            )
+        )
+    paragraph = re.search(r"^\*\*User-invoked\*\*[^\n]*$", text, re.MULTILINE)
+    if paragraph is None:
+        return
+    declared: set[str] = set()
+    for token in re.findall(r"`([^`]+)`", paragraph.group(0)):
+        entry = token.strip().lstrip("/")
+        match = next(
+            (str(skill["name"]) for skill in active if str(skill["name"]) == entry),
+            None,
+        )
+        if match is None:
+            match = next(
+                (
+                    str(skill["name"])
+                    for skill in active
+                    if str(skill["name"]).rsplit("/", 1)[-1] == entry
+                ),
+                None,
+            )
+        if match is None:
+            errors.append(
+                _finding(
+                    "readme-group",
+                    readme,
+                    f"User-invoked list names unknown skill {token!r}",
+                    root,
+                )
+            )
+            continue
+        declared.add(match)
+    expected = {str(skill["name"]) for skill in active if skill.get("invocation") == "user"}
+    if declared != expected:
+        errors.append(
+            _finding(
+                "readme-group",
+                readme,
+                "User-invoked list differs from manifest: "
+                f"missing={sorted(expected - declared)}, extra={sorted(declared - expected)}",
+                root,
+            )
+        )
+
+
+def _validate_host_neutral_wording(root: Path, errors: list[dict[str, str]]) -> None:
+    """Skill bodies must not hardcode a host-specific invocation API."""
+    for path in sorted(root.rglob("*.md")):
+        if path.name in HOST_NEUTRAL_EXEMPT_FILES or ".git" in path.parts:
+            continue
+        text = path.read_text(encoding="utf-8-sig")
+        if HOST_SPECIFIC_INVOCATION_RE.search(text):
+            errors.append(
+                _finding(
+                    "host-neutral-wording",
+                    path,
+                    "host-specific invocation phrasing; write 加载技能 <canonical-name>",
+                    root,
+                )
+            )
+
+
+def _validate_no_personal_paths(root: Path, errors: list[dict[str, str]]) -> None:
+    """A distributed skill repository must not carry a maintainer's home path.
+
+    ``tests/`` is exempt: fixtures are example prompts, not shipped defaults.
+    """
+    for path in sorted(root.rglob("*")):
+        if (
+            not path.is_file()
+            or path.suffix.lower() not in PERSONAL_PATH_SCAN_SUFFIXES
+            or path.name in PERSONAL_PATH_EXEMPT_FILES
+            or ".git" in path.parts
+        ):
+            continue
+        relative = path.relative_to(root)
+        if relative.parts and relative.parts[0] == "tests":
+            continue
+        try:
+            text = path.read_text(encoding="utf-8-sig")
+        except (OSError, UnicodeDecodeError):
+            continue
+        match = ABSOLUTE_USER_PATH_RE.search(text)
+        if match is not None:
+            errors.append(
+                _finding(
+                    "personal-path",
+                    path,
+                    f"personal absolute path in distributed content: {match.group(0)}",
+                    root,
+                )
+            )
+
+
+def _validate_trigger_eval_names(
+    skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
+) -> None:
+    """Every trigger-eval route must name a live skill."""
+    path = root / TRIGGER_EVAL_RELATIVE_PATH
+    if not path.is_file():
+        return
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError) as exc:
+        errors.append(_finding("trigger-eval", path, str(exc), root))
+        return
+    valid = {"direct"}
+    for skill in skills:
+        name = skill.get("name")
+        if not isinstance(name, str) or skill.get("status") == "deprecated":
+            continue
+        valid.add(name)
+        valid.add(skill_manifest.deployment_name(name))
+    for case in data.get("cases", []):
+        if not isinstance(case, dict):
+            continue
+        identifiers = [case.get("expected"), *(case.get("forbidden") or [])]
+        for identifier in identifiers:
+            if not isinstance(identifier, str) or identifier in valid:
+                continue
+            errors.append(
+                _finding(
+                    "trigger-eval",
+                    path,
+                    f"{case.get('id')}: route {identifier!r} is not an active skill",
+                    root,
+                )
+            )
+
+
 def _validate_dependency_references(
     skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
 ) -> None:
@@ -1110,6 +1357,11 @@ def validate_repository(
     _validate_dependencies(skills, root, errors)
     _validate_dependency_references(skills, root, errors)
     _validate_usage_index(skills, root, errors)
+    _validate_invocation_groups(skills, root, errors)
+    _validate_readme_groups(skills, root, errors)
+    _validate_host_neutral_wording(root, errors)
+    _validate_no_personal_paths(root, errors)
+    _validate_trigger_eval_names(skills, root, errors)
     _validate_invocation_graph(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):
         _validate_skill(

@@ -20,3 +20,23 @@
 ## Router skills
 
 当 user-invoked skill 多到超出你能记住的数量，那份堆积的 cognitive load 由 **router skill（路由技能）** 治愈：一个 user-invoked skill 命名其它技能、何时取哪个，于是人只需记一个技能而不是一堆。它只能提示，永不能触发它们：user-invoked skill 没有 description，所以除了人，谁也够不到它们。
+
+## 加载一个 skill（宿主机制）
+
+技能正文里表达「把这一步交给某个技能」时，统一写作**「加载技能 `<canonical-name>`」**，不在正文写宿主专有 API。含义是：在当前宿主取到该技能的 `SKILL.md` 并按其纪律执行。各宿主的取法：
+
+| 宿主 | 取一个技能的方式 |
+| --- | --- |
+| Claude Code | 通过其 Skill 工具按运行时名加载（`/<deployment-name>`） |
+| Cursor | 直接读该技能的 `SKILL.md`（技能目录已由分发挂载） |
+| Codex | 读取 `agents/openai.yaml` 对应的技能文件 |
+
+分发后技能被扁平部署，运行时名是 manifest contract 的 `deployment_name`；正文要指运行时名时用 `/` 前缀（如 `/tdd`），要指权威源时用 canonical name（如 `vocabulary/tdd`）。用户手工输入仍然总是可达的，这一点不随调用方式改变。
+
+## 改 description 之后（trigger eval 约定）
+
+`description` 是路由契约，动了它就要留下可复核的观察记录：
+
+- **重跑受影响的样例**：`tests/fixtures/prompts/router/trigger-evals.json` 中 `expected` 或 `forbidden` 命中该技能的 case；改动 `0-router` 正文时全跑。
+- **留痕**：把结果写进 `docs/governance/trigger-eval-results-<YYYY-MM-DD>.md`，头部记宿主、模型、`my-skills` commit；逐 case 记首个触发入口、是否先澄清、是否发生 `allowed_side_effect` 之外的副作用，以及与预期的差异。只记差异与结论，不复制数据集表格。
+- **不进阻断式 CI**：数据集结构由 pytest 静态校验（每个 route 必须指向活着的技能），模型观察按日期留痕即可。高副作用 case 的失败结论必须写明「只能进澄清或只读」。

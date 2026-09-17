@@ -9,8 +9,8 @@ description: 规划中大型功能：按方案确定程度分流到追问/领域
 
 ## 三种深度（先判，再走）
 
-1. **念头未定** — Call the Skill tool with "grill-me" 追问到能拍板。
-2. **已想清、只差成文** — Call the Skill tool with "to-spec" 产出 `docs/plans/<feature>/PRD.md`，再 Call the Skill tool with "to-tickets" 拆任务。
+1. **念头未定** — 加载技能 `vocabulary/grill-me` 追问到能拍板。
+2. **已想清、只差成文** — 加载技能 `vocabulary/to-spec` 产出 `docs/plans/<feature>/PRD.md`，再加载技能 `vocabulary/to-tickets` 拆任务。
 3. **纵深规划** — 需要领域建模/接口设计时走下方五阶段流程。
 
 ## 核心原则
@@ -25,7 +25,7 @@ description: 规划中大型功能：按方案确定程度分流到追问/领域
 
 ### 阶段 1 — 方案追问
 
-Call the Skill tool with "grill-me" 建立决策依赖图并推进 frontier。退出前必须确认：
+加载技能 `vocabulary/grill-me` 建立决策依赖图并推进 frontier。退出前必须确认：
 
 - 所有需求假设已显式化；技术和产品决策完成，frontier 为空且依赖已理清。
 - 输出共享理解摘要：目标、已验证事实、关键决策、范围外事项、残余风险。
@@ -35,25 +35,25 @@ Call the Skill tool with "grill-me" 建立决策依赖图并推进 frontier。�
 
 ### 阶段 2 — 领域术语与 ADR
 
-Call the Skill tool with "domain-modeling" 挑战术语、锐化模糊词、就地更新 `CONTEXT.md`，并按其三项门禁提议 ADR。格式见该技能的 `CONTEXT-FORMAT.md` 与 `ADR-FORMAT.md`（核心层唯一格式源）。
+加载技能 `vocabulary/domain-modeling` 挑战术语、锐化模糊词、就地更新 `CONTEXT.md`，并按其三项门禁提议 ADR。格式见该技能的 `CONTEXT-FORMAT.md` 与 `ADR-FORMAT.md`（核心层唯一格式源）。
 
 ### 阶段 3 — 接口设计与原型验证
 
 只有存在真实备选方案和用户需要比较的取舍时，才生成多个方案；否则直接记录推荐方案及理由。方案比较覆盖模块划分、接口、关键交互和测试切面；接口词汇（module/interfaces/depth/seam）采用 `codebase-design` 的 deep-module 语言。
 
-状态机、算法或 UI 假设无法由代码、文档或用户决策消除时，Call the Skill tool with "prototype" 建立 throwaway prototype（LOGIC/UI 分支与规则见该技能）。结论完成后，把 verdict 与证据摘要写入 `docs/plans/<topic>/`，必要的决策片段内联到 PRD；原型提交到 `prototype/<topic>` 分支留证，主分支只留决策。
+状态机、算法或 UI 假设无法由代码、文档或用户决策消除时，加载技能 `vocabulary/prototype` 建立 throwaway prototype（LOGIC/UI 分支与规则见该技能）。结论完成后，把 verdict 与证据摘要写入 `docs/plans/<topic>/`，必要的决策片段内联到 PRD；原型提交到 `prototype/<topic>` 分支留证，主分支只留决策。
 
 ### 阶段 4 — 输出 PRD
 
-Call the Skill tool with "to-spec" 综合阶段 1-3 的共识，产出 `docs/plans/<feature>/PRD.md`（Problem Statement、Solution、User Stories、Implementation Decisions、Testing Decisions、Out of Scope、Further Notes）。
+加载技能 `vocabulary/to-spec` 综合阶段 1-3 的共识，产出 `docs/plans/<feature>/PRD.md`（Problem Statement、Solution、User Stories、Implementation Decisions、Testing Decisions、Out of Scope、Further Notes）。
 
 ### 阶段 5 — 拆解任务
 
-Call the Skill tool with "to-tickets" 把 PRD 拆成 tracer-bullet 垂直切片，写 `docs/plans/<feature>/tasks.md`（每项含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL、Depends On、Write Set；阻塞边、核对话与写作约定见该技能）。
+加载技能 `vocabulary/to-tickets` 把 PRD 拆成 tracer-bullet 垂直切片，写 `docs/plans/<feature>/tasks.md`（每项含 Task ID、Title、Description、Acceptance Criteria、AFK/HITL、Depends On、Write Set；阻塞边、核对话与写作约定见该技能）。
 
 ## 最终确认
 
-阶段 5 完成后输出 PRD、任务清单、CONTEXT.md 更新情况和 ADR 情况，然后询问：**是否授权进入原型或开发？** 用户确认后 Call the Skill tool with "2-implement"；指出问题则回到对应阶段。
+阶段 5 完成后输出 PRD、任务清单、CONTEXT.md 更新情况和 ADR 情况，然后询问：**是否授权进入原型或开发？** 用户确认后加载技能 `2-implement`；指出问题则回到对应阶段。
 
 ## 边界
 

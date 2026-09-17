@@ -1,14 +1,9 @@
 # Diff Review Rules
 
-本文件只保留 3-review 编排层独有的规则；双轴审查纪律（固定基点、定位 spec/standards、Fowler 味道基线、并行 sub-agent、汇总不重排）已下沉到 `vocabulary/code-review`，此处不重复。
+本文件只保留 3-review 编排层独有的规则，两侧正文都不在此重复：
 
-## 风险路由（编排层专属）
-
-- **单 reviewer**：机械性、纯文档或极小且低风险的 diff。分别检查适用的 Standards 与 Spec，并说明未启用的独立轴。
-- **双轴并行**：行为变化、高风险改动，或 spec 复杂且存在明显取舍，且宿主提供独立只读上下文时，独立运行 Standards 与 Spec reviewer。
-- **双轴串行**：宿主缺少独立只读上下文，或 diff 很大、上下文可能超限时使用；先 Standards，再 Spec，并在报告中说明原因。
-
-高风险信号包括数据迁移、权限/安全、公共 API、并发、持久化、跨模块行为和性能/可靠性门禁。审查深度不由行数单独决定。
+- 双轴审查纪律（固定基点、定位 spec/standards、Fowler 味道基线、并行 sub-agent、汇总不重排）在 `vocabulary/code-review`。
+- 风险路由在 `SKILL.md`「风险路由（本文件专属）」；调整路由只改 `SKILL.md`。
 
 ## 输入契约（编排层对核心层的增强）
 

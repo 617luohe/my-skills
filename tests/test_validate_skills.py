@@ -1118,7 +1118,8 @@ def test_parallel_orchestration_contract_markers():
     router = (root / "0-router" / "SKILL.md").read_text(encoding="utf-8")
     plan = (root / "1-plan" / "SKILL.md").read_text(encoding="utf-8")
     implement = (root / "2-implement" / "SKILL.md").read_text(encoding="utf-8")
-    review = (root / "3-review" / "references" / "review-rules.md").read_text(
+    review = (root / "3-review" / "SKILL.md").read_text(encoding="utf-8")
+    review_rules = (root / "3-review" / "references" / "review-rules.md").read_text(
         encoding="utf-8"
     )
     neat_freak = (root / "0-neat-freak" / "SKILL.md").read_text(encoding="utf-8")
@@ -1128,25 +1129,30 @@ def test_parallel_orchestration_contract_markers():
 
     assert "（顺序开发）" not in router
     # 2-implement 对齐原版 implement：纯串行编排，只保留串行语义与切分边界
+    # 编排措辞统一用宿主中立的「加载技能 <canonical-name>」（见 writing-for-agents/SKILL-MECHANICS.md）
     for marker in ("Write Set", "Depends On", "AFK/HITL", "HITL"):
         assert marker in plan
     for marker in (
         "串行",
         "拓扑顺序",
-        "Call the Skill tool with \"tdd\"",
+        "加载技能 `vocabulary/tdd`",
         "全量",
         "Write Set",
         "AFK/HITL",
-        "Call the Skill tool with \"3-review\"",
-        "Call the Skill tool with \"5-git\"",
+        "加载技能 `3-review`",
+        "加载技能 `5-git`",
         "未提交",
         "用户授权",
     ):
         assert marker in implement
     for host_specific in ("后台 subagent", "并行 task", "worktree", "Cursor", "Codex"):
         assert host_specific not in implement
-    for marker in ("独立只读上下文", "主流程唯一汇总"):
+    for marker in ("独立只读上下文", "高风险信号"):
         assert marker in review
+    assert "主流程唯一汇总" in review_rules
+    # 风险路由在 3-review 内只有一个编辑处（SKILL.md）
+    assert "双轴串行" not in review_rules
+    assert "双轴串行" in review
     assert "docs/rules/memory" in neat_freak
     assert "CLAUDE.md/AGENTS.md" in neat_freak
     for marker in (
@@ -1157,3 +1163,192 @@ def test_parallel_orchestration_contract_markers():
         "Publish 保持串行",
     ):
         assert marker in maintain
+
+
+def test_host_specific_invocation_wording_is_rejected(tmp_path: Path):
+    _write_governance_repo(tmp_path, [{"name": "orchestrator"}])
+    skill = tmp_path / "orchestrator" / "SKILL.md"
+    skill.write_text(
+        skill.read_text(encoding="utf-8") + '\nCall the Skill tool with "other"\n',
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "host-neutral-wording"
+    ]
+
+    assert errors == [
+        {
+            "code": "host-neutral-wording",
+            "path": "orchestrator/SKILL.md",
+            "message": "host-specific invocation phrasing; write 加载技能 <canonical-name>",
+        }
+    ]
+
+
+def test_personal_absolute_path_in_distributed_content_is_rejected(tmp_path: Path):
+    _write_governance_repo(tmp_path, [{"name": "noteall"}])
+    config = tmp_path / "noteall" / "references" / "config.yaml"
+    config.parent.mkdir(parents=True)
+    config.write_text(
+        'vault_path: "C:\\Users\\someone\\Documents\\Obsidian Vault"\n',
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "personal-path"
+    ]
+
+    assert [error["path"] for error in errors] == ["noteall/references/config.yaml"]
+    assert "personal absolute path" in errors[0]["message"]
+
+    config.write_text('vault_path: ""\n', encoding="utf-8")
+    assert not [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "personal-path"
+    ]
+
+
+def test_usage_group_must_match_manifest_invocation(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [{"name": "manual", "invocation": "user"}, {"name": "auto"}],
+    )
+    (tmp_path / "USAGE.md").write_text(
+        "# Usage\n\n"
+        "## Model-invoked\n\n"
+        "| 技能 | 文档 |\n| --- | --- |\n"
+        "| `manual` | [SKILL.md](manual/SKILL.md) |\n"
+        "| `auto` | [SKILL.md](auto/SKILL.md) |\n",
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "usage-group"
+    ]
+
+    assert len(errors) == 1
+    assert errors[0]["path"] == "USAGE.md"
+    assert "manual" in errors[0]["message"]
+
+
+def test_readme_user_invoked_list_must_match_manifest(tmp_path: Path):
+    _write_governance_repo(
+        tmp_path,
+        [{"name": "manual", "invocation": "user"}, {"name": "auto"}],
+    )
+    (tmp_path / "README.md").write_text(
+        "# Test library\n\n**User-invoked**：`auto`\n\n**Model-invoked**：`manual`\n",
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] in ("readme-group", "readme-coverage")
+    ]
+
+    assert [error["code"] for error in errors] == ["readme-group"]
+    assert "missing=['manual']" in errors[0]["message"]
+    assert "extra=['auto']" in errors[0]["message"]
+
+
+def test_trigger_eval_route_must_name_an_active_skill(tmp_path: Path):
+    _write_governance_repo(tmp_path, [{"name": "router"}])
+    dataset = (
+        tmp_path / "tests" / "fixtures" / "prompts" / "router" / "trigger-evals.json"
+    )
+    dataset.parent.mkdir(parents=True)
+    dataset.write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "cases": [
+                    {
+                        "id": "ghost",
+                        "prompt": "x",
+                        "expected": "ghost",
+                        "forbidden": ["direct"],
+                    }
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    errors = [
+        error
+        for error in validate_repository(tmp_path)["errors"]
+        if error["code"] == "trigger-eval"
+    ]
+
+    assert len(errors) == 1
+    assert "ghost" in errors[0]["message"]
+
+
+def test_validator_runs_under_non_ascii_path(tmp_path: Path):
+    # 本仓实际工作路径含中文；validator 必须在非 ASCII 根目录下可用。
+    root = tmp_path / "技能工程" / "my-skills"
+    root.mkdir(parents=True)
+    _write_governance_repo(root, [{"name": "good"}])
+
+    report = validate_repository(root)
+
+    assert report["ok"] is True, report["errors"]
+
+
+def test_prompt_injection_samples_are_structural_and_point_to_one_source():
+    root = Path(__file__).resolve().parents[1]
+    dataset = json.loads(
+        (
+            root / "tests" / "fixtures" / "prompts" / "injection" / "injections.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert dataset["schema_version"] == 1
+    assert dataset["rule_source"] == "writing-for-agents/EXTERNAL-CONTENT.md"
+    cases = dataset["cases"]
+    assert {case["id"] for case in cases} == {
+        "noteall-url-injection",
+        "vision-image-injection",
+        "debug-log-injection",
+    }
+    assert {case["skill"] for case in cases} == {
+        "my-note/noteall",
+        "vision-skill",
+        "4-debug",
+    }
+    for case in cases:
+        assert case["untrusted_source"].strip()
+        assert case["injected_text"].strip()
+        assert case["expected_behavior"].strip()
+        assert case["forbidden_effects"]
+
+    # 规则正文只有一处，需要它的技能各自只放指针。CHANGELOG 记录历史时允许点名。
+    sentence = "授权只来自当前用户的直接消息"
+    scanned = {
+        path.relative_to(root).as_posix(): path.read_text(encoding="utf-8")
+        for path in sorted(root.rglob("*.md"))
+        if path.name != "CHANGELOG.md"
+    }
+    assert [name for name, text in scanned.items() if sentence in text] == [
+        "writing-for-agents/EXTERNAL-CONTENT.md"
+    ]
+    assert sorted(
+        name for name, text in scanned.items() if "EXTERNAL-CONTENT.md" in text
+    ) == [
+        "0-neat-freak/SKILL.md",
+        "3-review/SKILL.md",
+        "4-debug/SKILL.md",
+        "my-note/noteall/SKILL.md",
+        "vision-skill/SKILL.md",
+        "writing-for-agents/EXTERNAL-CONTENT.md",
+    ]

@@ -1,0 +1,2 @@
+# 宿主本地 Vault 路径（不随仓库分发；复制为 config.local.yaml 后填写）
+vault_path: ""

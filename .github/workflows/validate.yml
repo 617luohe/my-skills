@@ -22,7 +22,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dev deps
         run: pip install -e ".[dev]"
-      - name: Validate source governance
-        run: python scripts/validate_skills.py --check-claude-pointer --claude-md 0-claude/references/template.md
-      - name: Run tests
-        run: python -m pytest -q
+      - name: Gate (governance validation + pytest)
+        run: python scripts/check.py --claude-md 0-claude/references/template.md

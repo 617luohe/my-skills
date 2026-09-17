@@ -50,19 +50,19 @@ my-skills/
 > 本库采用**两层结构**，这是不可轻易改动的根基：
 >
 > - **核心层（`vocabulary/`）**：可复用的最小纪律，**复刻 mattpocock/skills 原版实现**（`references/skills/`）。核心只做一件事、说一种语言，跨工作流复用。
-> - **编排层（`N-*` 阶段技能）**：外壳，只做**路由、分支与串联**，把每一步 `Call the Skill tool` 到对应核心，本身不内嵌纪律。
+> - **编排层（`N-*` 阶段技能）**：外壳，只做**路由、分支与串联**，把每一步交接给对应核心技能，本身不内嵌纪律。
 >
 > **规则：核心层不要轻易改动。** 它是与上游 `mattpocock/skills` 对齐的锚点；改核心前先问"上游改了吗？我们为什么偏离？"——没有强理由就在编排层适配，不动核心。需要偏离时，把偏离记进 `CHANGELOG.md` 并写明理由。
 >
 > | 编排层 | 路由到的核心层 | mattpocock 原版 |
 > | --- | --- | --- |
 > | `1-plan` | `grill-me` → `grilling`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets` | grill-me / domain-modeling / prototype / to-spec / to-tickets |
-> | `2-implement` | `tdd` | implement / tdd |
+> | `2-implement` | `tdd`（接口形状成问题时再取 `codebase-design` 的 deep-module 词汇） | implement / tdd |
 > | `3-review` | `code-review` | code-review |
 > | `4-debug` | `diagnosing-bugs`、`tdd` | diagnosing-bugs / tdd |
 > | `6-sum` | （收尾编排，无核心） | handoff 等 |
 
-**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入（如 my-note 内部 Worker）。默认省略 `disable-model-invocation` 与 `policy` 块（model-reachable）；user-invoked 显式 `disable-model-invocation: true` + `policy.allow_implicit_invocation: false`。
+**单技能 invocation**（manifest 字段）：`invocation: model` 允许模型按 description 自动调用；`invocation: user` 仅用户显式输入。默认省略 `disable-model-invocation` 与 `policy` 块（model-reachable）；user-invoked 显式 `disable-model-invocation: true` + `policy.allow_implicit_invocation: false`。
 
 **hosts 语义**：`hosts` 表示 skills-manager 的分发目标，不等于各宿主已通过完整行为认证；技能应在正文声明环境要求，并在执行前探测所需能力。
 
@@ -70,16 +70,16 @@ my-skills/
 
 按调用方式分两组（与 manifest `invocation` 字段一致，详见 [USAGE.md](USAGE.md)）：
 
-**User-invoked**（仅用户显式输入可及，不进入模型技能表）：`0-dialectic`、`my-note/index-keeper`、`my-note/vault-publisher`
+**User-invoked**（仅用户显式输入可及，不进入模型技能表）：`0-dialectic`、`voice-input`
 
 **Model-invoked**（模型按 description 自动触发，用户亦可显式输入）：
 
 - 阶段技能：`0-router`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
 - 扩展能力：`0-claude`、`0-neat-freak`
 - 独立方法论：`writing-for-agents`、`wizard`、`vision-skill`
-- my-note 层：`noteall` 唯一入口
+- my-note 层：`noteall` 唯一入口；`index-keeper` 与 `vault-publisher` 是内部 Worker，由 `noteall` 在对应阶段加载，description 已限定触发范围
 
-`grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`code-review`、`diagnosing-bugs`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）；`vault-publisher`、`index-keeper` 由 `noteall` 调度。
+`grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`codebase-design`、`code-review`、`diagnosing-bugs`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）。
 
 技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见 [invocation-graph.md](../docs/governance/invocation-graph.md)；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -118,7 +118,7 @@ python -m pytest -q
 
 - 治理与测试用本机 Python 即可（PowerShell / cmd）；仓库已含 Windows CI。
 - `*.sh`（`wizard`、`0-neat-freak` 盘点、HITL 模板）必须 LF；`.gitattributes` 已锁定。在 Windows 上跑这些脚本用 **Git Bash** 或 **WSL**，不要用 PowerShell 直接执行。
-- `noteall` 默认 Vault 见 `my-note/noteall/references/config.yaml`（当前为 Windows 路径）。
+- `noteall` 的 Vault 路径解析顺序见 `my-note/noteall/references/config.yaml`；个人 Vault 路径存在宿主本地 `config.local.yaml`（gitignored）或环境变量 `NOTEALL_VAULT`，不随仓库分发。
 - 分发仍走 skills-manager → `~/.skills-manager/skills/` → 各宿主 junction；本仓库不校验部署目录。
 
 ## 技能生命周期

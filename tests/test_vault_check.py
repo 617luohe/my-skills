@@ -435,3 +435,18 @@ def test_json_emoji_filename_no_crash(vault: Path) -> None:
     assert result.returncode == EXIT_OK, result.stderr
     report = json.loads(result.stdout)
     assert "vault" in report
+
+
+def test_vault_check_under_non_ascii_path(tmp_path: Path) -> None:
+    # 非 ASCII 根路径（含中文目录）下的运行必须可用。
+    vault = tmp_path / "技能工程" / "知识库"
+    (vault / ".obsidian").mkdir(parents=True)
+    write(
+        vault,
+        "7-Sources/技术工具/原子笔记.md",
+        "---\ntitle: 原子笔记\ntags:\n  - type/source\n  - domain/tech\nstatus: draft\nconfidence: seed\n---\n\n# 原子笔记\n\n> 定义。\n\n[[原子笔记]]\n",
+    )
+
+    result = run_script(vault)
+
+    assert result.returncode == EXIT_OK, result.stdout + result.stderr

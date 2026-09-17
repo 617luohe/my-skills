@@ -4,7 +4,7 @@
 
 ## Step 1 — 前置校验（不可跳过）
 
-1. 按 `config.yaml` 解析 Vault：允许时优先当前目录的 `.obsidian/`，否则使用 `vault_path`。
+1. 按 `config.yaml` 的解析顺序确定 Vault：当前目录（含 `.obsidian/`）→ 环境变量 `NOTEALL_VAULT` → 宿主本地 `config.local.yaml`；都不成立即停止并给出配置指引。
 2. 确认所选目录存在且含 `.obsidian/`，并锁定为本次运行的 `{selected_vault}`。
 3. 检查 Vault Git 工作区是否干净（`git -C {selected_vault} status --porcelain`）。
 4. 任一步失败 → 立即停止并提示，不进入后续处理。

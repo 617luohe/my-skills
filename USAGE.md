@@ -12,8 +12,7 @@
 | 技能               | 职责                                                              | 触发                        | 文档                                        |
 | ------------------ | ----------------------------------------------------------------- | --------------------------- | ------------------------------------------- |
 | `0-dialectic`     | 战略问题的矛盾分析与阶段策略；仅用户显式调用                      | 用户显式 `/0-dialectic`    | [SKILL.md](0-dialectic/SKILL.md)           |
-| `vault-publisher`  | 所选 Vault 受控发布 Worker（校验 → 同步 → 只暂存 owned paths → commit/push） | 被 `noteall` 调度     | [SKILL.md](my-note/vault-publisher/SKILL.md) |
-| `index-keeper`     | 索引维护 Worker（增量更新 `_INDEX.md`、缺失补全、健康检查）       | 被 `noteall` 调度           | [SKILL.md](my-note/index-keeper/SKILL.md)   |
+| `voice-input`      | 语音输入会话模式：先做保真清洗，再按原意回答或执行                | 用户显式 `/voice-input`     | [SKILL.md](voice-input/SKILL.md)            |
 
 ---
 
@@ -24,13 +23,19 @@
 | 技能            | 职责                                                              | 触发                    | 文档                             |
 | --------------- | ----------------------------------------------------------------- | ----------------------- | -------------------------------- |
 | `0-router`      | **技能路由唯一事实源**                                            | `/0-router`             | [SKILL.md](0-router/SKILL.md)    |
-| `0-claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定）                      | `/0-claude`            | [SKILL.md](0-claude/SKILL.md)   |
 | `1-plan`        | 方案追问 → 领域建模 → 接口设计 → PRD → 任务拆解                   | `/1-plan`               | [SKILL.md](1-plan/SKILL.md)      |
 | `2-implement`   | 宿主/语言中立实现；发现项目原生 test/type/lint/build              | `/2-implement`          | [SKILL.md](2-implement/SKILL.md) |
 | `3-review`      | 只做正式 diff review，输出 PASS / PASS WITH WARNINGS / FAIL       | `/3-review`             | [SKILL.md](3-review/SKILL.md)    |
 | `4-debug`       | 结构化调试（复现 → 假设 → 验证 → 修复 + 回归）                    | `/4-debug`              | [SKILL.md](4-debug/SKILL.md)     |
 | `5-git`         | Git 版本控制（init/save/log/rollback/branch/remote/push）         | `/5-git`                | [SKILL.md](5-git/SKILL.md)       |
 | `6-sum`         | 会话收尾沉淀：修改总结 + 经验入 memory + 结构整理 + 交接          | `/6-sum`                | [SKILL.md](6-sum/SKILL.md)       |
+
+### 扩展能力（阶段 0）
+
+| 技能            | 职责                                                              | 触发                    | 文档                             |
+| --------------- | ----------------------------------------------------------------- | ----------------------- | -------------------------------- |
+| `0-claude`     | 初始化/修复 CLAUDE.md（工作哲学 + 记忆约定）                      | `/0-claude`            | [SKILL.md](0-claude/SKILL.md)   |
+| `0-neat-freak` | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业              | `/0-neat-freak`        | [SKILL.md](0-neat-freak/SKILL.md) |
 
 ### Vocabulary 层（可复用纪律，模型可自动取用）
 
@@ -54,14 +59,14 @@
 | `writing-for-agents` | 写给 agent 的文档写作规范，写/改技能时由模型自动调起                                          | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
 | `vision-skill`       | 图片描述：为纯文本模型经 OpenCode Go 视觉 API 描述图片/截图/URL                                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |
-| `voice-input`        | 语音输入会话模式：先整理语音转写稿，再按原意执行后续任务                                      | `/voice-input`        | [SKILL.md](voice-input/SKILL.md)       |
-| `0-neat-freak`      | 知识库洁癖审查：文档↔代码一致性、尺寸体检、记忆毕业               | `/0-neat-freak`      | [SKILL.md](0-neat-freak/SKILL.md)      |
 
 ### My-Note 层（知识管理）
 
 | 技能       | 职责                                                                  | 触发       | 文档                                 |
 | ---------- | --------------------------------------------------------------------- | ---------- | ------------------------------------ |
 | `noteall`  | 受控知识库唯一入口，解析并锁定 Vault 后编排 Intake → Curate → Publish | `/noteall` | [SKILL.md](my-note/noteall/SKILL.md) |
+| `index-keeper` | 索引维护 Worker：增量更新 `_INDEX.md`、缺失补全、健康检查；由 noteall 在 Curate/Maintain/Publish 阶段加载 | 由 `noteall` 调度 | [SKILL.md](my-note/index-keeper/SKILL.md) |
+| `vault-publisher` | 受控发布 Worker：校验 → 同步 → 只暂存 owned paths → commit/push；由 noteall 在 Publish 阶段加载 | 由 `noteall` 调度 | [SKILL.md](my-note/vault-publisher/SKILL.md) |
 
 ---
 

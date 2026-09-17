@@ -12,10 +12,10 @@ description: 按 TDD 把 spec 或任务清单实现出来：理解任务、逐�
 ## 流程
 
 1. **理解任务** — 提取功能切片、验收标准、AFK/HITL 标记、前置依赖与 Write Set。`[HITL]` 任务在首个需决策或不可逆动作前暂停。
-2. **TDD 实现** — 按 `docs/plans/<feature>/tasks.md` 的 DAG 拓扑顺序，每次一片：Call the Skill tool with "tdd" 完成 RED → GREEN → 下一片。串行执行，不做并行调度。
+2. **TDD 实现** — 按 `docs/plans/<feature>/tasks.md` 的 DAG 拓扑顺序，每次一片：加载技能 `vocabulary/tdd` 完成 RED → GREEN → 下一片。串行执行，不做并行调度。
 3. **验证** — 用项目原生 test/type/lint/build 命令跑全量门禁；开发中定期跑单个测试文件与 typecheck。
-4. **自检 + 交接审查** — 自检是轻量门禁（全量门禁过 + 快速扫重复与命名），然后带**未提交改动** Call the Skill tool with "3-review"，显式传：审查基点（探测 `git symbolic-ref refs/remotes/origin/HEAD`，不写死 `main`）+ 实际 diff 范围、需求来源路径、diff 审查意图。
-5. **提交** — `/3-review` 通过（PASS 或 PASS WITH WARNINGS）后，Call the Skill tool with "5-git" 提交到当前分支；提交范围与动作需用户授权。
+4. **自检 + 交接审查** — 自检是轻量门禁（全量门禁过 + 快速扫重复与命名），然后带**未提交改动**加载技能 `3-review`，显式传：审查基点（探测 `git symbolic-ref refs/remotes/origin/HEAD`，不写死 `main`）+ 实际 diff 范围、需求来源路径、diff 审查意图。
+5. **提交** — `/3-review` 通过（PASS 或 PASS WITH WARNINGS）后，加载技能 `5-git` 提交到当前分支；提交范围与动作需用户授权。
 
 ## 边界
 

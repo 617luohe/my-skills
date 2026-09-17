@@ -24,7 +24,7 @@ TDD 是 red → green 循环。本技能是让这个循环产出值得保留的�
 
 问："公共接口是什么，我们应该测哪些 seam？"
 
-当接口本身的形状成问题时（模块有多深、seam 属于哪、接口该暴露什么），Call the Skill tool with "codebase-design" 取词汇。它是 module、interface、depth、seam、adapter、leverage、locality 这些词的共享源头，是一份可查阅的参考，不是要跑的一个 session。
+当接口本身的形状成问题时（模块有多深、seam 属于哪、接口该暴露什么），加载技能 `vocabulary/codebase-design` 取词汇。它是 module、interface、depth、seam、adapter、leverage、locality 这些词的共享源头，是一份可查阅的参考，不是要跑的一个 session。
 
 ## 反模式
 
