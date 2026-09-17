@@ -17,6 +17,7 @@ All notable changes to this skills repository will be documented in this file.
 - **P2-3 3-review 风险路由单一编辑处**：`references/review-rules.md` 不再重复风险路由，只留指针。
 - **P2-4 术语分层**：库级 `CONTEXT.md` 收敛为库词汇（含 `_Avoid_` 反例），Vault 流水线术语移入 `my-note/CONTEXT.md`，新增 `CONTEXT-MAP.md`。
 - **单一门禁入口**：新增 `scripts/check.py`（validator + pytest），CI 与父仓库根目录共用同一条命令。
+- **自包含性修复（CI 回归）**：`README.md` 不再链接父仓库的 `docs/governance/invocation-graph.md`——本地因父仓库在场能解析，独立检出即断链，CI 四个矩阵任务曾因此全红；validator 新增「仓库内文件的本地链接不得逃出仓库根」检查（`markdown-link`），父仓库治理文档仍按父仓库根解析自己的链接。
 - **本批不做**：`0-neat-freak/SKILL.md` 仍为 210 行（P2-1 决定不收敛尺寸），validator 保留该 1 条 `skill-size` warning。
 
 
