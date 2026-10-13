@@ -51,6 +51,7 @@
 | `code-review` | 双轴审查：Standards（编码规范）+ Spec（需求符合），Fowler 味道基线，并行 sub-agent | `/code-review` 或 review 意图；`/3-review` 也加载 | [SKILL.md](vocabulary/code-review/SKILL.md) |
 | `diagnosing-bugs` | 六阶段诊断循环：反馈环→最小化→假设→插桩→修复+回归→清理 | `/diagnosing-bugs` 或 diagnose/debug 意图；`/4-debug` 也加载 | [SKILL.md](vocabulary/diagnosing-bugs/SKILL.md) |
 | `tdd`      | RED-GREEN-REFACTOR：先写失败测试再写最少实现                      | `/tdd` 或 test-first 意图；`/2-implement`、`/4-debug` 也加载 | [SKILL.md](vocabulary/tdd/SKILL.md) |
+| `plain-chinese` | 面向人的中文简明写法（本库自有核心）：一句一事、一词一义、主动句、不铺叙，内容一点不删 | `/plain-chinese` 或"说人话/写清楚点/太绕了"意图；`understanding-ladder` 第 1 级也加载 | [SKILL.md](vocabulary/plain-chinese/SKILL.md) |
 
 ### 独立方法论（不绑定开发阶段，跨场景通用）
 
@@ -59,6 +60,7 @@
 | `writing-for-agents` | 写给 agent 的文档写作规范，写/改技能时由模型自动调起                                          | `/writing-for-agents` | [SKILL.md](writing-for-agents/SKILL.md) |
 | `wizard`             | 生成交互式 bash 向导，带人走完只有人能做的步骤（配 CI secrets、第三方 dashboard、一次性迁移）   | `/wizard`             | [SKILL.md](wizard/SKILL.md)             |
 | `vision-skill`       | 图片描述：为纯文本模型经 OpenCode Go 视觉 API 描述图片/截图/URL                                  | `/vision-skill`       | [SKILL.md](vision-skill/SKILL.md)       |
+| `understanding-ladder` | 解释格式选择：按理解阶梯取能完整回答的最低一级（纯文本→图表→交互页→视频分镜），每级从第 1 级草稿起步 | `/understanding-ladder` 或"讲清楚/帮我理解/画个图"意图 | [SKILL.md](understanding-ladder/SKILL.md) |
 
 ### My-Note 层（知识管理）
 

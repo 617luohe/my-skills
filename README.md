@@ -13,13 +13,15 @@ my-skills/
 ├── 0-router/                 — 技能路由器（唯一入口）
 ├── vocabulary/                   — 可复用核心循环（被其他技能调用）
 │   ├── grilling/                — 询问循环
-│   └── tdd/                     — TDD 循环
+│   ├── tdd/                     — TDD 循环
+│   └── plain-chinese/           — 面向人的中文简明写法（本库自有）
 ├── my-note/                      — 知识管理技能体系（类比 vocabulary 层）
 │   ├── noteall/                 — 唯一入口（三阶段流水线编排）
 │   ├── index-keeper/            — 内部 Worker（索引维护）
 │   └── vault-publisher/         — 内部 Worker（所选 Vault 发布）
 ├── 1-plan/ ~ 6-sum/        — 阶段 1~6 开发流程
 ├── 0-*/                        — 阶段 0 扩展能力
+├── understanding-ladder/       — 解释格式选择（纯文本/图表/交互页/视频分镜）
 └── scripts/                     — manifest 解析与受管技能部署脚本
 ```
 
@@ -32,7 +34,7 @@ my-skills/
 | **阶段技能**      | `N-english-slug`      | `1-plan`、`2-implement`                 | N 为阶段编号 1-6                   |
 | **扩展能力**      | `0-英文名称`         | `0-claude`、`0-dialectic`                 | 阶段 0 扩展（显式名单）            |
 | **路由器**        | `0-router`         | `0-router`                                | 唯一入口，独立前缀                 |
-| **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`、`vocabulary/tdd`        | 核心层：复刻 mattpocock，模型可自动取用，父工作流调度 |
+| **vocabulary 层** | `vocabulary/英文名称` | `vocabulary/grilling`、`vocabulary/tdd`        | 核心层：只做一件事，模型可自动取用，父工作流调度；含上游对齐技能与本库自有技能 |
 | **my-note 层**    | `my-note/英文名称`    | `my-note/noteall`、`my-note/vault-publisher` | 知识管理层，noteall 为唯一用户入口 |
 | **独立方法论**    | `英文或中文名称`      | `writing-for-agents`                         | 不属于主流程的独立技能             |
 
@@ -49,10 +51,10 @@ my-skills/
 >
 > 本库采用**两层结构**，这是不可轻易改动的根基：
 >
-> - **核心层（`vocabulary/`）**：可复用的最小纪律，**复刻 mattpocock/skills 原版实现**（`references/skills/`）。核心只做一件事、说一种语言，跨工作流复用。
+> - **核心层（`vocabulary/`）**：可复用的最小纪律，只做一件事、说一种语言，跨工作流复用。含两类条目：**上游对齐技能**（复刻 mattpocock/skills 原版实现，见 `references/skills/`）与**本库自有技能**（无上游对应，本库自行定义并维护）。
 > - **编排层（`N-*` 阶段技能）**：外壳，只做**路由、分支与串联**，把每一步交接给对应核心技能，本身不内嵌纪律。
 >
-> **规则：核心层不要轻易改动。** 它是与上游 `mattpocock/skills` 对齐的锚点；改核心前先问"上游改了吗？我们为什么偏离？"——没有强理由就在编排层适配，不动核心。需要偏离时，把偏离记进 `CHANGELOG.md` 并写明理由。
+> **规则：上游对齐技能不要轻易改动。** 它是与上游 `mattpocock/skills` 对齐的锚点；改它之前先问"上游改了吗？我们为什么偏离？"——没有强理由就在编排层适配，不动核心。需要偏离时，把偏离记进 `CHANGELOG.md` 并写明理由。**本库自有技能**（如 `plain-chinese`）没有上游锚点，按同样的"只做一件事"标准自行演进，改动记 `CHANGELOG.md`。
 >
 > | 编排层 | 路由到的核心层 | mattpocock 原版 |
 > | --- | --- | --- |
@@ -76,10 +78,10 @@ my-skills/
 
 - 阶段技能：`0-router`、`1-plan`、`2-implement`、`3-review`、`4-debug`、`5-git`、`6-sum`
 - 扩展能力：`0-claude`、`0-neat-freak`
-- 独立方法论：`writing-for-agents`、`wizard`、`vision-skill`
+- 独立方法论：`writing-for-agents`、`wizard`、`vision-skill`、`understanding-ladder`
 - my-note 层：`noteall` 唯一入口；`index-keeper` 与 `vault-publisher` 是内部 Worker，由 `noteall` 在对应阶段加载，description 已限定触发范围
 
-`grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`codebase-design`、`code-review`、`diagnosing-bugs`、`tdd` 为可复用核心（模型可自动取用纪律，父工作流也调用）。
+`grilling`、`grill-me`、`domain-modeling`、`prototype`、`to-spec`、`to-tickets`、`codebase-design`、`code-review`、`diagnosing-bugs`、`tdd`、`plain-chinese` 为可复用核心（模型可自动取用纪律，父工作流也调用）。
 
 技能完整索引见 [USAGE.md](USAGE.md)；调用依赖见父仓库治理文档 `docs/governance/invocation-graph.md`（不随本仓分发）；架构演进见 [CHANGELOG.md](CHANGELOG.md)。
 

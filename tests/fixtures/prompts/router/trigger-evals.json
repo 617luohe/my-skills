@@ -212,6 +212,59 @@
       "reason": "改变模块边界与公共 API。",
       "clarification": "required",
       "allowed_side_effect": "none"
+    },
+    {
+      "id": "explain-clearly-ladder",
+      "prompt": "帮我把这个限流算法讲清楚，最好画个图说明令牌桶怎么走。",
+      "expected": "understanding-ladder",
+      "forbidden": [
+        "1-plan"
+      ],
+      "reason": "核心是结构（流程），要求更好懂的格式而非写代码。",
+      "clarification": "none",
+      "allowed_side_effect": "none"
+    },
+    {
+      "id": "plain-chinese-rewrite",
+      "prompt": "这段说明太绕了，改写成说人话的中文，内容一点不要删。",
+      "expected": "plain-chinese",
+      "forbidden": [
+        "understanding-ladder"
+      ],
+      "reason": "只要求中文写得平实，没有要求换格式或加图。",
+      "clarification": "none",
+      "allowed_side_effect": "none"
+    },
+    {
+      "id": "interactive-html-explainer",
+      "prompt": "学习率怎么影响收敛我看不懂，做个能拖动参数看结果变化的页面。",
+      "expected": "understanding-ladder",
+      "forbidden": [
+        "prototype"
+      ],
+      "reason": "参数改变结果是第 3 级信号；这不是设计验证用原型。",
+      "clarification": "none",
+      "allowed_side_effect": "none"
+    },
+    {
+      "id": "explainer-video-near-miss",
+      "prompt": "梯度下降怎么在曲面上移动，我要一个逐级演示，最后给视频分镜。",
+      "expected": "understanding-ladder",
+      "forbidden": [],
+      "reason": "逐级演示与视频分镜是第 4 级；需用户明确才产出。",
+      "clarification": "none",
+      "allowed_side_effect": "none"
+    },
+    {
+      "id": "writing-for-agents-not-plain-chinese",
+      "prompt": "把 4-debug 的描述改得更好懂一些。",
+      "expected": "writing-for-agents",
+      "forbidden": [
+        "plain-chinese"
+      ],
+      "reason": "目标是 agent 消费的文档（skill），归写作规范而非面向人的简明中文。",
+      "clarification": "none",
+      "allowed_side_effect": "none"
     }
   ]
 }

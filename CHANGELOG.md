@@ -5,6 +5,29 @@ All notable changes to this skills repository will be documented in this file.
 ## [Unreleased]
 
 
+### 理解阶梯批次（新增两个技能：理解格式选择 + 简明中文）
+
+引入 ChangWenC/understanding-ladder 的两个技能，按本库契约本地化后落地。
+
+#### Added
+
+- **`vocabulary/plain-chinese`**（本库自有核心层）：受 ASD-STE100 启发的显式中文写法规则 15 条（词/句/段/删掉/必须保留），核心原则「简单指语言简单，不指内容变少」；含 `references/examples.md`（4 组自造改写示例）。无上游 mattpocock 对应，属核心层的第一条**本库自有技能**。
+- **`understanding-ladder`**（独立方法论层）：按理解阶梯取能完整回答的最低一级——纯文本 → 图表 → 交互页 → 视频分镜；含 `references/level-2-diagram.md`、`level-3-html.md`、`level-4-video.md`。依赖边 `understanding-ladder ──> vocabulary/plain-chinese`（中文第 1 级）。**默认只到第 3 级**，用户明确要视频分镜时才产出第 4 级交付物。
+- 父仓库 `docs/governance/trigger-eval-results-2026-10-13.md`：本批 trigger eval 留痕（含边界设计、变异复核与 3 次不同排列的隔离观察结果）。
+
+#### Changed
+
+- **README 核心层定义修订**：`vocabulary/` 明确含两类条目——**上游对齐技能**（复刻 mattpocock，改前先问「上游改了吗」）与**本库自有技能**（无上游对应，按同一单事标准自行演进）。此前「核心层 = 复刻 mattpocock」的排他性表述会排除一切自定义核心，「核心层不要轻易改动」同步收窄为「上游对齐技能不要轻易改动」。`CONTEXT.md` 的核心层词条与 `_Avoid_` 反例同步。
+- **`0-router` 新增入口判定第 4 步「产出形态」**，并在「独立支线」补一行：换讲法 → `understanding-ladder`，只要中文平实 → `plain-chinese`。否则新技能虽已分发但路由器不指向它们。
+- README 目录树、README 调用分类、USAGE.md（`plain-chinese` 入 Vocabulary 层表、`understanding-ladder` 入独立方法论表）、`invocation-graph.md`、`skills-manifest.yaml` 五处同步登记。
+- `trigger-evals.json` 由 20 个 case 增至 25 个，覆盖两个新技能与两处最易误触发的边界。
+
+#### 落地时的本地化取舍（与上游差异）
+
+- 两个技能的 description 按本库「一个分支一个触发」重写：上游 `plain-chinese` 的原始措辞（「写中文的技术解释、操作步骤、学习笔记、报告」）几乎会在每次写中文时触发，并与 `writing-for-agents` 抢触发；现在按**受众**切开边界（给人读 → `plain-chinese`；写 skill/`CLAUDE.md` → `writing-for-agents`）。
+- `understanding-ladder` 的 SKILL.md 与 3 个 reference 由英文原文译为中文，规则逐条保留；新增「产出形态」路由衔接、第 3 级产出物交给 `/6-sum` 清理的约定，以及第 4 级「默认不产出」的显式约束。
+- 上游 `skills/*` 平铺安装改为本库布局（`agents/openai.yaml`、`references/` 相对链接、manifest 登记、依赖边）。
+
 ### 优化清单 P0/P1/P2 批次（宿主中立 + 契约自洽 + 单一门禁）
 
 - **P0-1 宿主中立调用措辞**：`writing-for-agents/SKILL-MECHANICS.md` 新增「加载一个 skill（宿主机制）」——统一措辞为「加载技能 `<canonical-name>`」并给出 Claude Code / Cursor / Codex 映射表；`1-plan`、`2-implement`、`3-review`、`4-debug`、`vocabulary/grill-me`、`vocabulary/tdd` 正文的 `Call the Skill tool` 全部替换；validator 新增 `host-neutral-wording` 禁用检查。

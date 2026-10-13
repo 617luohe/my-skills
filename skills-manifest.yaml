@@ -284,3 +284,24 @@ skills:
     distribution: synchronized
     sync: true
     dependencies: []
+  - name: vocabulary/plain-chinese
+    path: vocabulary/plain-chinese
+    category: vocabulary
+    version: 3.0.0
+    status: stable
+    invocation: model
+    layer: vocabulary
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: []
+  - name: understanding-ladder
+    path: understanding-ladder
+    category: standalone
+    version: 3.0.0
+    status: stable
+    invocation: model
+    hosts: [claude, cursor, codex]
+    distribution: synchronized
+    sync: true
+    dependencies: [vocabulary/plain-chinese]
