@@ -4,6 +4,39 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 上游 6 处句子级锐化 + wizard write_env 转义修复（2026-11-26，对齐上游 6f7f783）
+
+#### Added
+
+- **grilling**：问题须写成「回答 yes 即接受推荐答案」的形式；派 sub-agent 找事实时带全新上下文窗口。理由：上游 `grilling/SKILL.md:24,28` 把「省用户认知」与「省自己 context」写明，本地只写了「派 sub-agent」。
+- **tdd**：每条提议的 seam 附一句「能抓到什么、会漏掉什么」。理由：上游 `tdd/SKILL.md:24` 要求 seam 协商带代价说明。
+- **code-review**：sub-agent 从全新上下文窗口起步；standards 来源改为「先全仓搜索，`CODING_STANDARDS.md` / `CONTRIBUTING.md` 存在时必须列入」；两个调用同时前台发起。理由：上游 `code-review/SKILL.md:11,33,59-61`。
+- **diagnosing-bugs**：靠改代码或 fixture 强制变红时，先对纯净副本 `diff` 证明变异落地。理由：上游 `diagnosing-bugs/SKILL.md:125`。
+- **domain-modeling**：`CONTEXT-FORMAT.md` 补「定义里的其它术语写粗体互引」规则并给互引示例。理由：上游 `GLOSSARY-FORMAT.md:29`；本地保留 `CONTEXT.md` 命名，不改名。
+- **codebase-design**：`DESIGN-IT-TWICE.md` 的 sub-agent 改为带全新上下文窗口。理由：上游 `DESIGN-IT-TWICE.md:21`。
+
+#### Fixed
+
+- **`wizard/template.sh` 的 `write_env`**：原 `printf '%s=%s'` + `mv` 会把含空格/单引号的值写坏，并把符号链接替换成普通文件。改为：文件不存在时以 0600 创建、值单引号包裹并转义内部单引号、用 `cat` 写透符号链接；`_existing` 同步解码引号，保证重跑时 Enter 保留的是原值而非带引号的串。理由：上游 `wizard/template.sh` 同名函数语义正确（`6f7f783`）。
+
+#### 待核实
+
+- 上游 `wizard/template.sh` 另有 `run_wizard` 包裹与退出语义、`tput clear` 失败回退、EOF 取消语义、`read -e`（readline）四处差异，本批不动，留待单独立项。
+
+### 门禁修复与运行时一致性入档（2026-11-26）
+
+#### Fixed
+
+- **治理文档断链**：`docs/governance/current-baseline.md:6` 与 `docs/governance/mattpocock-replication-matrix-2026-10-27.md:6` 分别指向已丢弃的 `skills-optimization-review-2026-10-14.md`、`mattpocock-replication-update-2026-10-14.md`，产生 3 条 `markdown-link` error；现改为指向现存矩阵/基线。理由：validator 是 CI 门禁，断链让门禁恒红。
+- **`0-router` 并行切片授权**：删除 `0-router/SKILL.md:36` 中「tasks.md ≥2 个无依赖切片、且宿主可并行时并行 `/2-implement`」条款，与 `2-implement` 的纯串行契约（`2-implement/SKILL.md:22`）一致。理由：Router 与阶段技能对同一编排给出互斥指令。
+
+#### Changed
+
+- **治理基线按 2026-11-26 实测刷新**：父仓库 HEAD `7cb5526d`、gitlink/checkout `bdad671`、上游 `references/skills` `6f7f783`（2026-11-25，工作树 dirty 3 个文件）、validator 0 error / 1 warning（`0-neat-freak` 210 行）、pytest 109 passed。理由：旧基线仍是 2026-10-27 的数字与 959a8e9f 上游身份。
+
+#### Added
+
+- **运行时一致性入档**：`docs/governance/current-baseline.md` 新增只读审计小节——`~/.skills-manager/skills` 64 个 SKILL.md 全为 CRLF、`0-router`/`1-plan` 内容对应 `fbb6b9a`/`87edc83` 旧提交、分发库 48 条记录指向 `skills-manager-backup.git` 且 26 条 `update_status=error`（GitHub 连接超时）。理由：仓库与运行时不是同一事实源，基线需区分两者。
 
 ### 理解阶梯批次（新增两个技能：理解格式选择 + 简明中文）
 
