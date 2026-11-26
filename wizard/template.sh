@@ -114,8 +114,13 @@ confirm() {
 _existing() {
   _valid_key "$1" || return 2
   [[ -f "$ENV_FILE" ]] || return 1
-  local line; line=$(grep -E "^${1}=" "$ENV_FILE" | tail -n1) || return 1
-  printf '%s' "${line#*=}"
+  local line value sq="'\''"; line=$(grep -E "^${1}=" "$ENV_FILE" | tail -n1) || return 1
+  value="${line#*=}"
+  if [[ "$value" == \'*\' ]]; then
+    value="${value:1:${#value}-2}"
+    value="${value//"$sq"/\'}"
+  fi
+  printf '%s' "$value"
 }
 
 # ask KEY "Prompt" — read a value into $KEY. Offers the existing .env value as
@@ -158,16 +163,17 @@ ask_secret() {
   printf -v "$key" '%s' "$input"
 }
 
-# write_env KEY VALUE — upsert KEY=VALUE into ENV_FILE (creates it; replaces
-# any existing line). Idempotent.
+# write_env KEY VALUE — upsert KEY='VALUE' into ENV_FILE (creates it at mode
+# 0600; replaces any existing line; writes through a symlink). Idempotent.
 write_env() {
-  local key="$1" value="$2" tmp
+  local key="$1" value="$2" tmp sq="'\''"
   _valid_key "$key" || { warn "invalid environment key: $key"; return 2; }
-  touch "$ENV_FILE"
+  [[ -e "$ENV_FILE" ]] || ( umask 077 && : > "$ENV_FILE" )
   tmp=$(mktemp)
   awk -v key="$key" 'index($0, key "=") != 1 { print }' "$ENV_FILE" > "$tmp"
-  printf '%s=%s\n' "$key" "$value" >> "$tmp"
-  mv "$tmp" "$ENV_FILE"
+  printf '%s=%s\n' "$key" "'${value//\'/$sq}'" >> "$tmp"
+  cat "$tmp" > "$ENV_FILE"
+  rm -f "$tmp"
   WRITTEN_ENV+=("$key")
   printf '  %s✓ wrote%s %s → %s\n' "$GREEN" "$RESET" "$key" "$ENV_FILE"
 }
