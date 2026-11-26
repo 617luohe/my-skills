@@ -9,7 +9,12 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from validate_skills import _full_description, _validate_naming, validate_repository
+from validate_skills import (
+    _full_description,
+    _validate_naming,
+    _validate_text_hygiene,
+    validate_repository,
+)
 
 MANIFEST = """schema_version: 1
 repository_version: 1.0.0
@@ -127,15 +132,17 @@ def _write_governance_repo(
             "---\n\n"
             f"# {name}\n\nDependencies: {', '.join(dependencies)}.\n",
             encoding="utf-8",
+            newline="\n",
         )
         (skill_path / "agents").mkdir()
         (skill_path / "agents" / "openai.yaml").write_text(
             "policy:\n"
             f"  allow_implicit_invocation: {'false' if invocation == 'user' else 'true'}\n",
             encoding="utf-8",
+            newline="\n",
         )
     (root / "skills-manifest.yaml").write_text(
-        "\n".join(manifest_lines) + "\n", encoding="utf-8"
+        "\n".join(manifest_lines) + "\n", encoding="utf-8", newline="\n"
     )
 
 
@@ -1380,3 +1387,50 @@ def test_prompt_injection_samples_are_structural_and_point_to_one_source():
         "vision-skill/SKILL.md",
         "writing-for-agents/EXTERNAL-CONTENT.md",
     ]
+
+
+def test_crlf_text_file_reports_line_ending_error(tmp_path: Path):
+    (tmp_path / "notes.md").write_bytes(b"# title\r\n\r\nbody\r\n")
+    errors: list[dict[str, str]] = []
+    _validate_text_hygiene(tmp_path, errors)
+    assert [item["code"] for item in errors] == ["line-ending"]
+    assert errors[0]["path"] == "notes.md"
+    assert "3 line(s)" in errors[0]["message"]
+
+
+@pytest.mark.parametrize(
+    "name", ["notes.md", "run.sh", "tool.py", "conf.yaml", "data.json"]
+)
+def test_crlf_detected_for_each_text_suffix(tmp_path: Path, name: str):
+    (tmp_path / name).write_bytes(b"first\r\nsecond\r\n")
+    errors: list[dict[str, str]] = []
+    _validate_text_hygiene(tmp_path, errors)
+    assert [(item["code"], item["path"]) for item in errors] == [("line-ending", name)]
+
+
+def test_trailing_whitespace_reports_error(tmp_path: Path):
+    (tmp_path / "run.sh").write_bytes(b"echo ok\necho padded \necho done\n")
+    errors: list[dict[str, str]] = []
+    _validate_text_hygiene(tmp_path, errors)
+    assert [item["code"] for item in errors] == ["trailing-whitespace"]
+    assert "line 2" in errors[0]["message"]
+
+
+def test_trailing_whitespace_before_crlf_is_reported(tmp_path: Path):
+    (tmp_path / "conf.yaml").write_bytes(b"key: value \r\n")
+    errors: list[dict[str, str]] = []
+    _validate_text_hygiene(tmp_path, errors)
+    assert sorted(item["code"] for item in errors) == [
+        "line-ending",
+        "trailing-whitespace",
+    ]
+
+
+def test_repository_text_files_are_lf_and_have_no_trailing_whitespace():
+    report = validate_repository(Path(__file__).resolve().parents[1])
+    hygiene = [
+        item
+        for item in report["errors"]
+        if item["code"] in {"line-ending", "trailing-whitespace"}
+    ]
+    assert hygiene == [], hygiene

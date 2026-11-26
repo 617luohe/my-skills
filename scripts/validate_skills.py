@@ -7,6 +7,7 @@ import argparse
 import importlib.util
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -70,6 +71,10 @@ HOST_SPECIFIC_INVOCATION_RE = re.compile(r"Call the Skill tool")
 HOST_NEUTRAL_EXEMPT_FILES = frozenset({"CHANGELOG.md"})
 PERSONAL_PATH_SCAN_SUFFIXES = (".md", ".yaml", ".yml", ".sh", ".json")
 PERSONAL_PATH_EXEMPT_FILES = frozenset({"CHANGELOG.md"})
+TEXT_HYGIENE_SUFFIXES = frozenset({".md", ".sh", ".py", ".yaml", ".yml", ".json"})
+TEXT_HYGIENE_SKIP_DIRS = frozenset(
+    {".git", "__pycache__", ".pytest_cache", "node_modules", ".venv", "venv"}
+)
 ABSOLUTE_USER_PATH_RE = re.compile(
     r"[A-Za-z]:\\Users\\[^\\\s\"'`|)\]},]+|/home/[A-Za-z0-9._-]+/"
 )
@@ -900,6 +905,79 @@ def _validate_no_personal_paths(root: Path, errors: list[dict[str, str]]) -> Non
             )
 
 
+def _validate_text_hygiene(root: Path, errors: list[dict[str, str]]) -> None:
+    """Text files must be stored as LF and carry no trailing whitespace.
+
+    The committed blob is the authority for line endings: a Windows checkout may
+    convert LF blobs to CRLF on disk (w/crlf) without any committed change.
+    Without git metadata the working-tree bytes are checked instead.
+    """
+    index_eol = _index_line_endings(root) or {}
+    for path in sorted(root.rglob("*")):
+        if (
+            not path.is_file()
+            or path.suffix.lower() not in TEXT_HYGIENE_SUFFIXES
+            or any(
+                part in TEXT_HYGIENE_SKIP_DIRS
+                for part in path.relative_to(root).parts
+            )
+        ):
+            continue
+        try:
+            data = path.read_bytes()
+        except OSError:
+            continue
+        committed = index_eol.get(path.relative_to(root).as_posix())
+        crlf_count = data.count(b"\r\n")
+        if committed == "crlf" or (committed is None and crlf_count):
+            errors.append(
+                _finding(
+                    "line-ending",
+                    path,
+                    f"CRLF line endings; commit LF only ({crlf_count} line(s))",
+                    root,
+                )
+            )
+        for number, line in enumerate(data.split(b"\n"), 1):
+            if line.rstrip(b"\r").endswith((b" ", b"\t")):
+                errors.append(
+                    _finding(
+                        "trailing-whitespace",
+                        path,
+                        f"trailing whitespace on line {number}",
+                        root,
+                    )
+                )
+                break
+
+
+def _index_line_endings(root: Path) -> dict[str, str] | None:
+    """Line endings of committed (index) blobs, or None when git is unavailable."""
+    if not (root / ".git").exists():
+        return None
+    try:
+        result = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--eol", "-z"],
+            capture_output=True,
+            check=False,
+        )
+    except OSError:
+        return None
+    if result.returncode != 0:
+        return None
+    endings: dict[str, str] = {}
+    for entry in result.stdout.split(b"\0"):
+        meta, separator, raw_path = entry.partition(b"\t")
+        if not separator:
+            continue
+        for token in meta.split():
+            if token.startswith(b"i/"):
+                endings[raw_path.decode("utf-8", "surrogateescape")] = token[2:].decode(
+                    "ascii", "replace"
+                )
+    return endings
+
+
 def _validate_trigger_eval_names(
     skills: list[dict[str, Any]], root: Path, errors: list[dict[str, str]]
 ) -> None:
@@ -1386,6 +1464,7 @@ def validate_repository(
     _validate_readme_groups(skills, root, errors)
     _validate_host_neutral_wording(root, errors)
     _validate_no_personal_paths(root, errors)
+    _validate_text_hygiene(root, errors)
     _validate_trigger_eval_names(skills, root, errors)
     _validate_invocation_graph(skills, root, errors)
     for skill in sorted(skills, key=lambda item: str(item.get("name", ""))):

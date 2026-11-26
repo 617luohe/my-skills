@@ -4,6 +4,13 @@ All notable changes to this skills repository will be documented in this file.
 
 ## [Unreleased]
 
+### 文本卫生门禁：CRLF 与行尾空白（2026-11-26）
+
+#### Added
+
+- **`validator` 新增 `line-ending` / `trailing-whitespace` 两类错误**：`.md/.sh/.py/.yaml/.yml/.json` 文本文件不得以 CRLF 提交，行尾不得带空格或制表符。行尾判定以 index 内容为准（`git ls-files --eol`），因为 Windows checkout 会把 LF blob 转成工作区 CRLF 而 `git status` 仍干净；无 git 元数据时回退到工作区字节。理由：仓库此前没有任何行尾门禁，CRLF 与行尾空白只能靠 review 肉眼发现。
+- **测试**：新增 5 个用例（CRLF 报 `line-ending` 并计数、五种后缀逐一覆盖、行尾空白定位到行号、CRLF 与行尾空白同时命中、仓库本体零命中）；`_write_governance_repo` 改为显式 `newline="\n"`，避免 Windows fixture 自身写出 CRLF。
+
 ### 上游 6 处句子级锐化 + wizard write_env 转义修复（2026-11-26，对齐上游 6f7f783）
 
 #### Added
