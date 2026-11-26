@@ -9,7 +9,7 @@ description: 审查自一个固定点（commit、branch、tag 或 merge-base）�
 - **Standards**：代码符合本仓库记录的编码标准吗？
 - **Spec**：代码忠实实现了来源 issue / spec 吗？
 
-两轴各在**并行 sub-agent** 里跑，互不污染彼此的上下文，再由本技能汇总它们的发现。
+两轴各在**并行 sub-agent** 里跑，每个 sub-agent 从全新上下文窗口起步，互不污染彼此的上下文，再由本技能汇总它们的发现。
 
 issue tracker 应该已经提供给你。若 `docs/agents/issue-tracker.md` 缺失，让用户先跑 tracker 配置（本体系适配：spec 来源即 `docs/plans/` 下的 PRD/tasks）。
 
@@ -34,7 +34,7 @@ issue tracker 应该已经提供给你。若 `docs/agents/issue-tracker.md` 缺�
 
 ### 3. 定位 standards 来源
 
-仓库里记录"代码应怎么写"的任何东西，如 `CODING_STANDARDS.md` 或 `CONTRIBUTING.md`。
+先全仓搜索所有记录"代码应怎么写"的文件；`CODING_STANDARDS.md` 或 `CONTRIBUTING.md` 存在时必须列入清单。
 
 在仓库记录的之外，Standards 轴**始终**携带下面的**味道基线**：一组固定的 Fowler code smells（_Refactoring_ ch.3），即便仓库什么都没记录也适用。两条规则约束它：
 
@@ -57,6 +57,8 @@ issue tracker 应该已经提供给你。若 `docs/agents/issue-tracker.md` 缺�
 - **Refused Bequest**：子类或实现忽略或覆盖继承的大部分。→ 丢掉继承，用组合。
 
 ### 4. 并行派生两个 sub-agent
+
+两个调用同时、前台发起（不要退回串行逐个跑），等两份报告都回来再汇总。
 
 **Standards sub-agent prompt** 应包含：
 
